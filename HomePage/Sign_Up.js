@@ -9,8 +9,4 @@ function passInfo(){
     if(password==""){
         alert("Enter your password");
     }
-    sessionStorage.setItem('username', username);
-    sessionStorage.setItem('type', type);
-    sessionStorage.setItem('password', password);
-    window.location.href = 'Sign_In.html';
 }
