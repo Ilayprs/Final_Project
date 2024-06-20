@@ -1,0 +1,70 @@
+
+
+body{
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background: linear-gradient(to right, #6a11cb, #2575fc);
+}
+
+#container{
+    width: 300px; 
+    height: 330px; 
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 20px; 
+    background-color: white;
+    border-radius: 10px;
+}
+
+#container .get{
+    margin-left: 20px;
+    width: 250px;
+    border: 2px solid #ccc;
+    border-radius: 5px;
+    padding: 10px;
+    font-size: 16px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: border-color 0.3s ease;
+}
+
+#container .get:hover{
+    border-color: #aaa;
+}
+
+#container .get:focus{
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 2px 5px rgba(0, 123, 255, 0.5);
+}
+
+#container #submit{
+    width: 275px;
+    font-weight: bold;
+}
+
+.get{
+    background: linear-gradient(to right, #6a11cb, #2575fc);
+    color: white;
+}
+
+.get::placeholder{
+    color: white;
+}
+
+.subject{
+    font-family: 'Georgia', serif;  /* Custom font */
+    font-size: 3rem;                /* Font size */
+    color: linear-gradient(to right, #6a11cb, #2575fc);           /* Text color */
+    text-align: center;             /* Center align */
+    text-transform: uppercase;      /* Uppercase text */
+    letter-spacing: 2px;            /* Letter spacing */
+    word-spacing: 4px;              /* Word spacing */
+    padding: 20px;                  /* Padding */
+    margin: 0;                      /* Remove default margin */
+    border: 2px solid linear-gradient(to right, #6a11cb, #2575fc);      /* Border */
+    border-radius: 10px;            /* Rounded corners */
+    width: fit-content;             /* Width of content */
+}
