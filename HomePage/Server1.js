@@ -1,29 +1,32 @@
 const express = require('express');
-const app = express();
-app.use(express.static('public'));
-
 const bodyParser = require('body-parser');
+const path = require('path');
+
+const app = express();
+const PORT = 3000; // Changed port to a more common value
+
+// Serve static files from the "public" directory
+app.use(express.static(path.join(__dirname, 'public')));
+
 app.use(bodyParser.urlencoded({ extended: true }));
 
-function send(username, password, selection){
-    return ("name: " + username + " pass: " + password + " type: " + selection);
+function send(username, password, selection) {
+    return `name: ${username} pass: ${password} type: ${selection}`;
 }
-app.post('/send', function (req, res) {
-    let name = req.body.username;
-    let pass = req.body.password;
-    let type = req.body.selection;
 
-    let result = send(name, pass, type);
+app.post('/send', (req, res) => {
+    const { username, password, selection } = req.body;
+    const result = send(username, password, selection);
 
-    res.end(`<html>
-                <body>
-                    <h2>${result}</h2>
-                </body>
-            </html>`);
+    res.send(`
+        <html>
+            <body>
+                <h2>${result}</h2>
+            </body>
+        </html>
+    `);
 });
 
-app.get('/data', function(req, res) {
-    res.send(output);
+app.listen(PORT, () => {
+    console.log(`Server is running on http://localhost:${PORT}`);
 });
-
-app.listen(81);
