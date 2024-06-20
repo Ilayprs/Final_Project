@@ -3,7 +3,7 @@ const bodyParser = require('body-parser');
 const path = require('path');
 
 const app = express();
-const PORT = 3000; // Changed port to a more common value
+const PORT = 3000; // Use port 3000
 
 // Serve static files from the "public" directory
 app.use(express.static(path.join(__dirname, 'public')));
@@ -13,6 +13,11 @@ app.use(bodyParser.urlencoded({ extended: true }));
 function send(username, password, selection) {
     return `name: ${username} pass: ${password} type: ${selection}`;
 }
+
+// Serve the HTML file for the root URL
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'Sign_Up.html'));
+});
 
 app.post('/send', (req, res) => {
     const { username, password, selection } = req.body;
