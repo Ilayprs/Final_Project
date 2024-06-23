@@ -4,24 +4,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign Up</title>
-    <script src='Sign_Up.js'></script>
     <link rel="stylesheet" href="EnterStores.css">
 </head>
 <body>
-    <form action='/send' method='post'>
-        <div id='container'>
-            <h1 class='subject'>Sign Up</h1>
-            <input type='text' placeholder='Enter your username' class='get' id='username' name='username'>
+    <div class="container">
+        <h1>Sign Up</h1>
+        <form action="/send" method="POST">
+            <input type="text" name="username" placeholder="Enter your username" required>
             <br/><br/>
-            <input type='password' placeholder='Enter your password' class='get' id='password' name='password'>
+            <input type="password" name="password" placeholder="Enter your password" required>
             <br/><br/>
-            <select class='get' id='selection' name='selection' aria-placeholder="choose level">
-                <option value='customer'>customer</option>
-                <option value='manager'>manager</option>
+            <select name="selection" required>
+                <option value="customer">Customer</option>
+                <option value="manager">Manager</option>
             </select>
             <br/><br/>
-            <button type='submit' class='get' id='submit'>submit</button>
-        </div>
-    </form>
+            <button type="submit" class="button">Submit</button>
+        </form>
+    </div>
+    <div class="bottom-left">
+        <a href="Sign_In.html"><button class="bottom-left-button">back</button></a>
+    </div>
 </body>
 </html>
