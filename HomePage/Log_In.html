@@ -4,22 +4,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Log In</title>
-    <script src="Log_In.js"></script>
     <link rel="stylesheet" href="EnterStores.css">
+    <script src="Log_In.js"></script>
 </head>
 <body>
-    <div id="container">
+    <div class="container">
         <h1 class="subject">Log In</h1>
-        <input type="text" placeholder="Enter your username" class="get" id="username">
-        <br/><br/>
-        <input type="password" placeholder="Enter your password" class="get" id="password">
-        <br/><br/>
-        <select class="get" id="selection">
-            <option value="customer">customer</option>
-            <option value="manager">manager</option>
-        </select>
-        <br/><br/>
-        <button type="button" class="get" id="submit" onclick="passInfo()">Submit</button> 
+        <form action="/login" method="POST">
+            <input type="text" name="username" placeholder="Enter your username" required>
+            <br/><br/>
+            <input type="password" name="password" placeholder="Enter your password" required>
+            <br/><br/>
+            <select name="selection" required>
+                <option value="customer">Customer</option>
+                <option value="manager">Manager</option>
+            </select>
+            <br/><br/>
+            <button type="submit" class="button">Submit</button>
+        </form>
+    </div>
+    <div class="bottom-left">
+        <a href="Sign_In.html"><button class="bottom-left-button">back</button></a>
     </div>
 </body>
 </html>
