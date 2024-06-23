@@ -11,7 +11,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 // Connect to MongoDB
-mongoose.connect('mongodb://127.0.0.1:27017', {
+mongoose.connect('mongodb://127.0.0.1:27017/yourdbname', {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     //useCreateIndex: true,
@@ -24,36 +24,42 @@ db.once('open', function() {
 });
 
 // Define a Mongoose schema and model for your data (example)
-const Customer = mongoose.Schema({
+const customerSchema = new mongoose.Schema({
     username: String,
     password: String,
     city: String,
-    credit: Number,
+    credit: { type: Number, default: 0 },
 });
 
-Customer.statics.createCustomer = function(name, password, city) {
-    return new this({name, password, city, credit:0});
+customerSchema.statics.createCustomer = function(username, password, city) {
+    return new this({ username, password, city, credit: 0 });
 };
 
-Customer.methods.setCredit = function(credit) {
+customerSchema.methods.setCredit = function(credit) {
     this.credit = credit;
 };
 
-const Manager = mongoose.Schema({
+const Customer = mongoose.model('Customer', customerSchema);
+
+const managerSchema = new mongoose.Schema({
     username: String,
     password: String,
     city: String,
 });
 
+const Manager = mongoose.model('Manager', managerSchema);
+
 // Function to process login data (using Mongoose)
-function sendCustomer(username, password, city) {
+async function sendCustomer(username, password, city) {
     const newUser = Customer.createCustomer(username, password, city);
-    return newUser.save();
+    await newUser.save();
+    return newUser;
 }
 
-function sendManager(username, password, city) {
+async function sendManager(username, password, city) {
     const newUser = new Manager({ username, password, city });
-    return newUser.save();
+    await newUser.save();
+    return newUser;
 }
 
 // Route to serve the Sign In page
@@ -70,8 +76,8 @@ app.get('/signup', (req, res) => {
 app.post('/send', async (req, res) => {
     const { username, password, selection, city } = req.body;
     const result = `name: ${username} pass: ${password} type: ${selection} city: ${city}`;
-    if(selection === 'customer'){
-        try {
+    try {
+        if (selection === 'customer') {
             await sendCustomer(username, password, city);
             res.send(`
                 <html>
@@ -81,12 +87,7 @@ app.post('/send', async (req, res) => {
                     </body>
                 </html>
             `);
-        } catch (err) {
-            console.error('Error saving data:', err);
-            res.status(500).send('Error saving data');
-        }
-    } else { //is manager 
-        try {
+        } else { //is manager 
             await sendManager(username, password, city);
             res.send(`
                 <html>
@@ -96,10 +97,10 @@ app.post('/send', async (req, res) => {
                     </body>
                 </html>
             `);
-        } catch (err) {
-            console.error('Error saving data:', err);
-            res.status(500).send('Error saving data');
         }
+    } catch (err) {
+        console.error('Error saving data:', err);
+        res.status(500).send('Error saving data');
     }
 });
 
