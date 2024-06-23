@@ -1,6 +1,5 @@
-
-
-body{
+/* General styles */
+body {
     font-family: Arial, sans-serif;
     display: flex;
     justify-content: center;
@@ -10,61 +9,79 @@ body{
     background: linear-gradient(to right, #6a11cb, #2575fc);
 }
 
-#container{
-    width: 300px; 
-    height: 330px; 
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    padding: 20px; 
-    background-color: white;
+.container {
+    text-align: center;
+    background: white;
+    padding: 50px;
     border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-#container .get{
-    margin-left: 20px;
-    width: 250px;
-    border: 2px solid #ccc;
-    border-radius: 5px;
-    padding: 10px;
+h1 {
+    margin-bottom: 20px;
+    color: #333;
+}
+.bottom-left-button {
+    padding: 10px 20px; /* Padding inside the button */
+    font-size: 16px; /* Font size of the button text */
+    background-color: #4CAF50; /* Background color of the button */
+    color: white; /* Text color of the button */
+    border: none; /* No border */
+    cursor: pointer; /* Cursor style */
+    border-radius: 5px; /* Rounded corners for the button */
+}
+.button {
+    display: inline-block;
+    margin: 10px;
+    padding: 15px 30px;
     font-size: 16px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    transition: border-color 0.3s ease;
-}
-
-#container .get:hover{
-    border-color: #aaa;
-}
-
-#container .get:focus{
-    outline: none;
-    border-color: #007bff;
-    box-shadow: 0 2px 5px rgba(0, 123, 255, 0.5);
-}
-
-#container #submit{
-    width: 275px;
     font-weight: bold;
-}
-
-.get{
-    background: linear-gradient(to right, #6a11cb, #2575fc);
     color: white;
+    background-color: #6a11cb;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
 }
 
-.get::placeholder{
+.button:hover {
+    background-color: #2575fc;
+}
+
+.bottom-left {
+    position: fixed; /* Fixed position to stay at the bottom of the viewport */
+    left: 20px; /* Adjust this value to control the horizontal position */
+    bottom: 20px; /* Adjust this value to control the vertical position */
+    
+}
+
+/* Input and select styles */
+input, select {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+input:focus, select:focus {
+    border-color: #6a11cb;
+    outline: none;
+}
+
+/* Additional styles */
+form {
+    max-width: 400px;
+    margin: auto;
+}
+
+form input[type="submit"] {
+    background-color: #6a11cb;
     color: white;
+    cursor: pointer;
 }
 
-.subject{
-    font-family: 'Georgia', serif;  /* Custom font */
-    font-size: 3rem;                /* Font size */
-    color: linear-gradient(to right, #6a11cb, #2575fc);           /* Text color */
-    text-align: center;             /* Center align */
-    text-transform: uppercase;      /* Uppercase text */
-    letter-spacing: 2px;            /* Letter spacing */
-    word-spacing: 4px;              /* Word spacing */
-    padding: 20px;                  /* Padding */
-    margin: 0;                      /* Remove default margin */
-    border: 2px solid linear-gradient(to right, #6a11cb, #2575fc);      /* Border */
-    border-radius: 10px;            /* Rounded corners */
-    width: fit-content;             /* Width of content */
+form input[type="submit"]:hover {
+    background-color: #2575fc;
 }
