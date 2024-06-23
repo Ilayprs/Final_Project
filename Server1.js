@@ -14,7 +14,7 @@ app.use(express.json());
 function send(username, password, selection) {
     return `name: ${username} pass: ${password} type: ${selection}`;
 }
-//hello
+//hello world
 // Route to serve the Sign In page
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'HomePage', 'Sign_In.html'));
