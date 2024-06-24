@@ -64,6 +64,42 @@ async function sendManager(id, username, password, city) {
     return newUser;
 }
 
+const findManagerById = async (managerId) => {
+    try {
+        // Connect to the database
+
+        // Search for the manager by ID
+        const manager = await Manager.findOne({ id: managerId });
+
+        // Check if the manager was found
+        if (manager) {
+            console.log('Manager found:');
+        } else {
+            console.log('Manager not found');
+        }
+    }catch (err) {
+        console.error('Error searching for manager:', err);
+    }
+}
+
+const findCustomerById = async (managerId) => {
+    try {
+        // Connect to the database
+
+        // Search for the manager by ID
+        const manager = await Customer.findOne({ id: managerId });
+
+        // Check if the manager was found
+        if (manager) {
+            console.log('Customer found:');
+        } else {
+            console.log('Customer not found');
+        }
+    }catch (err) {
+        console.error('Error searching for customer:', err);
+    }
+}
+
 // Route to serve the Sign In page
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'HomePage', 'Sign_In.html'));
@@ -74,10 +110,39 @@ app.get('/signup', (req, res) => {
     res.sendFile(path.join(__dirname, 'HomePage', 'Sign_Up.html'));
 });
 
+app.get('/login', (req, res) => {
+    res.sendFile(path.join(__dirname, 'HomePage', 'Log_In.html'));
+});
+
+app.post('/send2', async (req, res) => {
+    const {id, selection} = req.body;
+
+    if(selection === 'customer'){
+       findCustomerById(id);
+       res.send(`
+        <html>
+            <body onload="window.location.href='Cus_Store.html'">
+                
+            </body>
+        </html>
+    `);
+
+    } else { //is manager
+        findManagerById(id);
+        res.send(`
+            <html>
+                <body onload="window.location.href='Man_Store.html'">
+                    
+                </body>
+            </html>
+        `);
+    }
+
+});
+
 // Route to handle form submission
 app.post('/send', async (req, res) => {
     const { id, username, password, selection, city } = req.body;
-    const result = `id: ${id} name: ${username} pass: ${password} type: ${selection} city: ${city}`;
     try {
         if (selection === 'customer') {
             await sendCustomer(id, username, password, city);
