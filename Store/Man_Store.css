@@ -2,12 +2,12 @@ body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #f0f2f5;
+    background: #f7f7f7;
     color: #333;
 }
 
 header {
-    background-color: #007bff;
+    background: linear-gradient(to right, #6a11cb, #2575fc);
     color: white;
     padding: 1.5em 0;
     text-align: center;
@@ -16,6 +16,8 @@ header {
 
 header h1 {
     margin: 0;
+    font-size: 2.5em;
+    letter-spacing: 1px;
 }
 
 header nav ul {
@@ -36,10 +38,27 @@ header nav ul li a {
     text-decoration: none;
     font-weight: bold;
     transition: color 0.3s ease;
+    position: relative;
 }
 
 header nav ul li a:hover {
-    color: #ffeb3b;
+    color: #FFEB3B;
+}
+
+header nav ul li a::after {
+    content: '';
+    display: block;
+    width: 0;
+    height: 2px;
+    background: #FFEB3B;
+    transition: width 0.3s;
+    position: absolute;
+    left: 0;
+    bottom: -5px;
+}
+
+header nav ul li a:hover::after {
+    width: 100%;
 }
 
 section {
@@ -50,22 +69,22 @@ section {
 
 section h2 {
     margin-bottom: 1em;
-    color: #007bff;
+    color: #6a11cb;
+    font-size: 2em;
+    border-left: 4px solid #6a11cb;
+    padding-left: 0.5em;
 }
 
 .product-list, .order-list {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 1.5em;
 }
 
 .product, .order {
     border: 1px solid #ddd;
     padding: 1.5em;
-    background-color: white;
-    width: 100%;
-    max-width: 400px;
+    background-color: #FFFFFF;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -78,6 +97,7 @@ section h2 {
 
 .product h3, .order h3 {
     margin: 0 0 0.5em;
+    color: #6a11cb;
 }
 
 .product p, .order p {
@@ -85,22 +105,27 @@ section h2 {
 }
 
 button {
-    background-color: #007bff;
+    background-color: #2575fc;
     color: white;
     border: none;
     padding: 0.75em 1.5em;
     border-radius: 5px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s ease, transform 0.3s ease;
 }
 
 button:hover {
-    background-color: #0056b3;
+    background-color: #6a11cb;
+    transform: scale(1.05);
 }
 
 #addProductBtn {
     margin-top: 2em;
     padding: 1em 2em;
+    background: linear-gradient(to right, #6a11cb, #2575fc);
+    border: none;
+    color: white;
+    font-size: 1em;
 }
 
 form {
@@ -110,7 +135,7 @@ form {
     max-width: 400px;
     margin: 0 auto;
     padding: 2em;
-    background-color: white;
+    background-color: #FFFFFF;
     border: 1px solid #ddd;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
@@ -118,6 +143,7 @@ form {
 
 form label {
     font-weight: bold;
+    color: #6a11cb;
 }
 
 form input, form textarea {
@@ -125,19 +151,36 @@ form input, form textarea {
     border: 1px solid #ddd;
     border-radius: 5px;
     width: 100%;
+    transition: border-color 0.3s ease;
+}
+
+form input:focus, form textarea:focus {
+    border-color: #6a11cb;
 }
 
 form button {
     align-self: center;
     padding: 0.75em 2em;
+    background-color: #2575fc;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+form button:hover {
+    background-color: #6a11cb;
+    transform: scale(1.05);
 }
 
 footer {
-    background-color: #007bff;
+    background-color: #6a11cb;
     color: white;
     text-align: center;
     padding: 1em;
     position: fixed;
     width: 100%;
     bottom: 0;
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
 }
