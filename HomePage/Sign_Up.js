@@ -1,6 +1,6 @@
 
 function passInfo(){
-    let type = document.getElementById('selection').value;
+    let id = document.getElementById('id').value;
     let username = document.getElementById('username').value;
     let password = document.getElementById('password').value;
     if(username==""){
@@ -8,5 +8,8 @@ function passInfo(){
     }
     if(password==""){
         alert("Enter your password");
+    }
+    if(id ==""){
+        alert("Enter your id")
     }
 }
