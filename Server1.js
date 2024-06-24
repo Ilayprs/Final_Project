@@ -42,6 +42,16 @@ const managerSchema = new mongoose.Schema({
 
 const Manager = mongoose.model('Manager', managerSchema);
 
+const itemSchema = new mongoose.Schema({
+    name: String , 
+    price: Number,
+    catagory: String,
+    stock: Number,
+
+});
+itemSchema.index({ name: 1, category: 1 }, { unique: true });
+const Item = mongoose.model('Item', itemSchema);
+
 // Function to create a new Customer
 async function sendCustomer(id, username, password, city) {
     const newUser = new Customer({ id, username, password, city });
