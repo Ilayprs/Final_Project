@@ -52,6 +52,15 @@ const itemSchema = new mongoose.Schema({
 itemSchema.index({ name: 1, category: 1 }, { unique: true });
 const Item = mongoose.model('Item', itemSchema);
 
+const orderSchema = new mongoose.Schema({
+    orderId: {type: Number, unique: true}, 
+    customerId: Number,
+    totalPrice: Number,
+    numItems: Number,
+    items: [itemSchema],
+});
+const Order = mongoose.model('Order', orderSchema);
+
 // Function to create a new Customer
 async function sendCustomer(id, username, password, city) {
     const newUser = new Customer({ id, username, password, city });
