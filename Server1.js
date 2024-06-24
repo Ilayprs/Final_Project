@@ -49,7 +49,7 @@ const managerSchema = new mongoose.Schema({
 
 const Manager = mongoose.model('Manager', managerSchema);
 
-// Function to process login data (using Mongoose)
+// Function to process login data (using Mongoose) in js
 async function sendCustomer(username, password, city) {
     const newUser = Customer.createCustomer(username, password, city);
     await newUser.save();
