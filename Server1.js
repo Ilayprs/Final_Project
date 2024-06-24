@@ -46,7 +46,7 @@ const itemSchema = new mongoose.Schema({
     name: String , 
     price: Number,
     catagory: String,
-    stock: Number,
+    stock: { type: Number, default: 0 },
 
 });
 itemSchema.index({ name: 1, category: 1 }, { unique: true });
