@@ -25,7 +25,7 @@ db.once('open', function() {
 
 // Define a Mongoose schema and model for your data (example)
 const customerSchema = new mongoose.Schema({
-    id: Number,
+    id: {type: Number, unique: true},
     username: String,
     password: String,
     city: String,
@@ -43,7 +43,8 @@ customerSchema.methods.setCredit = function(credit) {
 const Customer = mongoose.model('Customer', customerSchema);
 
 const managerSchema = new mongoose.Schema({
-    id: Number,
+    id: {type: Number, unique: true},
+
     username: String,
     password: String,
     city: String,
@@ -92,8 +93,10 @@ const findCustomerById = async (managerId) => {
         // Check if the manager was found
         if (manager) {
             console.log('Customer found:');
+            
         } else {
             console.log('Customer not found');
+            
         }
     }catch (err) {
         console.error('Error searching for customer:', err);
@@ -106,13 +109,24 @@ app.get('/', (req, res) => {
 });
 
 // Route to serve the Sign Up page
-app.get('/signup', (req, res) => {
++app.get('/signup', (req, res) => {
     res.sendFile(path.join(__dirname, 'HomePage', 'Sign_Up.html'));
 });
 
 app.get('/login', (req, res) => {
     res.sendFile(path.join(__dirname, 'HomePage', 'Log_In.html'));
 });
+
+app.get('/Cus_Store.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'store', 'Cus_Store.html'));
+});
+
+app.get('/Man_Store.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'store', 'Man_Store.html'));
+});
+
+
+
 
 app.post('/send2', async (req, res) => {
     const {id, selection} = req.body;
@@ -155,8 +169,8 @@ app.post('/send', async (req, res) => {
             `);
         } else { //is manager 
             await sendManager(id, username, password, city);
-            res.send(`
-                <html>
+ +           res.send(`
++                <html>
                     <body onload="window.location.href='Sign_In.html'">
                         
                     </body>
