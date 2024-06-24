@@ -5,6 +5,45 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kitchen Stuff Supplier Portal</title>
     <link rel="stylesheet" href="Man_Store.css">
+    <style>
+        /* Additional CSS styling if needed */
+        .product, .order {
+            margin-bottom: 10px; /* Add margin between items */
+        }
+        /* Modal styles */
+        .modal {
+            display: none; 
+            position: fixed; 
+            z-index: 1; 
+            left: 0;
+            top: 0;
+            width: 100%; 
+            height: 100%; 
+            overflow: auto; 
+            background-color: rgb(0,0,0); 
+            background-color: rgba(0,0,0,0.4); 
+            padding-top: 60px;
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto; 
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
     <header>
@@ -26,30 +65,36 @@
     
     <section id="inventory">
         <h2>Inventory</h2>
+        <button onclick="openModal()">Add New Product</button>
+        <button type="button" onclick="createNewCategory()">Create New Category</button>
         <div class="category" id="category1">
             <h3>Category 1: Blenders</h3>
             <div class="product-list">
                 <div class="product">
                     <h3>Blender 1</h3>
                     <p>Stock: 100</p>
+                    <p>Price: $50.00</p>
                     <button onclick="editProduct('Blender 1')">Edit</button>
                     <button onclick="deleteProduct('Blender 1')">Delete</button>
                 </div>
                 <div class="product">
                     <h3>Blender 2</h3>
                     <p>Stock: 150</p>
+                    <p>Price: $65.00</p>
                     <button onclick="editProduct('Blender 2')">Edit</button>
                     <button onclick="deleteProduct('Blender 2')">Delete</button>
                 </div>
                 <div class="product">
                     <h3>Blender 3</h3>
                     <p>Stock: 80</p>
+                    <p>Price: $55.00</p>
                     <button onclick="editProduct('Blender 3')">Edit</button>
                     <button onclick="deleteProduct('Blender 3')">Delete</button>
                 </div>
                 <div class="product">
                     <h3>Blender 4</h3>
                     <p>Stock: 120</p>
+                    <p>Price: $70.00</p>
                     <button onclick="editProduct('Blender 4')">Edit</button>
                     <button onclick="deleteProduct('Blender 4')">Delete</button>
                 </div>
@@ -62,24 +107,28 @@
                 <div class="product">
                     <h3>Toaster 1</h3>
                     <p>Stock: 90</p>
+                    <p>Price: $25.00</p>
                     <button onclick="editProduct('Toaster 1')">Edit</button>
                     <button onclick="deleteProduct('Toaster 1')">Delete</button>
                 </div>
                 <div class="product">
                     <h3>Toaster 2</h3>
                     <p>Stock: 110</p>
+                    <p>Price: $30.00</p>
                     <button onclick="editProduct('Toaster 2')">Edit</button>
                     <button onclick="deleteProduct('Toaster 2')">Delete</button>
                 </div>
                 <div class="product">
                     <h3>Toaster 3</h3>
                     <p>Stock: 70</p>
+                    <p>Price: $28.00</p>
                     <button onclick="editProduct('Toaster 3')">Edit</button>
                     <button onclick="deleteProduct('Toaster 3')">Delete</button>
                 </div>
                 <div class="product">
                     <h3>Toaster 4</h3>
                     <p>Stock: 100</p>
+                    <p>Price: $35.00</p>
                     <button onclick="editProduct('Toaster 4')">Edit</button>
                     <button onclick="deleteProduct('Toaster 4')">Delete</button>
                 </div>
@@ -92,24 +141,28 @@
                 <div class="product">
                     <h3>Coffee Maker 1</h3>
                     <p>Stock: 80</p>
+                    <p>Price: $40.00</p>
                     <button onclick="editProduct('Coffee Maker 1')">Edit</button>
                     <button onclick="deleteProduct('Coffee Maker 1')">Delete</button>
                 </div>
                 <div class="product">
                     <h3>Coffee Maker 2</h3>
                     <p>Stock: 100</p>
+                    <p>Price: $45.00</p>
                     <button onclick="editProduct('Coffee Maker 2')">Edit</button>
                     <button onclick="deleteProduct('Coffee Maker 2')">Delete</button>
                 </div>
                 <div class="product">
                     <h3>Coffee Maker 3</h3>
                     <p>Stock: 60</p>
+                    <p>Price: $38.00</p>
                     <button onclick="editProduct('Coffee Maker 3')">Edit</button>
                     <button onclick="deleteProduct('Coffee Maker 3')">Delete</button>
                 </div>
                 <div class="product">
                     <h3>Coffee Maker 4</h3>
                     <p>Stock: 90</p>
+                    <p>Price: $50.00</p>
                     <button onclick="editProduct('Coffee Maker 4')">Edit</button>
                     <button onclick="deleteProduct('Coffee Maker 4')">Delete</button>
                 </div>
@@ -122,24 +175,28 @@
                 <div class="product">
                     <h3>Mixer 1</h3>
                     <p>Stock: 70</p>
+                    <p>Price: $55.00</p>
                     <button onclick="editProduct('Mixer 1')">Edit</button>
                     <button onclick="deleteProduct('Mixer 1')">Delete</button>
                 </div>
                 <div class="product">
                     <h3>Mixer 2</h3>
                     <p>Stock: 90</p>
+                    <p>Price: $60.00</p>
                     <button onclick="editProduct('Mixer 2')">Edit</button>
                     <button onclick="deleteProduct('Mixer 2')">Delete</button>
                 </div>
                 <div class="product">
                     <h3>Mixer 3</h3>
                     <p>Stock: 50</p>
+                    <p>Price: $52.00</p>
                     <button onclick="editProduct('Mixer 3')">Edit</button>
                     <button onclick="deleteProduct('Mixer 3')">Delete</button>
                 </div>
                 <div class="product">
                     <h3>Mixer 4</h3>
                     <p>Stock: 80</p>
+                    <p>Price: $65.00</p>
                     <button onclick="editProduct('Mixer 4')">Edit</button>
                     <button onclick="deleteProduct('Mixer 4')">Delete</button>
                 </div>
@@ -152,24 +209,28 @@
                 <div class="product">
                     <h3>Cookware 1</h3>
                     <p>Stock: 60</p>
+                    <p>Price: $75.00</p>
                     <button onclick="editProduct('Cookware 1')">Edit</button>
                     <button onclick="deleteProduct('Cookware 1')">Delete</button>
                 </div>
                 <div class="product">
                     <h3>Cookware 2</h3>
                     <p>Stock: 80</p>
+                    <p>Price: $85.00</p>
                     <button onclick="editProduct('Cookware 2')">Edit</button>
                     <button onclick="deleteProduct('Cookware 2')">Delete</button>
                 </div>
                 <div class="product">
                     <h3>Cookware 3</h3>
                     <p>Stock: 40</p>
+                    <p>Price: $70.00</p>
                     <button onclick="editProduct('Cookware 3')">Edit</button>
                     <button onclick="deleteProduct('Cookware 3')">Delete</button>
                 </div>
                 <div class="product">
                     <h3>Cookware 4</h3>
                     <p>Stock: 70</p>
+                    <p>Price: $85.00</p>
                     <button onclick="editProduct('Cookware 4')">Edit</button>
                     <button onclick="deleteProduct('Cookware 4')">Delete</button>
                 </div>
@@ -177,8 +238,191 @@
         </div>
     </section>
     
+    <section id="orders">
+        <h2>Orders</h2>
+        <div class="order-list">
+            <div class="order">
+                <h3>Order ID: 1001</h3>
+                <p>Product: Blender 1</p>
+                <p>Quantity: 2</p>
+                <p>Status: Shipped</p>
+            </div>
+            <div class="order">
+                <h3>Order ID: 1002</h3>
+                <p>Product: Toaster 3</p>
+                <p>Quantity: 1</p>
+                <p>Status: Processing</p>
+            </div>
+            <div class="order">
+                <h3>Order ID: 1003</h3>
+                <p>Product: Coffee Maker 2</p>
+                <p>Quantity: 3</p>
+                <p>Status: Delivered</p>
+            </div>
+            <div class="order">
+                <h3>Order ID: 1004</h3>
+                <p>Product: Mixer 4</p>
+                <p>Quantity: 1</p>
+                <p>Status: Pending</p>
+            </div>
+            <div class="order">
+                <h3>Order ID: 1005</h3>
+                <p>Product: Cookware 2</p>
+                <p>Quantity: 4</p>
+                <p>Status: Shipped</p>
+            </div>
+        </div>
+    </section>
+    
+    <section id="profile">
+        <h2>Profile</h2>
+        <div class="profile-info">
+            <p>Name: John Doe</p>
+            <p>Email: john.doe@example.com</p>
+            <p>Company: Kitchen Supplies Inc.</p>
+            <button onclick="editProfile()">Edit Profile</button>
+        </div>
+    </section>
+    
     <footer>
         <p>&copy; 2024 Kitchen Stuff Supplier Portal</p>
     </footer>
+
+    <!-- Modal for adding new product -->
+    <div id="addProductModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2>Add New Product</h2>
+            <form id="addProductForm">
+                <label for="productName">Product Name:</label><br>
+                <input type="text" id="productName" name="productName"><br>
+                <label for="productStock">Stock:</label><br>
+                <input type="number" id="productStock" name="productStock"><br>
+                <label for="productPrice">Price:</label><br>
+                <input type="text" id="productPrice" name="productPrice"><br><br>
+                <label for="existingCategory">Choose Category:</label><br>
+                <select id="existingCategory" name="existingCategory">
+    <!-- Existing options remain static -->
+    <option value="Blenders">Blenders</option>
+    <option value="Toasters">Toasters</option>
+    <option value="Coffee Makers">Coffee Makers</option>
+    <option value="Mixers">Mixers</option>
+    <option value="Cookware">Cookware</option>
+</select><br><br>
+                <input type="button" value="Add Product" onclick="addProductToCategory()">
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal for existing category -->
+    <div id="existingCategoryModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2>Add Product to Existing Category</h2>
+            <form id="existingCategoryForm">
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal for new category -->
+    <div id="newCategoryModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2>Create New Category</h2>
+            <form id="newCategoryForm">
+                <label for="newCategoryName">Category Name:</label><br>
+                <input type="text" id="newCategoryName" name="newCategoryName"><br><br>
+                <input type="button" value="Create Category" onclick="createCategory()">
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Function to open modal
+        function openModal() {
+            document.getElementById("addProductModal").style.display = "block";
+        }
+
+        // Function to close modal
+        function closeModal() {
+            document.getElementById("addProductModal").style.display = "none";
+            document.getElementById("existingCategoryModal").style.display = "none";
+            document.getElementById("newCategoryModal").style.display = "none";
+        }
+
+        // Function to show the existing category modal
+        function addToExistingCategory() {
+            closeModal();
+            document.getElementById("existingCategoryModal").style.display = "block";
+        }
+
+        // Function to show the new category modal
+        function createNewCategory() {
+            closeModal();
+            document.getElementById("newCategoryModal").style.display = "block";
+        }
+
+        // Function to add a product to an existing category (placeholder function)
+        function addProductToCategory() {
+            var productName = document.getElementById("productName").value;
+            var productStock = document.getElementById("productStock").value;
+            var productPrice = document.getElementById("productPrice").value;
+            var category = document.getElementById("existingCategory").value;
+
+            if (productName && productStock && productPrice) {
+                alert('New product added: ' + productName + ', Stock: ' + productStock + ', Price: ' + productPrice + ' to category: ' + category);
+                closeModal();
+                // You can add more logic here to actually add the product to the inventory list
+            } else {
+                alert('Please fill out all fields.');
+            }
+        }
+
+        // Function to create a new category and add the product (placeholder function)
+// Function to create a new category and add the product
+function createCategory() {
+    var newCategory = document.getElementById("newCategoryName").value;
+
+    if (productName && productStock && productPrice && newCategory) {
+        alert('New category created: ' + newCategory );
+        closeModal();
+
+        // Add new category to select options
+        var select = document.getElementById("existingCategory");
+        var option = document.createElement("option");
+        option.text = newCategory;
+        option.value = newCategory;
+        select.add(option);
+
+        // Reset new category form field
+        document.getElementById("newCategoryName").value = '';
+
+        // Optionally, sort options alphabetically
+        sortSelectOptions(select);
+    } else {
+        alert('Please fill out all fields.');
+    }
+}
+
+// Helper function to sort select options alphabetically
+function sortSelectOptions(select) {
+    var options = select.options;
+    var sortedOptions = Array.from(options).sort((a, b) => a.text.localeCompare(b.text));
+    select.options.length = 0; // Clear existing options
+    sortedOptions.forEach(option => select.add(option));
+}
+
+        function editProduct(productName) {
+            alert('Edit product: ' + productName);
+        }
+
+        function deleteProduct(productName) {
+            alert('Delete product: ' + productName);
+        }
+
+        function editProfile() {
+            alert('Edit profile');
+        }
+    </script>
 </body>
 </html>
