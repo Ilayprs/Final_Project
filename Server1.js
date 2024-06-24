@@ -83,9 +83,8 @@ app.post('/send', async (req, res) => {
             await sendCustomer(id, username, password, city);
             res.send(`
                 <html>
-                    <body>
-                        <h2>Data saved successfully! customer</h2>
-                        <h2>${result}</h2>
+                    <body onload="window.location.href='Sign_In.html'">
+
                     </body>
                 </html>
             `);
@@ -93,9 +92,8 @@ app.post('/send', async (req, res) => {
             await sendManager(id, username, password, city);
             res.send(`
                 <html>
-                    <body>
-                        <h2>Data saved successfully! manager</h2>
-                        <h2>${result}</h2>
+                    <body onload="window.location.href='Sign_In.html'">
+                        
                     </body>
                 </html>
             `);
