@@ -172,7 +172,7 @@ app.post('/send', async (req, res) => {
     }
 });
 
-// Start the server
+// Start the server nbc
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 });
