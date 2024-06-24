@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kitchen Stuff Supplier Portal</title>
+    <link rel="stylesheet" href="Man_Store.css">
+</head>
+<body>
+    <header>
+        <h1>Kitchen Stuff Supplier Portal</h1>
+        <nav>
+            <ul>
+                <li><a href="#dashboard">Dashboard</a></li>
+                <li><a href="#inventory">Inventory</a></li>
+                <li><a href="#orders">Orders</a></li>
+                <li><a href="#profile">Profile</a></li>
+            </ul>
+        </nav>
+    </header>
+    
+    <section id="dashboard">
+        <h2>Dashboard</h2>
+        <p>Welcome to the supplier portal. Here you can manage your products, view orders, and update your profile.</p>
+    </section>
+    
+    <section id="inventory">
+        <h2>Inventory</h2>
+        <div class="product-list">
+            <div class="product">
+                <h3>Blender</h3>
+                <p>Stock: 100</p>
+                <button onclick="editProduct('Blender')">Edit</button>
+                <button onclick="deleteProduct('Blender')">Delete</button>
+            </div>
+            <div class="product">
+                <h3>Toaster</h3>
+                <p>Stock: 150</p>
+                <button onclick="editProduct('Toaster')">Edit</button>
+                <button onclick="deleteProduct('Toaster')">Delete</button>
+            </div>
+            <div class="product">
+                <h3>Coffee Maker</h3>
+                <p>Stock: 80</p>
+                <button onclick="editProduct('Coffee Maker')">Edit</button>
+                <button onclick="deleteProduct('Coffee Maker')">Delete</button>
+            </div>
+            <!-- Add more products as needed -->
+        </div>
+        <button id="addProductBtn">Add New Product</button>
+    </section>
+    
+    <section id="orders">
+        <h2>Orders</h2>
+        <div class="order-list">
+            <div class="order">
+                <h3>Order #12345</h3>
+                <p>Product: Blender</p>
+                <p>Quantity: 2</p>
+                <p>Status: Pending</p>
+                <button onclick="updateOrderStatus('12345', 'Shipped')">Mark as Shipped</button>
+            </div>
+            <div class="order">
+                <h3>Order #12346</h3>
+                <p>Product: Toaster</p>
+                <p>Quantity: 1</p>
+                <p>Status: Pending</p>
+                <button onclick="updateOrderStatus('12346', 'Shipped')">Mark as Shipped</button>
+            </div>
+            <!-- Add more orders as needed -->
+        </div>
+    </section>
+    
+    <section id="profile">
+        <h2>Profile</h2>
+        <form id="profile-form">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required>
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+            <button type="submit">Update Profile</button>
+        </form>
+    </section>
+    
+    <footer>
+        <p>&copy; 2024 Kitchen Stuff Supplier Portal</p>
+    </footer>
+    
+    <script src="Man_Store.js"></script>
+</body>
+</html>
