@@ -8,7 +8,7 @@ function passInfo(){
     if(password==""){
         alert("Enter your password");
     }
-    
-
-
+    if(id ==""){
+        alert("Enter your id")
+    }
 }
