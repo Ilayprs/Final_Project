@@ -6,6 +6,7 @@ const PORT = 3000;
 
 // Middleware to serve static files
 app.use(express.static(path.join(__dirname, 'HomePage')));
+app.use(express.static(path.join(__dirname, 'store')));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
@@ -43,7 +44,7 @@ const Manager = mongoose.model('Manager', managerSchema);
 
 // Function to create a new Customer
 async function sendCustomer(id, username, password, city) {
-    const newUser = Customer.createCustomer(id, username, password, city);
+    const newUser = new Customer({ id, username, password, city });
     await newUser.save();
     return newUser;
 }
@@ -172,7 +173,7 @@ app.post('/send', async (req, res) => {
     }
 });
 
-// Start the server nbc
+// Start the server
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 });
