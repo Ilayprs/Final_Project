@@ -25,14 +25,15 @@ db.once('open', function() {
 
 // Define a Mongoose schema and model for your data (example)
 const customerSchema = new mongoose.Schema({
+    id: Number,
     username: String,
     password: String,
     city: String,
     credit: { type: Number, default: 0 },
 });
 
-customerSchema.statics.createCustomer = function(username, password, city) {
-    return new this({ username, password, city, credit: 0 });
+customerSchema.statics.createCustomer = function(id, username, password, city) {
+    return new this({ id, username, password, city, credit: 0 });
 };
 
 customerSchema.methods.setCredit = function(credit) {
@@ -42,6 +43,7 @@ customerSchema.methods.setCredit = function(credit) {
 const Customer = mongoose.model('Customer', customerSchema);
 
 const managerSchema = new mongoose.Schema({
+    id: Number,
     username: String,
     password: String,
     city: String,
@@ -50,14 +52,14 @@ const managerSchema = new mongoose.Schema({
 const Manager = mongoose.model('Manager', managerSchema);
 
 // Function to process login data (using Mongoose) in js bbbb
-async function sendCustomer(username, password, city) {
-    const newUser = Customer.createCustomer(username, password, city);
+async function sendCustomer(id, username, password, city) {
+    const newUser = Customer.createCustomer(id, username, password, city);
     await newUser.save();
     return newUser;
 }
 
-async function sendManager(username, password, city) {
-    const newUser = new Manager({ username, password, city });
+async function sendManager(id, username, password, city) {
+    const newUser = new Manager({ id, username, password, city });
     await newUser.save();
     return newUser;
 }
@@ -74,11 +76,11 @@ app.get('/signup', (req, res) => {
 
 // Route to handle form submission
 app.post('/send', async (req, res) => {
-    const { username, password, selection, city } = req.body;
-    const result = `name: ${username} pass: ${password} type: ${selection} city: ${city}`;
+    const { id, username, password, selection, city } = req.body;
+    const result = `id: ${id} name: ${username} pass: ${password} type: ${selection} city: ${city}`;
     try {
         if (selection === 'customer') {
-            await sendCustomer(username, password, city);
+            await sendCustomer(id, username, password, city);
             res.send(`
                 <html>
                     <body>
@@ -88,7 +90,7 @@ app.post('/send', async (req, res) => {
                 </html>
             `);
         } else { //is manager 
-            await sendManager(username, password, city);
+            await sendManager(id, username, password, city);
             res.send(`
                 <html>
                     <body>
