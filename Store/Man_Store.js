@@ -10,7 +10,6 @@
             document.getElementById("newCategoryModal").style.display = "none";
         }
 
-        // Function to create a new category
         async function createCategory() {
             var newCategoryName = document.getElementById("newCategoryName").value;
             
