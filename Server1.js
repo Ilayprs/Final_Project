@@ -11,7 +11,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 // Connect to MongoDB
-mongoose.connect('mongodb+srv://IlayPrs:aYUsj9u46pprNGSU@project.kvttl0m.mongodb.net/', {
+mongoose.connect('mongodb+srv://ilaypreiss10:WO9uG6pLo8I1PIo5@project.zpnipmo.mongodb.net/', {
     useNewUrlParser: true,
     useUnifiedTopology: true,
 });
@@ -60,6 +60,7 @@ const orderSchema = new mongoose.Schema({
     items: [itemSchema],
 });
 const Order = mongoose.model('Order', orderSchema);
+
 
 // Function to create a new Customer
 async function sendCustomer(id, username, password, city) {
