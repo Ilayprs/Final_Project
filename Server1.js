@@ -10,6 +10,7 @@ app.use(express.static(path.join(__dirname, 'store')));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
+
 // Connect to MongoDB
 mongoose.connect('mongodb+srv://ilaypreiss10:WO9uG6pLo8I1PIo5@project.zpnipmo.mongodb.net/', {
     useNewUrlParser: true,
@@ -60,6 +61,41 @@ const orderSchema = new mongoose.Schema({
     items: [itemSchema],
 });
 const Order = mongoose.model('Order', orderSchema);
+
+const categorySchema = new mongoose.Schema({
+    name: { type: String, unique: true, required: true },
+});
+
+const Category = mongoose.model('Category', categorySchema);
+
+// Route to create a new category
+app.post('/categories', async (req, res) => {
+    const { categoryName } = req.body;
+
+    try {
+        const category = new Category({ name: categoryName });
+        await category.save();
+
+        // Emit a socket event to notify clients about the new category
+        io.emit('newCategory', category);
+
+        res.status(201).json(category);
+    } catch (error) {
+        console.error('Error creating category:', error);
+        res.status(500).send('Error creating category');
+    }
+});
+
+// Route to fetch all categories
+app.get('/categories', async (req, res) => {
+    try {
+        const categories = await Category.find();
+        res.json(categories);
+    } catch (error) {
+        console.error('Error fetching categories:', error);
+        res.status(500).send('Error fetching categories');
+    }
+});
 
 
 // Function to create a new Customer
