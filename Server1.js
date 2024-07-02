@@ -10,7 +10,6 @@ app.use(express.static(path.join(__dirname, 'store')));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-
 // Connect to MongoDB
 mongoose.connect('mongodb+srv://ilaypreiss10:WO9uG6pLo8I1PIo5@project.zpnipmo.mongodb.net/', {
     useNewUrlParser: true,
@@ -23,7 +22,7 @@ db.once('open', function() {
     console.log('Connected to MongoDB');
 });
 
-// Define Mongoose schemas and models for Customer and Manager
+// Define Mongoose schemas and models
 const customerSchema = new mongoose.Schema({
     id: { type: Number, unique: true },
     username: String,
@@ -44,17 +43,16 @@ const managerSchema = new mongoose.Schema({
 const Manager = mongoose.model('Manager', managerSchema);
 
 const itemSchema = new mongoose.Schema({
-    name: String , 
+    name: String,
     price: Number,
-    catagory: String,
+    category: String,
     stock: { type: Number, default: 0 },
-
 });
 itemSchema.index({ name: 1, category: 1 }, { unique: true });
 const Item = mongoose.model('Item', itemSchema);
 
 const orderSchema = new mongoose.Schema({
-    orderId: {type: Number, unique: true}, 
+    orderId: {type: Number, unique: true},
     customerId: Number,
     totalPrice: Number,
     numItems: Number,
@@ -65,7 +63,6 @@ const Order = mongoose.model('Order', orderSchema);
 const categorySchema = new mongoose.Schema({
     name: { type: String, unique: true, required: true },
 });
-
 const Category = mongoose.model('Category', categorySchema);
 
 // Route to create a new category
@@ -75,14 +72,12 @@ app.post('/categories', async (req, res) => {
     try {
         const category = new Category({ name: categoryName });
         await category.save();
-
         res.status(201).json(category);
     } catch (error) {
         console.error('Error creating category:', error);
         res.status(500).send('Error creating category');
     }
 });
-
 
 // Route to fetch all categories
 app.get('/categories', async (req, res) => {
@@ -95,7 +90,19 @@ app.get('/categories', async (req, res) => {
     }
 });
 
+// Route to create a new product
+app.post('/products', async (req, res) => {
+    const { name, price, category, stock } = req.body;
 
+    try {
+        const product = new Item({ name, price, category, stock });
+        await product.save();
+        res.status(201).json(product);
+    } catch (error) {
+        console.error('Error creating product:', error);
+        res.status(500).send('Error creating product');
+    }
+});
 
 // Function to create a new Customer
 async function sendCustomer(id, username, password, city) {
@@ -232,4 +239,3 @@ app.post('/send', async (req, res) => {
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 });
-//hi world
