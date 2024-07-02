@@ -142,8 +142,8 @@ async function addProductToCategory() {
     } else {
         alert('Please fill out all fields.');
     }
+    window.location.reload();
 }
-
 // Dummy function for editing a product (replace with actual functionality)
 function editProduct(productName) {
     alert('Edit product: ' + productName);
@@ -165,9 +165,8 @@ async function fetchCategories() {
         const response = await fetch('/categories');
         const categories = await response.json();
 
-        // Populate the select dropdown with fetched categories
         var select = document.getElementById("existingCategory");
-        categories.forEach(category => {
+        categories.forEach(async (category) => {
             var option = document.createElement("option");
             option.text = category.name;
             option.value = category.name;
@@ -175,16 +174,47 @@ async function fetchCategories() {
 
             // Add category to the page
             addCategoryToPage(category);
+
+            // Fetch items for this category
+            const responseItems = await fetch(`/items?category=${category.name}`);
+            const items = await responseItems.json();
+
+            // Display items for this category
+            displayItems(category.name, items);
         });
 
-        // Optionally, sort options alphabetically
         sortSelectOptions(select);
-
     } catch (error) {
-        console.error('Error fetching categories:', error);
+        console.error('Error fetching categories and items:', error);
         // Handle error fetching categories (e.g., display an error message)
     }
 }
+
+function displayItems(categoryName, items) {
+    var categoryDiv = Array.from(document.getElementsByClassName("category"))
+        .find(div => div.querySelector("h3").innerText === categoryName);
+
+    if (categoryDiv) {
+        var productListDiv = categoryDiv.querySelector(".product-list");
+        productListDiv.innerHTML = ''; // Clear existing items
+
+        items.forEach(item => {
+            var newProductDiv = document.createElement("div");
+            newProductDiv.className = "product";
+            newProductDiv.innerHTML = `
+                <h3>${item.name}</h3>
+                <p>Stock: ${item.stock}</p>
+                <p>Price: $${item.price}</p>
+                <button onclick="editProduct('${item.name}')">Edit</button>
+                <button onclick="deleteProduct('${item.name}')">Delete</button>
+            `;
+            productListDiv.appendChild(newProductDiv);
+        });
+    } else {
+        console.error('Selected category not found:', categoryName);
+    }
+}
+
 
 // Call fetchCategories() when the page loads to populate categories
 window.onload = fetchCategories;
