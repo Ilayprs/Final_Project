@@ -90,6 +90,19 @@ app.get('/categories', async (req, res) => {
     }
 });
 
+// Route to fetch items by category
+app.get('/items', async (req, res) => {
+    const categoryName = req.query.category;
+
+    try {
+        const items = await Item.find({ category: categoryName });
+        res.json(items);
+    } catch (error) {
+        console.error('Error fetching items:', error);
+        res.status(500).send('Error fetching items');
+    }
+});
+
 // Route to create a new product
 app.post('/products', async (req, res) => {
     const { name, price, category, stock } = req.body;
@@ -97,6 +110,10 @@ app.post('/products', async (req, res) => {
     try {
         const product = new Item({ name, price, category, stock });
         await product.save();
+
+        // Broadcast new product to all connected clients
+        io.emit('newProduct', product);
+
         res.status(201).json(product);
     } catch (error) {
         console.error('Error creating product:', error);
