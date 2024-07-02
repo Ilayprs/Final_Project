@@ -11,41 +11,66 @@
         }
 
         // Function to create a new category
-        function createCategory() {
+        async function createCategory() {
             var newCategoryName = document.getElementById("newCategoryName").value;
             
             if (newCategoryName) {
-                // Create a new category div
-                var newCategoryDiv = document.createElement("div");
-                newCategoryDiv.className = "category";
-                
-                // Add the new category to the HTML structure
-                var categoriesDiv = document.querySelector("section#inventory");
-                newCategoryDiv.innerHTML = `
-                    <h3 class="category-title">${newCategoryName}</h3>
-                    <div class="product-list"></div>
-                `;
-                categoriesDiv.appendChild(newCategoryDiv);
-
-                // Add new category to the select dropdown
-                var select = document.getElementById("existingCategory");
-                var option = document.createElement("option");
-                option.text = newCategoryName;
-                option.value = newCategoryName;
-                select.add(option);
-
-                // Optionally, sort options alphabetically
-                sortSelectOptions(select);
-
-                // Reset the new category form field
-                document.getElementById("newCategoryName").value = '';
-
-                // Close the modal
-                closeModal();
+                try {
+                    const response = await fetch('/categories', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ categoryName: newCategoryName }),
+                    });
+        
+                    if (!response.ok) {
+                        throw new Error('Failed to create category');
+                    }
+        
+                    // If successful, fetch categories again to update the dropdown and add new category to the page
+                    const newCategory = { name: newCategoryName };
+                    addCategoryToPage(newCategory);
+        
+                    // Close the modal
+                    closeModal();
+        
+                } catch (error) {
+                    console.error('Error creating category:', error);
+                    // Handle error creating category
+                }
             } else {
                 alert('Please fill out the category name.');
             }
         }
+        
+        // Function to dynamically add a new category to the page
+        function addCategoryToPage(category) {
+            var categoriesDiv = document.querySelector("section#inventory");
+            
+            // Create the new category div
+            var newCategoryDiv = document.createElement("div");
+            newCategoryDiv.className = "category";
+            newCategoryDiv.innerHTML = `
+                <h3 class="category-title">${category.name}</h3>
+                <div class="product-list"></div>
+            `;
+        
+            // Add the new category to the HTML structure
+            categoriesDiv.appendChild(newCategoryDiv);
+        
+            // Add new category to the select dropdown
+            var select = document.getElementById("existingCategory");
+            var option = document.createElement("option");
+            option.text = category.name;
+            option.value = category.name;
+            select.add(option);
+        
+            // Optionally, sort options alphabetically
+            sortSelectOptions(select);
+        }
+        
+        
 
         // Helper function to sort select options alphabetically
         function sortSelectOptions(select) {
@@ -103,3 +128,30 @@
         function editProfile() {
             alert('Edit profile');
         }
+
+// Function to fetch categories and populate the dropdown
+async function fetchCategories() {
+    try {
+        const response = await fetch('/categories');
+        const categories = await response.json();
+
+        // Populate the select dropdown with fetched categories
+        var select = document.getElementById("existingCategory");
+        categories.forEach(category => {
+            var option = document.createElement("option");
+            option.text = category.name;
+            option.value = category.name;
+            select.add(option);
+        });
+
+        // Optionally, sort options alphabetically
+        sortSelectOptions(select);
+
+    } catch (error) {
+        console.error('Error fetching categories:', error);
+        // Handle error fetching categories
+    }
+}
+
+// Call fetchCategories() when the page loads
+window.onload = fetchCategories;
