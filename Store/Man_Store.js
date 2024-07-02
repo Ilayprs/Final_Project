@@ -79,40 +79,65 @@ function sortSelectOptions(select) {
 }
 
 // Function to add product to a category
-function addProductToCategory() {
+async function addProductToCategory() {
     var productName = document.getElementById("productName").value;
     var productStock = document.getElementById("productStock").value;
     var productPrice = document.getElementById("productPrice").value;
     var selectedCategory = document.getElementById("existingCategory").value;
 
     if (productName && productStock && productPrice && selectedCategory) {
-        // Find the category div
-        var categoryDiv = Array.from(document.getElementsByClassName("category")).find(div => div.querySelector("h3").innerText === selectedCategory);
+        try {
+            const response = await fetch('/products', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    name: productName,
+                    stock: productStock,
+                    price: productPrice,
+                    category: selectedCategory
+                }),
+            });
 
-        if (categoryDiv) {
-            // Create the new product element
-            var newProductDiv = document.createElement("div");
-            newProductDiv.className = "product";
-            newProductDiv.innerHTML = `
-                <h3>${productName}</h3>
-                <p>Stock: ${productStock}</p>
-                <p>Price: $${productPrice}</p>
-                <button onclick="editProduct('${productName}')">Edit</button>
-                <button onclick="deleteProduct('${productName}')">Delete</button>
-            `;
+            if (!response.ok) {
+                throw new Error('Failed to create product');
+            }
 
-            // Add the new product to the category
-            categoryDiv.querySelector(".product-list").appendChild(newProductDiv);
+            const product = await response.json();
 
-            // Reset the add product form
-            document.getElementById("productName").value = '';
-            document.getElementById("productStock").value = '';
-            document.getElementById("productPrice").value = '';
+            // Find the category div
+            var categoryDiv = Array.from(document.getElementsByClassName("category"))
+                .find(div => div.querySelector("h3").innerText === selectedCategory);
 
-            // Close the modal
-            closeModal();
-        } else {
-            console.error('Selected category not found:', selectedCategory);
+            if (categoryDiv) {
+                // Create the new product element
+                var newProductDiv = document.createElement("div");
+                newProductDiv.className = "product";
+                newProductDiv.innerHTML = `
+                    <h3>${product.name}</h3>
+                    <p>Stock: ${product.stock}</p>
+                    <p>Price: $${product.price}</p>
+                    <button onclick="editProduct('${product.name}')">Edit</button>
+                    <button onclick="deleteProduct('${product.name}')">Delete</button>
+                `;
+
+                // Add the new product to the category
+                categoryDiv.querySelector(".product-list").appendChild(newProductDiv);
+
+                // Reset the add product form
+                document.getElementById("productName").value = '';
+                document.getElementById("productStock").value = '';
+                document.getElementById("productPrice").value = '';
+
+                // Close the modal
+                closeModal();
+            } else {
+                console.error('Selected category not found:', selectedCategory);
+            }
+        } catch (error) {
+            console.error('Error creating product:', error);
+            // Handle error creating product (e.g., display an error message)
         }
     } else {
         alert('Please fill out all fields.');
