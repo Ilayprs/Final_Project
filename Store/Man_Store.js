@@ -78,7 +78,7 @@
             var sortedOptions = Array.from(options).sort((a, b) => a.text.localeCompare(b.text));
             select.options.length = 0; // Clear existing options
             sortedOptions.forEach(option => select.add(option));
-        }
+        } 
 
         // Function to add product to a category
         function addProductToCategory() {
