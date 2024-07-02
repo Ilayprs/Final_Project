@@ -76,15 +76,13 @@ app.post('/categories', async (req, res) => {
         const category = new Category({ name: categoryName });
         await category.save();
 
-        // Emit a socket event to notify clients about the new category
-        io.emit('newCategory', category);
-
         res.status(201).json(category);
     } catch (error) {
         console.error('Error creating category:', error);
         res.status(500).send('Error creating category');
     }
 });
+
 
 // Route to fetch all categories
 app.get('/categories', async (req, res) => {
@@ -96,6 +94,7 @@ app.get('/categories', async (req, res) => {
         res.status(500).send('Error fetching categories');
     }
 });
+
 
 
 // Function to create a new Customer
