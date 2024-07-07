@@ -3,6 +3,7 @@ const path = require('path');
 const mongoose = require('mongoose');
 const app = express();
 const PORT = 3000;
+const router = express.Router();
 
 // Middleware to serve static files
 app.use(express.static(path.join(__dirname, 'HomePage')));
@@ -273,6 +274,27 @@ app.post('/send', async (req, res) => {
     }
 });
 
+// Example route in app.js
+router.put('/products/:id', async (req, res) => {
+    const { id } = req.params;
+    const { stock, price } = req.body;
+
+    try {
+        const updatedProduct = await Item.findByIdAndUpdate(id, { stock, price }, { new: true });
+
+        if (!updatedProduct) {
+            return res.status(404).send({ message: 'Product not found' });
+        }
+
+        res.json(updatedProduct);
+    } catch (error) {
+        console.error('Error updating product:', error);
+        res.status(500).send({ message: 'Error updating product', error });
+    }
+});
+
+
+module.exports = router;
 // Start the server
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
