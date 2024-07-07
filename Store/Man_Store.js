@@ -15,6 +15,11 @@ function openModal(modalId) {
 function closeModal() {
     document.getElementById("addProductModal").style.display = "none";
     document.getElementById("newCategoryModal").style.display = "none";
+    document.getElementById("editProductModal").style.display = "none"; // Add this line for the edit product modal
+
+    // Reset inner form fields if applicable (adjust IDs as per your modal structure)
+    document.getElementById("editProductStock").value = '';
+    document.getElementById("editProductPrice").value = '';
 }
 
 // Function to handle creation of a new category
@@ -239,6 +244,66 @@ function displayItems(categoryName, items) {
         console.error('Selected category not found:', categoryName);
     }
 }
+
+// Function to handle editing a product
+function editProduct(productId, currentStock, currentPrice) {
+    // Populate the modal fields with current values
+    document.getElementById('editProductId').value = productId;
+    document.getElementById('editProductStock').value = currentStock;
+    document.getElementById('editProductPrice').value = currentPrice;
+
+    // Open the edit product modal
+    openModal('editProductModal');
+}
+
+
+async function updateProduct() {
+    const productId = document.getElementById('editProductId').value;
+    const updatedStock = document.getElementById('editProductStock').value;
+    const updatedPrice = document.getElementById('editProductPrice').value;
+
+    try {
+        const response = await fetch(`/products/${productId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                stock: updatedStock,
+                price: updatedPrice,
+            }),
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to update product');
+        }
+
+        const updatedProduct = await response.json();
+
+        // Update the product details on the page
+        updateProductOnPage(updatedProduct);
+
+        closeModal(); // Close modal after update
+
+    } catch (error) {
+        console.error('Error updating product:', error);
+        // Handle error updating product
+    }
+}
+
+function updateProductOnPage(product) {
+    const productDiv = document.getElementById(`product-${product._id}`);
+    if (productDiv) {
+        productDiv.querySelector('.product-stock').textContent = `Stock: ${product.stock}`;
+        productDiv.querySelector('.product-price').textContent = `Price: $${product.price}`;
+    } else {
+        console.error('Product element not found on the page:', product._id);
+    }
+}
+
+
+
+
 
 // Call fetchCategories() when the page loads to populate categories
 window.onload = fetchCategories;
