@@ -9,12 +9,19 @@ document.getElementById('userType').innerText = 'Type: manager';
 function openModal(modalId) {
     closeModal(); // Close any open modal first
     document.getElementById(modalId).style.display = "block";
+
 }
 
-// Function to close all modals
+// Function to close all modals and reset form fields
 function closeModal() {
     document.getElementById("addProductModal").style.display = "none";
     document.getElementById("newCategoryModal").style.display = "none";
+    document.getElementById("editProductModal").style.display = "none";
+    
+    // Reset inner form fields if applicable (adjust IDs as per your modal structure)
+    document.getElementById("editProductStock").value = '';
+    document.getElementById("editProductPrice").value = '';
+
 }
 
 // Function to handle creation of a new category
@@ -35,8 +42,9 @@ async function createCategory() {
                 throw new Error('Failed to create category');
             }
 
-            // If successful, fetch categories again to update the dropdown and add new category to the page
-            const newCategory = { name: newCategoryName };
+            const newCategory = await response.json();
+
+            // Add new category to the page
             addCategoryToPage(newCategory);
 
             // Close the modal
@@ -123,9 +131,9 @@ async function addProductToCategory() {
                 newProductDiv.className = "product";
                 newProductDiv.innerHTML = `
                     <h3>${product.name}</h3>
-                    <p>Stock: ${product.stock}</p>
-                    <p>Price: $${product.price}</p>
-                    <button onclick="editProduct('${product.name}')">Edit</button>
+                    <p class="product-stock">Stock: ${product.stock}</p>
+                    <p class="product-price">Price: $${product.price}</p>
+                    <button onclick="editProduct('${product._id}', '${product.stock}', '${product.price}')">Edit</button>
                     <button onclick="deleteProduct('${product.name}', this)">Delete</button>
                 `;
 
@@ -149,7 +157,6 @@ async function addProductToCategory() {
     } else {
         alert('Please fill out all fields.');
     }
-    window.location.reload();
 }
 
 // Function to delete a product
@@ -174,14 +181,62 @@ async function deleteProduct(productName, button) {
     }
 }
 
-// Dummy function for editing a product (replace with actual functionality)
-function editProduct(productName) {
-    alert('Edit product: ' + productName);
+// Function to handle editing a product
+function editProduct(productId, currentStock, currentPrice) {
+    // Populate the modal fields with current values
+    document.getElementById('editProductId').value = productId;
+    document.getElementById('editProductStock').value = currentStock;
+    document.getElementById('editProductPrice').value = currentPrice;
+
+    // Open the edit product modal
+    openModal('editProductModal');
 }
 
-// Dummy function for editing profile (replace with actual functionality)
-function editProfile() {
-    alert('Edit profile');
+// Function to update a product
+async function updateProduct() {
+    const productId = document.getElementById('editProductId').value;
+    const updatedStock = document.getElementById('editProductStock').value;
+    const updatedPrice = document.getElementById('editProductPrice').value;
+
+    try {
+        const response = await fetch(`/products/${productId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                stock: updatedStock,
+                price: updatedPrice,
+            }),
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to update product');
+        }
+
+        const updatedProduct = await response.json();
+
+        // Update the product details on the page
+        updateProductOnPage(updatedProduct);
+
+        // Close the modal
+        closeModal();
+
+    } catch (error) {
+        console.error('Error updating product:', error);
+        // Handle error updating product
+    }
+}
+
+// Function to update product details on the page after editing
+function updateProductOnPage(product) {
+    const productDiv = document.getElementById(`product-${product._id}`);
+    if (productDiv) {
+        productDiv.querySelector('.product-stock').textContent = `Stock: ${product.stock}`;
+        productDiv.querySelector('.product-price').textContent = `Price: $${product.price}`;
+    } else {
+        console.error('Product element not found on the page:', product._id);
+    }
 }
 
 // Function to fetch categories and populate the dropdown and page on initial load
@@ -215,6 +270,7 @@ async function fetchCategories() {
     }
 }
 
+// Function to display items under a category
 function displayItems(categoryName, items) {
     var categoryDiv = Array.from(document.getElementsByClassName("category"))
         .find(div => div.querySelector("h3").innerText === categoryName);
@@ -225,12 +281,13 @@ function displayItems(categoryName, items) {
 
         items.forEach(item => {
             var newProductDiv = document.createElement("div");
+            newProductDiv.id = `product-${item._id}`;
             newProductDiv.className = "product";
             newProductDiv.innerHTML = `
                 <h3>${item.name}</h3>
-                <p>Stock: ${item.stock}</p>
-                <p>Price: $${item.price}</p>
-                <button onclick="editProduct('${item.name}')">Edit</button>
+                <p class="product-stock">Stock: ${item.stock}</p>
+                <p class="product-price">Price: $${item.price}</p>
+                <button onclick="editProduct('${item._id}', '${item.stock}', '${item.price}')">Edit</button>
                 <button onclick="deleteProduct('${item.name}', this)">Delete</button>
             `;
             productListDiv.appendChild(newProductDiv);
