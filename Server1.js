@@ -110,14 +110,27 @@ app.post('/products', async (req, res) => {
     try {
         const product = new Item({ name, price, category, stock });
         await product.save();
-
-        // Broadcast new product to all connected clients
-        io.emit('newProduct', product);
-
         res.status(201).json(product);
     } catch (error) {
         console.error('Error creating product:', error);
         res.status(500).send('Error creating product');
+    }
+});
+
+// Route to delete a product
+app.delete('/products/:name', async (req, res) => {
+    const { name } = req.params;
+
+    try {
+        const result = await Item.findOneAndDelete({ name });
+        if (result) {
+            res.sendStatus(204); // No Content
+        } else {
+            res.status(404).send('Product not found');
+        }
+    } catch (error) {
+        console.error('Error deleting product:', error);
+        res.status(500).send('Error deleting product');
     }
 });
 
@@ -185,7 +198,7 @@ app.get('/Man_Store.html', (req, res) => {
 // Route to handle login form submission
 app.post('/send2', async (req, res) => {
     const { id, selection } = req.body;
-    
+
     try {
         if (selection === 'customer') {
             const customer = await findCustomerById(id);
