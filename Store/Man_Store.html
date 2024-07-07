@@ -41,9 +41,9 @@
     <section id="profile">
         <h2>Profile</h2>
         <div class="profile-info">
-            <p id = 'userName'></p>
-            <p id = 'userId'></p>
-            <p id = 'userType'></p>
+            <p id="userName"></p>
+            <p id="userId"></p>
+            <p id="userType"></p>
             <p>Company: Kitchen Supplies Inc.</p>
             <button onclick="editProfile()">Edit Profile</button>
         </div>
@@ -86,6 +86,20 @@
             </form>
         </div>
     </div>
+
+    <div id="editProductModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <label for="editProductStock">Stock:</label>
+            <input type="text" id="editProductStock" name="editProductStock" value="">
+            <label for="editProductPrice">Price:</label>
+            <input type="text" id="editProductPrice" name="editProductPrice" value="">
+            <input type="hidden" id="editProductId" name="editProductId" value="">
+            <button onclick="updateProduct()">Update Product</button>
+        </div>
+    </div>
+    
+
     <script src="Man_Store.js"></script>
 </body>
 </html>
