@@ -134,6 +134,24 @@ app.delete('/products/:name', async (req, res) => {
     }
 });
 
+// Route to update a product
+app.put('/products/:id', async (req, res) => {
+    const { id } = req.params;
+    const { stock, price } = req.body;
+
+    try {
+        const updatedProduct = await Item.findByIdAndUpdate(id, { stock, price }, { new: true });
+        if (updatedProduct) {
+            res.json(updatedProduct);
+        } else {
+            res.status(404).send('Product not found');
+        }
+    } catch (error) {
+        console.error('Error updating product:', error);
+        res.status(500).send('Error updating product');
+    }
+});
+
 // Function to create a new Customer
 async function sendCustomer(id, username, password, city) {
     const newCustomer = new Customer({ id, username, password, city });
