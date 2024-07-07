@@ -3,7 +3,7 @@ const userName = localStorage.getItem('userName');
 
 document.getElementById('userName').innerText = 'Name: ' + userName;
 document.getElementById('userId').innerText = 'ID: ' + id;
-document.getElementById('userType').innerText = 'Type: manager'
+document.getElementById('userType').innerText = 'Type: manager';
 
 // Function to open a specific modal
 function openModal(modalId) {
@@ -126,7 +126,7 @@ async function addProductToCategory() {
                     <p>Stock: ${product.stock}</p>
                     <p>Price: $${product.price}</p>
                     <button onclick="editProduct('${product.name}')">Edit</button>
-                    <button onclick="deleteProduct('${product.name}')">Delete</button>
+                    <button onclick="deleteProduct('${product.name}', this)">Delete</button>
                 `;
 
                 // Add the new product to the category
@@ -151,14 +151,32 @@ async function addProductToCategory() {
     }
     window.location.reload();
 }
+
+// Function to delete a product
+async function deleteProduct(productName, button) {
+    if (confirm(`Are you sure you want to delete the product: ${productName}?`)) {
+        try {
+            const response = await fetch(`/products/${productName}`, {
+                method: 'DELETE',
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to delete product');
+            }
+
+            // Remove the product from the page
+            const productDiv = button.parentElement;
+            productDiv.remove();
+        } catch (error) {
+            console.error('Error deleting product:', error);
+            // Handle error deleting product (e.g., display an error message)
+        }
+    }
+}
+
 // Dummy function for editing a product (replace with actual functionality)
 function editProduct(productName) {
     alert('Edit product: ' + productName);
-}
-
-// Dummy function for deleting a product (replace with actual functionality)
-function deleteProduct(productName) {
-    alert('Delete product: ' + productName);
 }
 
 // Dummy function for editing profile (replace with actual functionality)
@@ -213,7 +231,7 @@ function displayItems(categoryName, items) {
                 <p>Stock: ${item.stock}</p>
                 <p>Price: $${item.price}</p>
                 <button onclick="editProduct('${item.name}')">Edit</button>
-                <button onclick="deleteProduct('${item.name}')">Delete</button>
+                <button onclick="deleteProduct('${item.name}', this)">Delete</button>
             `;
             productListDiv.appendChild(newProductDiv);
         });
@@ -221,7 +239,6 @@ function displayItems(categoryName, items) {
         console.error('Selected category not found:', categoryName);
     }
 }
-
 
 // Call fetchCategories() when the page loads to populate categories
 window.onload = fetchCategories;
