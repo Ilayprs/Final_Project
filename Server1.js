@@ -52,7 +52,7 @@ itemSchema.index({ name: 1, category: 1 }, { unique: true });
 const Item = mongoose.model('Item', itemSchema);
 
 const orderSchema = new mongoose.Schema({
-    orderId: {type: Number, unique: true},
+    orderId: { type: Number, unique: true },
     customerId: Number,
     totalPrice: Number,
     numItems: Number,
@@ -123,16 +123,16 @@ app.post('/products', async (req, res) => {
 
 // Function to create a new Customer
 async function sendCustomer(id, username, password, city) {
-    const newUser = new Customer({ id, username, password, city });
-    await newUser.save();
-    return newUser;
+    const newCustomer = new Customer({ id, username, password, city });
+    await newCustomer.save();
+    return newCustomer;
 }
 
 // Function to create a new Manager
 async function sendManager(id, username, password, city) {
-    const newUser = new Manager({ id, username, password, city });
-    await newUser.save();
-    return newUser;
+    const newManager = new Manager({ id, username, password, city });
+    await newManager.save();
+    return newManager;
 }
 
 // Function to find a Manager by ID
@@ -190,14 +190,14 @@ app.post('/send2', async (req, res) => {
         if (selection === 'customer') {
             const customer = await findCustomerById(id);
             if (customer) {
-                const userName = customer.username;
+                const userName = JSON.stringify(customer.username);
                 res.send(`
                     <html>
                         <body onload="window.location.href='Cus_Store.html'">
                             <script>
                             localStorage.setItem('userName', ${userName});
-                        localStorage.setItem('id', ${id});
-                        </script>
+                            localStorage.setItem('id', ${id});
+                            </script>
                         </body>
                     </html>
                 `);
@@ -207,17 +207,15 @@ app.post('/send2', async (req, res) => {
         } else { // is manager
             const manager = await findManagerById(id);
             if (manager) {
-                const userName = manager.username;
+                const userName = JSON.stringify(manager.username);
                 res.send(`
                     <html>
                         <body onload="window.location.href='Man_Store.html'">
-                            
-                        <script>
-                        localStorage.setItem('userName', ${userName});
-                        localStorage.setItem('id', ${id});
-                        </script>
+                            <script>
+                            localStorage.setItem('userName', ${userName});
+                            localStorage.setItem('id', ${id});
+                            </script>
                         </body>
-                        
                     </html>
                 `);
             } else {
