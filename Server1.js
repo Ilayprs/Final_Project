@@ -185,15 +185,19 @@ app.get('/Man_Store.html', (req, res) => {
 // Route to handle login form submission
 app.post('/send2', async (req, res) => {
     const { id, selection } = req.body;
-
+    
     try {
         if (selection === 'customer') {
             const customer = await findCustomerById(id);
             if (customer) {
+                const userName = customer.username;
                 res.send(`
                     <html>
                         <body onload="window.location.href='Cus_Store.html'">
-                            
+                            <script>
+                            localStorage.setItem('userName', ${userName});
+                        localStorage.setItem('id', ${id});
+                        </script>
                         </body>
                     </html>
                 `);
@@ -203,11 +207,17 @@ app.post('/send2', async (req, res) => {
         } else { // is manager
             const manager = await findManagerById(id);
             if (manager) {
+                const userName = manager.username;
                 res.send(`
                     <html>
                         <body onload="window.location.href='Man_Store.html'">
                             
+                        <script>
+                        localStorage.setItem('userName', ${userName});
+                        localStorage.setItem('id', ${id});
+                        </script>
                         </body>
+                        
                     </html>
                 `);
             } else {
