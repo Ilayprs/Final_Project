@@ -1,13 +1,11 @@
-
-const id = localStorage.getItem('id');
-const userName = localStorage.getItem('userName');
-
-document.getElementById('userName').innerText = 'Name: ' + userName;
-
-document.getElementById('userId').innerText = 'ID: ' + id;
-document.getElementById('userType').innerText = 'Type: customer';
-
 document.addEventListener('DOMContentLoaded', function() {
+    const id = localStorage.getItem('id');
+    const userName = localStorage.getItem('userName');
+
+    document.getElementById('userName').innerText = 'Name: ' + userName;
+    document.getElementById('userId').innerText = 'ID: ' + id;
+    document.getElementById('userType').innerText = 'Type: customer';
+
     // Sample products data
     const products = [
         { id: 1, name: 'Blender', stock: 10, price: 59.99 },
@@ -17,6 +15,7 @@ document.addEventListener('DOMContentLoaded', function() {
     ];
 
     let cart = JSON.parse(localStorage.getItem('cart')) || [];
+    let addedMoney = 0; // Variable to store the added money amount
 
     function renderProducts() {
         const productList = document.querySelector('.product-list');
@@ -63,6 +62,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     renderProducts();
     updateProductStock();
+
     window.openCartModal = function() {
         const cartModal = document.getElementById('cartModal');
         renderCart();
@@ -73,6 +73,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const cartModal = document.getElementById('cartModal');
         cartModal.style.display = 'none';
     }
+
     function renderCart() {
         const cartList = document.querySelector('.cart-list');
         cartList.innerHTML = '';
@@ -90,7 +91,6 @@ document.addEventListener('DOMContentLoaded', function() {
             cartList.appendChild(cartItemElement);
         });
     }
-    
 
     window.incrementCartItem = function(productId) {
         const cartItem = cart.find(item => item.id === productId);
@@ -107,7 +107,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
     }
-    
+
     window.decrementCartItem = function(productId) {
         const cartItem = cart.find(item => item.id === productId);
         if (cartItem) {
@@ -124,45 +124,71 @@ document.addEventListener('DOMContentLoaded', function() {
             renderProducts(); // Update product list to reflect stock changes
         }
     }
+
     // Function to calculate total amount in the cart
-function calculateTotalAmount() {
-    let total = 0;
-    cart.forEach(item => {
-        total += item.price * item.quantity;
+    function calculateTotalAmount() {
+        let total = 0;
+        cart.forEach(item => {
+            total += item.price * item.quantity;
+        });
+        return total.toFixed(2);
+    }
+
+    // Function to render total amount in the checkout modal
+    function renderTotalAmount() {
+        const totalAmountElement = document.getElementById('totalAmount');
+        totalAmountElement.textContent = `$${calculateTotalAmount()}`;
+    }
+
+    // Function to open the checkout modal
+    window.openCheckoutModal = function() {
+        renderTotalAmount();
+        const checkoutModal = document.getElementById('checkoutModal');
+        checkoutModal.style.display = 'block';
+    }
+
+    // Function to close the checkout modal
+    window.closeCheckoutModal = function() {
+        const checkoutModal = document.getElementById('checkoutModal');
+        checkoutModal.style.display = 'none';
+    }
+
+    // Function to add money to the addedMoney variable
+    window.addMoney = function() {
+        const addMoneyInput = document.getElementById('addMoney');
+        const amount = parseFloat(addMoneyInput.value);
+        if (!isNaN(amount) && amount > 0) {
+            addedMoney += amount;
+            alert(`Added $${amount.toFixed(2)} to your account.`);
+            addMoneyInput.value = ''; // Clear input field
+        } else {
+            alert('Please enter a valid amount to add.');
+        }
+    }
+
+    // Function to confirm checkout
+    window.confirmCheckout = function() {
+        // Check if there is enough money added for the purchase
+        const totalAmount = parseFloat(calculateTotalAmount());
+        if (addedMoney >= totalAmount) {
+            // Perform any necessary actions upon confirmation, e.g., process payment
+            alert('Your order has been confirmed!');
+            // Clear the cart after checkout
+            cart = [];
+            localStorage.setItem('cart', JSON.stringify(cart));
+            renderCart();
+            renderProducts(); // Update product list to reflect changes
+            closeCheckoutModal();
+            updateProductStock();
+        } else {
+            alert('Please add enough money to your account before proceeding.');
+        }
+    }
+
+    // Event listener for the Proceed to Checkout button
+    const checkoutBtn = document.getElementById('checkoutBtn');
+    checkoutBtn.addEventListener('click', function() {
+        openCheckoutModal();
     });
-    return total.toFixed(2);
-}
 
-// Function to render total amount in the checkout modal
-function renderTotalAmount() {
-    const totalAmountElement = document.getElementById('totalAmount');
-    totalAmountElement.textContent = `$${calculateTotalAmount()}`;
-}
-
-// Function to open the checkout modal
-window.openCheckoutModal = function() {
-    renderTotalAmount();
-    const checkoutModal = document.getElementById('checkoutModal');
-    checkoutModal.style.display = 'block';
-}
-
-// Function to close the checkout modal
-window.closeCheckoutModal = function() {
-    const checkoutModal = document.getElementById('checkoutModal');
-    checkoutModal.style.display = 'none';
-}
-
-// Function to confirm checkout
-window.confirmCheckout = function() {
-    // Perform any necessary actions upon confirmation, e.g., process payment
-    alert('Your order has been confirmed!');
-    // Clear the cart after checkout
-    cart = [];
-    localStorage.setItem('cart', JSON.stringify(cart));
-    renderCart();
-    renderProducts(); // Update product list to reflect changes
-    closeCheckoutModal();
-    updateProductStock();
-}
-    
 });
