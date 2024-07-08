@@ -19,7 +19,8 @@
         <div class="cart-icon" onclick="openCartModal()">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-cart" viewBox="0 0 16 16">
                 <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5M3.102 4l1.313 7h8.17l1.313-7zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4m7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4m-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2m7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2"/>
-              </svg>        </div>
+            </svg>
+        </div>
     </header>
 
     <section id="home">
@@ -61,20 +62,19 @@
         </div>
     </div>
 
-<!-- Button to proceed to checkout -->
-<button id="checkoutBtn" onclick="openCheckoutModal()">Proceed to Checkout</button>
-
-<!-- Modal for Checkout Confirmation -->
-<div id="checkoutModal" class="modal" style="display: none;">
-    <div class="modal-content">
-        <span class="close" onclick="closeCheckoutModal()">&times;</span>
-        <h2>Checkout</h2>
-        <p>Total Amount: <span id="totalAmount">$0.00</span></p>
-        <p>Are you sure you want to proceed with the purchase?</p>
-        <button onclick="confirmCheckout()">Confirm</button>
-        <button onclick="closeCheckoutModal()">Cancel</button>
+    <!-- Modal for Checkout Confirmation -->
+    <div id="checkoutModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close" onclick="closeCheckoutModal()">&times;</span>
+            <h2>Checkout</h2>
+            <p>Total Amount: <span id="totalAmount">$0.00</span></p>
+            <p>Add money to your account:</p>
+            <input type="number" id="addMoney" placeholder="Enter amount">
+            <button onclick="addMoney()">Add Money</button>
+            <button onclick="confirmCheckout()">Confirm Checkout</button>
+            <button onclick="closeCheckoutModal()">Cancel</button>
+        </div>
     </div>
-</div>
 
     <script src="Cus_store.js"></script>
 </body>
