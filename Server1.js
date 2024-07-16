@@ -259,6 +259,53 @@ app.post('/send', async (req, res) => {
         res.status(500).send('Error saving data');
     }
 });
+
+app.get('/items/:id', async (req, res) => {
+    const { id } = req.params;
+    try {
+        const item = await Item.findById(id);
+        if (item) {
+            res.json(item);
+        } else {
+            res.status(404).send('Item not found');
+        }
+    } catch (error) {
+        console.error('Error fetching item:', error);
+        res.status(500).send('Error fetching item');
+    }
+});
+
+app.post('/update-stock', async (req, res) => {
+    const { items } = req.body;
+
+    try {
+        for (const item of items) {
+            const { _id, quantity } = item;
+            await Item.findByIdAndUpdate(_id, {
+                $inc: { stock: -quantity }
+            });
+        }
+        res.sendStatus(200); // OK
+    } catch (error) {
+        console.error('Error updating stock:', error);
+        res.status(500).send('Error updating stock');
+    }
+});
+
+app.post('/update-credit', async (req, res) => {
+    const { customerId, amount } = req.body;
+
+    try {
+        await Customer.findOneAndUpdate(
+            { id: customerId },
+            { $inc: { credit: amount } }
+        );
+        res.sendStatus(200); // OK
+    } catch (error) {
+        console.error('Error updating credit:', error);
+        res.status(500).send('Error updating credit');
+    }
+});
 // Start the server
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
