@@ -1,10 +1,8 @@
 const id = localStorage.getItem('id');
 const userName = localStorage.getItem('userName');
-
 document.getElementById('userName').innerText = 'Name: ' + userName;
 document.getElementById('userId').innerText = 'ID: ' + id;
 document.getElementById('userType').innerText = 'Type: manager';
-
 // Function to open a specific modal
 function openModal(modalId) {
     closeModal(); // Close any open modal first
@@ -12,12 +10,13 @@ function openModal(modalId) {
 
 }
 
+// Function to close all modals
 // Function to close all modals and reset form fields
 function closeModal() {
     document.getElementById("addProductModal").style.display = "none";
     document.getElementById("newCategoryModal").style.display = "none";
     document.getElementById("editProductModal").style.display = "none";
-    
+
     // Reset inner form fields if applicable (adjust IDs as per your modal structure)
     document.getElementById("editProductStock").value = '';
     document.getElementById("editProductPrice").value = '';
@@ -27,7 +26,6 @@ function closeModal() {
 // Function to handle creation of a new category
 async function createCategory() {
     var newCategoryName = document.getElementById("newCategoryName").value;
-
     if (newCategoryName) {
         try {
             const response = await fetch('/categories', {
@@ -37,11 +35,12 @@ async function createCategory() {
                 },
                 body: JSON.stringify({ categoryName: newCategoryName }),
             });
-
             if (!response.ok) {
                 throw new Error('Failed to create category');
             }
 
+            // If successful, fetch categories again to update the dropdown and add new category to the page
+            const newCategory = { name: newCategoryName };
             const newCategory = await response.json();
 
             // Add new category to the page
@@ -49,7 +48,6 @@ async function createCategory() {
 
             // Close the modal
             closeModal();
-
         } catch (error) {
             console.error('Error creating category:', error);
             // Handle error creating category (e.g., display an error message)
@@ -58,11 +56,9 @@ async function createCategory() {
         alert('Please fill out the category name.');
     }
 }
-
 // Function to dynamically add a new category to the page
 function addCategoryToPage(category) {
     var categoriesDiv = document.querySelector("section#inventory");
-
     // Create the new category div
     var newCategoryDiv = document.createElement("div");
     newCategoryDiv.className = "category";
@@ -70,21 +66,17 @@ function addCategoryToPage(category) {
         <h3 class="category-title">${category.name}</h3>
         <div class="product-list"></div>
     `;
-
     // Add the new category to the HTML structure
     categoriesDiv.appendChild(newCategoryDiv);
-
     // Add new category to the select dropdown
     var select = document.getElementById("existingCategory");
     var option = document.createElement("option");
     option.text = category.name;
     option.value = category.name;
     select.add(option);
-
     // Optionally, sort options alphabetically
     sortSelectOptions(select);
 }
-
 // Helper function to sort select options alphabetically
 function sortSelectOptions(select) {
     var options = select.options;
@@ -92,14 +84,12 @@ function sortSelectOptions(select) {
     select.options.length = 0; // Clear existing options
     sortedOptions.forEach(option => select.add(option));
 }
-
 // Function to add product to a category
 async function addProductToCategory() {
     var productName = document.getElementById("productName").value;
     var productStock = document.getElementById("productStock").value;
     var productPrice = document.getElementById("productPrice").value;
     var selectedCategory = document.getElementById("existingCategory").value;
-
     if (productName && productStock && productPrice && selectedCategory) {
         try {
             const response = await fetch('/products', {
@@ -114,23 +104,22 @@ async function addProductToCategory() {
                     category: selectedCategory
                 }),
             });
-
             if (!response.ok) {
                 throw new Error('Failed to create product');
             }
-
             const product = await response.json();
-
             // Find the category div
             var categoryDiv = Array.from(document.getElementsByClassName("category"))
                 .find(div => div.querySelector("h3").innerText === selectedCategory);
-
             if (categoryDiv) {
                 // Create the new product element
                 var newProductDiv = document.createElement("div");
                 newProductDiv.className = "product";
                 newProductDiv.innerHTML = `
                     <h3>${product.name}</h3>
+                    <p>Stock: ${product.stock}</p>
+                    <p>Price: $${product.price}</p>
+                    <button onclick="editProduct('${product.name}')">Edit</button>
                     <p class="product-stock">Stock: ${product.stock}</p>
                     <p class="product-price">Price: $${product.price}</p>
                     <button onclick="editProduct('${product._id}', '${product.stock}', '${product.price}')">Edit</button>
@@ -139,12 +128,10 @@ async function addProductToCategory() {
 
                 // Add the new product to the category
                 categoryDiv.querySelector(".product-list").appendChild(newProductDiv);
-
                 // Reset the add product form
                 document.getElementById("productName").value = '';
                 document.getElementById("productStock").value = '';
                 document.getElementById("productPrice").value = '';
-
                 // Close the modal
                 closeModal();
             } else {
@@ -157,6 +144,7 @@ async function addProductToCategory() {
     } else {
         alert('Please fill out all fields.');
     }
+    window.location.reload();
 }
 
 // Function to delete a product
@@ -166,11 +154,9 @@ async function deleteProduct(productName, button) {
             const response = await fetch(`/products/${productName}`, {
                 method: 'DELETE',
             });
-
             if (!response.ok) {
                 throw new Error('Failed to delete product');
             }
-
             // Remove the product from the page
             const productDiv = button.parentElement;
             productDiv.remove();
@@ -181,7 +167,11 @@ async function deleteProduct(productName, button) {
     }
 }
 
+// Dummy function for editing a product (replace with actual functionality)
+function editProduct(productName) {
+    alert('Edit product: ' + productName);
 // Function to handle editing a product
+}
 function editProduct(productId, currentStock, currentPrice) {
     // Populate the modal fields with current values
     document.getElementById('editProductId').value = productId;
@@ -228,6 +218,10 @@ async function updateProduct() {
     }
 }
 
+// Dummy function for editing profile (replace with actual functionality)
+function editProfile() {
+    alert('Edit profile');
+}
 // Function to update product details on the page after editing
 function updateProductOnPage(product) {
     const productDiv = document.getElementById(`product-${product._id}`);
@@ -244,25 +238,20 @@ async function fetchCategories() {
     try {
         const response = await fetch('/categories');
         const categories = await response.json();
-
         var select = document.getElementById("existingCategory");
         categories.forEach(async (category) => {
             var option = document.createElement("option");
             option.text = category.name;
             option.value = category.name;
             select.add(option);
-
             // Add category to the page
             addCategoryToPage(category);
-
             // Fetch items for this category
             const responseItems = await fetch(`/items?category=${category.name}`);
             const items = await responseItems.json();
-
             // Display items for this category
             displayItems(category.name, items);
         });
-
         sortSelectOptions(select);
     } catch (error) {
         console.error('Error fetching categories and items:', error);
@@ -274,7 +263,6 @@ async function fetchCategories() {
 function displayItems(categoryName, items) {
     var categoryDiv = Array.from(document.getElementsByClassName("category"))
         .find(div => div.querySelector("h3").innerText === categoryName);
-
     if (categoryDiv) {
         var productListDiv = categoryDiv.querySelector(".product-list");
         productListDiv.innerHTML = ''; // Clear existing items
@@ -285,6 +273,9 @@ function displayItems(categoryName, items) {
             newProductDiv.className = "product";
             newProductDiv.innerHTML = `
                 <h3>${item.name}</h3>
+                <p>Stock: ${item.stock}</p>
+                <p>Price: $${item.price}</p>
+                <button onclick="editProduct('${item.name}')">Edit</button>
                 <p class="product-stock">Stock: ${item.stock}</p>
                 <p class="product-price">Price: $${item.price}</p>
                 <button onclick="editProduct('${item._id}', '${item.stock}', '${item.price}')">Edit</button>
@@ -296,6 +287,5 @@ function displayItems(categoryName, items) {
         console.error('Selected category not found:', categoryName);
     }
 }
-
 // Call fetchCategories() when the page loads to populate categories
-window.onload = fetchCategories;
+window.onload = fetchCategories();
