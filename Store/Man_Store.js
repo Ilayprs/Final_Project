@@ -118,9 +118,6 @@ async function addProductToCategory() {
                 newProductDiv.className = "product";
                 newProductDiv.innerHTML = `
                     <h3>${product.name}</h3>
-                    <p>Stock: ${product.stock}</p>
-                    <p>Price: $${product.price}</p>
-                    <button onclick="editProduct('${product.name}')">Edit</button>
                     <p class="product-stock">Stock: ${product.stock}</p>
                     <p class="product-price">Price: $${product.price}</p>
                     <button onclick="editProduct('${product._id}', '${product.stock}', '${product.price}')">Edit</button>
@@ -274,9 +271,7 @@ function displayItems(categoryName, items) {
             newProductDiv.className = "product";
             newProductDiv.innerHTML = `
                 <h3>${item.name}</h3>
-                <p>Stock: ${item.stock}</p>
-                <p>Price: $${item.price}</p>
-                <button onclick="editProduct('${item.name}')">Edit</button>
+                
                 <p class="product-stock">Stock: ${item.stock}</p>
                 <p class="product-price">Price: $${item.price}</p>
                 <button onclick="editProduct('${item._id}', '${item.stock}', '${item.price}')">Edit</button>
