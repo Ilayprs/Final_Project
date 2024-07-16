@@ -1,32 +1,23 @@
-/* Cus_store.css */
-
-/* General Styles */
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 0;
     padding: 0;
-    background: linear-gradient(to right, #e6e9f0, #eef1f5);
+    background: #f7f7f7;
     color: #333;
-    overflow-x: hidden;
 }
-
 header {
-    background: linear-gradient(to right, #ff512f, #dd2476);
+    background: linear-gradient(to right, #6a11cb, #2575fc);
     color: white;
     padding: 1.5em 0;
     text-align: center;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    position: sticky;
-    top: 0;
-    z-index: 1000;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    position: relative;
 }
-
 header h1 {
     margin: 0;
     font-size: 2.5em;
     letter-spacing: 1px;
 }
-
 header nav ul {
     list-style-type: none;
     padding: 0;
@@ -35,24 +26,19 @@ header nav ul {
     justify-content: center;
     gap: 2em;
 }
-
 header nav ul li {
     margin: 0;
 }
-
 header nav ul li a {
     color: white;
     text-decoration: none;
     font-weight: bold;
     transition: color 0.3s ease;
     position: relative;
-    padding: 0.5em 1em;
 }
-
 header nav ul li a:hover {
     color: #FFEB3B;
 }
-
 header nav ul li a::after {
     content: '';
     display: block;
@@ -61,15 +47,12 @@ header nav ul li a::after {
     background: #FFEB3B;
     transition: width 0.3s;
     position: absolute;
-    left: 50%;
+    left: 0;
     bottom: -5px;
-    transform: translateX(-50%);
 }
-
 header nav ul li a:hover::after {
-    width: calc(100% - 20px); /* Adjust the width as needed */
+    width: 100%;
 }
-
 header .cart-icon {
     position: absolute;
     top: 1.5em;
@@ -77,76 +60,51 @@ header .cart-icon {
     cursor: pointer;
 }
 
+header .cart-icon img {
 header .cart-icon svg {
     width: 24px;
     height: 24px;
     fill: white;
 }
-
+}
 section {
     padding: 2em;
     max-width: 1200px;
     margin: 0 auto;
 }
-
 section h2 {
     margin-bottom: 1em;
-    color: #dd2476;
+    color: #6a11cb;
     font-size: 2em;
-    border-left: 4px solid #dd2476;
+    border-left: 4px solid #6a11cb;
     padding-left: 0.5em;
 }
-
 .product-list {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 1.5em;
 }
-
 .product {
-    border: 1px solid #dd2476;
+    border: 1px solid #ddd;
     padding: 1.5em;
     background-color: #FFFFFF;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
-    position: relative;
-    overflow: hidden;
 }
-
-.product::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(255, 255, 255, 0.7);
-    z-index: 1;
-    transition: opacity 0.3s ease;
-    opacity: 0;
-}
-
-.product:hover::before {
-    opacity: 1;
-}
-
 .product:hover {
     transform: translateY(-5px);
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
-
 .product h3 {
     margin: 0 0 0.5em;
-    color: #ff512f;
+    color: #6a11cb;
 }
-
 .product p {
     margin: 0.5em 0;
 }
-
 button {
-    background-color: #dd2476;
+    background-color: #2575fc;
     color: white;
     border: none;
     padding: 0.75em 1.5em;
@@ -154,14 +112,12 @@ button {
     cursor: pointer;
     transition: background-color 0.3s ease, transform 0.3s ease;
 }
-
 button:hover {
-    background-color: #ff512f;
+    background-color: #6a11cb;
     transform: scale(1.05);
 }
-
 footer {
-    background-color: #dd2476;
+    background-color: #6a11cb;
     color: white;
     text-align: center;
     padding: 1em;
@@ -170,26 +126,73 @@ footer {
     bottom: 0;
     box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
 }
-
-/* Additional Styles */
-
-.product-list {
-    position: relative;
-}
-
-.product::after {
-    content: '';
-    position: absolute;
-    top: 0;
+/* Modal styles */
+.modal {
+    display: none; 
+    position: fixed; 
+    z-index: 1; 
     left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(255, 255, 255, 0.7);
-    z-index: 1;
-    transition: opacity 0.3s ease;
-    opacity: 0;
+    top: 0;
+    width: 100%; 
+    height: 100%; 
+    overflow: auto; 
+    background-color: rgb(0,0,0); 
+    background-color: rgba(0,0,0,0.4); 
+    padding-top: 60px;
+}
+.modal-content {
+    background-color: #fefefe;
+    margin: 5% auto; 
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+}
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
 }
 
-.product:hover::after {
-    opacity: 1;
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.bi-cart{
+    margin-right: 20px;
+    margin-top: 10px;
+.close:hover {
+    color: #333;
+}
+}
+/* Styles for quantity control buttons */
+.quantity-controls button {
+    width: 20px;
+    height: 20px;
+    font-size: 14px;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    outline: none;
+}
+@media (max-width: 768px) {
+    header h1 {
+        font-size: 2em;
+    }
+}
+.quantity-controls button:hover {
+    background-color: #e0e0e0;
+    section {
+        padding: 1em;
+    }
+}
+.quantity-controls span {
+    margin: 0 10px;
+    font-size: 16px;
+    .product-list {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    }
 }
