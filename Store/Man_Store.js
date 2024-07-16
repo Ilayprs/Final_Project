@@ -23,9 +23,8 @@ function closeModal() {
 
 }
 
-// Function to handle creation of a new category
 async function createCategory() {
-    var newCategoryName = document.getElementById("newCategoryName").value;
+    var newCategoryName = document.getElementById("newCategoryName").value.trim(); // Trim whitespace
     if (newCategoryName) {
         try {
             const response = await fetch('/categories', {
@@ -40,9 +39,7 @@ async function createCategory() {
             }
 
             // If successful, fetch categories again to update the dropdown and add new category to the page
-             
-            const newCategory = { name: newCategoryName };
-            newCategory = await response.json();
+            const newCategory = await response.json();
 
             // Add new category to the page
             addCategoryToPage(newCategory);
