@@ -4,7 +4,6 @@ const mongoose = require('mongoose');
 const app = express();
 const PORT = 3000;
 
-// Middleware to serve static files
 app.use(express.static(path.join(__dirname, 'HomePage')));
 app.use(express.static(path.join(__dirname, 'store')));
 app.use(express.urlencoded({ extended: true }));
@@ -22,7 +21,6 @@ db.once('open', function() {
     console.log('Connected to MongoDB');
 });
 
-// Define Mongoose schemas and models
 const customerSchema = new mongoose.Schema({
     id: { type: Number, unique: true },
     username: String,
@@ -65,7 +63,6 @@ const categorySchema = new mongoose.Schema({
 });
 const Category = mongoose.model('Category', categorySchema);
 
-// Route to create a new category
 app.post('/categories', async (req, res) => {
     const { categoryName } = req.body;
 
@@ -79,7 +76,6 @@ app.post('/categories', async (req, res) => {
     }
 });
 
-// Route to fetch all categories
 app.get('/categories', async (req, res) => {
     try {
         const categories = await Category.find();
@@ -90,7 +86,6 @@ app.get('/categories', async (req, res) => {
     }
 });
 
-// Route to fetch items by category
 app.get('/items', async (req, res) => {
     const categoryName = req.query.category;
 
@@ -103,7 +98,6 @@ app.get('/items', async (req, res) => {
     }
 });
 
-// Route to create a new product
 app.post('/products', async (req, res) => {
     const { name, price, category, stock } = req.body;
 
@@ -117,7 +111,6 @@ app.post('/products', async (req, res) => {
     }
 });
 
-// Route to delete a product
 app.delete('/products/:name', async (req, res) => {
     const { name } = req.params;
 
@@ -134,7 +127,6 @@ app.delete('/products/:name', async (req, res) => {
     }
 });
 
-// Route to update a product
 app.put('/products/:id', async (req, res) => {
     const { id } = req.params;
     const { stock, price } = req.body;
@@ -152,21 +144,18 @@ app.put('/products/:id', async (req, res) => {
     }
 });
 
-// Function to create a new Customer
 async function sendCustomer(id, username, password, city) {
     const newCustomer = new Customer({ id, username, password, city });
     await newCustomer.save();
     return newCustomer;
 }
 
-// Function to create a new Manager
 async function sendManager(id, username, password, city) {
     const newManager = new Manager({ id, username, password, city });
     await newManager.save();
     return newManager;
 }
 
-// Function to find a Manager by ID
 async function findManagerById(managerId) {
     try {
         const manager = await Manager.findOne({ id: managerId });
@@ -177,7 +166,6 @@ async function findManagerById(managerId) {
     }
 }
 
-// Function to find a Customer by ID
 async function findCustomerById(customerId) {
     try {
         const customer = await Customer.findOne({ id: customerId });
@@ -188,32 +176,26 @@ async function findCustomerById(customerId) {
     }
 }
 
-// Route to serve the Sign In page
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'HomePage', 'Sign_In.html'));
 });
 
-// Route to serve the Sign Up page
 app.get('/signup', (req, res) => {
     res.sendFile(path.join(__dirname, 'HomePage', 'Sign_Up.html'));
 });
 
-// Route to serve the Log In page
 app.get('/login', (req, res) => {
     res.sendFile(path.join(__dirname, 'HomePage', 'Log_In.html'));
 });
 
-// Route to serve the Customer Store page
 app.get('/Cus_Store.html', (req, res) => {
     res.sendFile(path.join(__dirname, 'store', 'Cus_Store.html'));
 });
 
-// Route to serve the Manager Store page
 app.get('/Man_Store.html', (req, res) => {
     res.sendFile(path.join(__dirname, 'store', 'Man_Store.html'));
 });
 
-// Route to handle login form submission
 app.post('/send2', async (req, res) => {
     const { id, selection } = req.body;
 
@@ -268,7 +250,6 @@ app.post('/send2', async (req, res) => {
     }
 });
 
-// Route to handle sign up form submission
 app.post('/send', async (req, res) => {
     const { id, username, password, selection, city } = req.body;
 
@@ -291,7 +272,80 @@ app.post('/send', async (req, res) => {
     }
 });
 
-// Start the server
+app.post('/addMoney', async (req, res) => {
+    const { userId, amount } = req.body;
+
+    try {
+        const customer = await Customer.findOne({ id: userId });
+        if (customer) {
+            customer.credit += amount;
+            await customer.save();
+            res.status(200).json({ message: 'Money added successfully', credit: customer.credit });
+        } else {
+            res.status(404).json({ message: 'Customer not found' });
+        }
+    } catch (err) {
+        console.error('Error adding money:', err);
+        res.status(500).json({ message: 'Error adding money' });
+    }
+});
+
+app.get('/customer/:id', async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        const customer = await Customer.findOne({ id: id });
+        if (customer) {
+            res.json(customer);
+        } else {
+            res.status(404).send('Customer not found');
+        }
+    } catch (error) {
+        console.error('Error fetching customer details:', error);
+        res.status(500).send('Error fetching customer details');
+    }
+});
+
+app.post('/checkout', async (req, res) => {
+    const { userId, userName, items, totalAmount } = req.body;
+
+    try {
+        const customer = await Customer.findOne({ id: userId });
+        if (customer) {
+            if (customer.credit >= totalAmount) {
+                customer.credit -= totalAmount;
+                await customer.save();
+
+                const order = new Order({
+                    orderId: Date.now(),
+                    customerId: userId,
+                    totalPrice: totalAmount,
+                    numItems: items.length,
+                    items: items
+                });
+                await order.save();
+
+                for (const item of items) {
+                    const product = await Item.findById(item.id);
+                    if (product) {
+                        product.stock -= item.quantity;
+                        await product.save();
+                    }
+                }
+
+                res.status(200).send('Order placed successfully.');
+            } else {
+                res.status(400).send('Insufficient credit.');
+            }
+        } else {
+            res.status(404).send('Customer not found.');
+        }
+    } catch (error) {
+        console.error('Error during checkout:', error);
+        res.status(500).send('Error during checkout.');
+    }
+});
+
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 });
