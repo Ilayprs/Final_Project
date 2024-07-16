@@ -75,7 +75,7 @@ function addCategoryToPage(category) {
     categoriesDiv.appendChild(newCategoryDiv);
 
     // Add new category to the select dropdown
-    //var select = document.getElementById("existingCategory");
+    var select = document.getElementById("existingCategory");
     var option = document.createElement("option");
     option.text = category.name;
     option.value = category.name;
