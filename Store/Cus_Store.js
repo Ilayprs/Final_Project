@@ -1,25 +1,9 @@
-document.addEventListener('DOMContentLoaded', async function() {
+document.addEventListener('DOMContentLoaded', function() {
     const id = localStorage.getItem('id');
     const userName = localStorage.getItem('userName');
-
     document.getElementById('userName').innerText = 'Name: ' + userName;
     document.getElementById('userId').innerText = 'ID: ' + id;
     document.getElementById('userType').innerText = 'Type: customer';
-
-    // Fetch customer credit
-    try {
-        const response = await fetch(`http://localhost:3000/customer/${id}/credit`);
-        const data = await response.json();
-        if (response.ok) {
-            localStorage.setItem('credit', data.credit);
-            document.getElementById('credit').innerText = 'Credit: $' + data.credit.toFixed(2);
-        } else {
-            console.error('Error fetching credit:', data.message);
-        }
-    } catch (error) {
-        console.error('Error fetching credit:', error);
-    }
-
     // Sample products data
     const products = [
         { id: 1, name: 'Blender', stock: 10, price: 59.99 },
@@ -46,7 +30,6 @@ document.addEventListener('DOMContentLoaded', async function() {
             productList.appendChild(productElement);
         });
     }
-
     function updateProductStock() {
         cart.forEach(cartItem => {
             const product = products.find(p => p.id === cartItem.id);
@@ -55,7 +38,6 @@ document.addEventListener('DOMContentLoaded', async function() {
             }
         });
     }
-
     window.addToCart = function(productId) {
         const product = products.find(p => p.id === productId);
         if (product && product.stock > 0) {
@@ -82,7 +64,6 @@ document.addEventListener('DOMContentLoaded', async function() {
         renderCart();
         cartModal.style.display = 'block';
     }
-
     window.closeCartModal = function() {
         const cartModal = document.getElementById('cartModal');
         cartModal.style.display = 'none';
@@ -106,6 +87,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         });
     }
 
+
     window.incrementCartItem = function(productId) {
         const cartItem = cart.find(item => item.id === productId);
         if (cartItem) {
@@ -121,7 +103,6 @@ document.addEventListener('DOMContentLoaded', async function() {
             }
         }
     }
-
     window.decrementCartItem = function(productId) {
         const cartItem = cart.find(item => item.id === productId);
         if (cartItem) {
@@ -147,105 +128,36 @@ document.addEventListener('DOMContentLoaded', async function() {
         });
         return total.toFixed(2);
     }
-
     // Function to render total amount in the checkout modal
     function renderTotalAmount() {
         const totalAmountElement = document.getElementById('totalAmount');
         totalAmountElement.textContent = `$${calculateTotalAmount()}`;
     }
-
     // Function to open the checkout modal
     window.openCheckoutModal = function() {
         renderTotalAmount();
         const checkoutModal = document.getElementById('checkoutModal');
         checkoutModal.style.display = 'block';
     }
-
     // Function to close the checkout modal
     window.closeCheckoutModal = function() {
         const checkoutModal = document.getElementById('checkoutModal');
         checkoutModal.style.display = 'none';
     }
 
-    window.addMoney = async function() {
-        const addMoneyInput = document.getElementById('addMoneyInput');
+    // Function to add money to the addedMoney variable
+    window.addMoney = function() {
+        const addMoneyInput = document.getElementById('addMoney');
         const amount = parseFloat(addMoneyInput.value);
-        const userId = localStorage.getItem('id');
         if (!isNaN(amount) && amount > 0) {
-            try {
-                const response = await fetch('http://localhost:3000/addMoney', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ userId: userId, amount: amount })
-                });
-                const data = await response.json();
-                if (response.ok) {
-                    addedMoney = amount;
-                    const updatedCredit = data.credit; // Get updated credit value
-                    localStorage.setItem('credit', updatedCredit); // Save updated credit to localStorage
-                    document.getElementById('credit').innerText = 'Credit: $' + updatedCredit.toFixed(2); // Update displayed credit
-                    addMoneyInput.value = '';
-                    alert('Money added successfully.');
-                } 
-                else {
-                    console.error('Error adding money:', data.message);
-                }
-            } catch (error) {
-                console.error('Error adding money:', error);
-            }
+            addedMoney += amount;
+            alert(`Added $${amount.toFixed(2)} to your account.`);
+            addMoneyInput.value = ''; // Clear input field
         } else {
-            alert('Please enter a valid amount.');
+            alert('Please enter a valid amount to add.');
         }
     }
-    
 
-    // Function to handle checkout process
-    window.checkout = async function() {
-        const totalAmount = calculateTotalAmount();
-        const userId = localStorage.getItem('id');
-        const userName = localStorage.getItem('userName');
-        const totalAmountElement = document.getElementById('totalAmount');
-        totalAmountElement.textContent = `$${totalAmount}`;
-    
-        const checkoutModal = document.getElementById('checkoutModal');
-        checkoutModal.style.display = 'block';
-    
-        try {
-            const response = await fetch('http://localhost:3000/checkout', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ userId: userId, userName: userName, items: cart, totalAmount: parseFloat(totalAmount) })
-            });
-    
-            if (response.ok) {
-                cart = [];
-                localStorage.removeItem('cart'); // Clear cart from localStorage
-                updateProductStock(); // Update product stock
-                renderProducts(); // Re-render products to reflect stock changes
-                renderCart(); // Re-render cart to show it is empty
-    
-                const customer = await response.json(); // Assuming server responds with updated customer data
-                if (customer && customer.credit !== undefined) {
-                    localStorage.setItem('credit', customer.credit);
-                    document.getElementById('credit').innerText = 'Credit: $' + customer.credit.toFixed(2);
-                }
-    
-                alert('Order placed successfully.');
-                closeCheckoutModal(); // Close checkout modal after successful checkout
-            } else {
-                const errorData = await response.json();
-                alert('Checkout failed: ' + errorData.message);
-            }
-        } 
-        catch (error) {
-            console.error('Error during checkout:', error);
-            alert('Error during checkout.');
-        }
-    }
     // Function to confirm checkout
     window.confirmCheckout = function() {
         // Check if there is enough money added for the purchase
@@ -265,7 +177,10 @@ document.addEventListener('DOMContentLoaded', async function() {
         }
     }
 
-    // Event listener for checkout button click
-    const checkoutButton = document.querySelector('.checkout-btn');
-    checkoutButton.addEventListener('click', checkout);
+    // Event listener for the Proceed to Checkout button
+    const checkoutBtn = document.getElementById('checkoutBtn');
+    checkoutBtn.addEventListener('click', function() {
+        openCheckoutModal();
+    });
+
 });
