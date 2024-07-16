@@ -58,7 +58,7 @@
             <div class="cart-list">
                 <!-- Shopping cart items will be displayed here -->
             </div>
-            <button id="checkoutBtn">Proceed to Checkout</button>
+            <button onclick="openCheckoutModal()">Proceed to Checkout</button>
         </div>
     </div>
 
@@ -69,9 +69,9 @@
             <h2>Checkout</h2>
             <p>Total Amount: <span id="totalAmount">$0.00</span></p>
             <p>Add money to your account:</p>
-            <input type="number" id="addMoney" placeholder="Enter amount">
+            <input type="number" id="addMoneyInput" placeholder="Enter amount">
             <button onclick="addMoney()">Add Money</button>
-            <button onclick="confirmCheckout()">Confirm Checkout</button>
+            <button onclick="confirmCheckout">Confirm Checkout</button>
             <button onclick="closeCheckoutModal()">Cancel</button>
         </div>
     </div>
