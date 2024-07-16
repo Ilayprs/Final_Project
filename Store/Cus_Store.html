@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kitchen Stuff Online Store</title>
-    <link rel="stylesheet" href="Cus_store.css">
+    <link rel="stylesheet" href="Cus_Store.css">
 </head>
 <body>
     <header>
@@ -19,10 +19,11 @@
         <div class="cart-icon" onclick="openCartModal()">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-cart" viewBox="0 0 16 16">
                 <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5M3.102 4l1.313 7h8.17l1.313-7zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4m7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4m-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2m7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2"/>
+              </svg>        </div>
             </svg>
         </div>
     </header>
-    <div>
+
     <section id="home">
         <h2>Welcome</h2>
         <p>Welcome to the Kitchen Stuff Online Store. Explore our range of products and add them to your shopping cart.</p>
@@ -45,11 +46,10 @@
             <button onclick="editProfile()">Edit Profile</button>
         </div>
     </section>
-    </div>
+    
     <footer>
         <p>&copy; 2024 Kitchen Stuff Online Store</p>
     </footer>
-
     <!-- Modal for Shopping Cart -->
     <div id="cartModal" class="modal">
         <div class="modal-content">
@@ -62,12 +62,17 @@
         </div>
     </div>
 
+<!-- Button to proceed to checkout -->
+<button id="checkoutBtn" onclick="openCheckoutModal()">Proceed to Checkout</button>
+
     <!-- Modal for Checkout Confirmation -->
     <div id="checkoutModal" class="modal" style="display: none;">
         <div class="modal-content">
             <span class="close" onclick="closeCheckoutModal()">&times;</span>
             <h2>Checkout</h2>
             <p>Total Amount: <span id="totalAmount">$0.00</span></p>
+        <p>Are you sure you want to proceed with the purchase?</p>
+        <button onclick="confirmCheckout()">Confirm</button>
             <p>Add money to your account:</p>
             <input type="number" id="addMoney" placeholder="Enter amount">
             <button onclick="addMoney()">Add Money</button>
@@ -75,7 +80,6 @@
             <button onclick="closeCheckoutModal()">Cancel</button>
         </div>
     </div>
-
     <script src="Cus_store.js"></script>
 </body>
 </html>
