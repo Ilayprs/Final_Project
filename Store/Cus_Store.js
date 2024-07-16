@@ -37,7 +37,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 itemElement.className = 'product';
                 itemElement.innerHTML = `
                     <h4>${item.name}</h4>
-                    <p>Stock: ${item.stock}</p>
                     <p>Price: $${item.price.toFixed(2)}</p>
                     <button onclick="addToCart('${item._id}')">Add to Shopping Cart</button>
                 `;
@@ -58,9 +57,14 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     window.addToCart = async function(productId) {
+        console.log('Adding product to cart:', productId); // Debug log
         try {
             const response = await fetch(`/items/${productId}`);
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
             const product = await response.json();
+            console.log('Fetched product:', product); // Debug log
             if (product && product.stock > 0) {
                 const cartItem = cart.find(item => item._id === productId);
                 if (cartItem) {
@@ -79,6 +83,7 @@ document.addEventListener('DOMContentLoaded', function() {
             console.error('Error adding to cart:', error);
         }
     }
+    
 
     renderCategoriesAndItems();
     updateProductStock();
@@ -176,28 +181,67 @@ document.addEventListener('DOMContentLoaded', function() {
         checkoutModal.style.display = 'none';
     }
 
-    window.addMoney = function() {
+    window.addMoney = async function() {
         const addMoneyInput = document.getElementById('addMoney');
         const amount = parseFloat(addMoneyInput.value);
         if (!isNaN(amount) && amount > 0) {
-            addedMoney += amount;
-            alert(`Added $${amount.toFixed(2)} to your account.`);
-            addMoneyInput.value = ''; // Clear input field
+            try {
+                // Get customer ID from localStorage
+                const customerId = localStorage.getItem('id');
+    
+                // Send request to update credit on server
+                const response = await fetch('/update-credit', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ customerId, amount })
+                });
+    
+                if (!response.ok) {
+                    throw new Error('Failed to update credit');
+                }
+    
+                addedMoney += amount;
+                alert(`Added $${amount.toFixed(2)} to your account.`);
+                addMoneyInput.value = ''; // Clear input field
+            } catch (error) {
+                console.error('Error adding money:', error);
+                alert('Error adding money. Please try again.');
+            }
         } else {
             alert('Please enter a valid amount to add.');
         }
     }
 
-    window.confirmCheckout = function() {
+    window.confirmCheckout = async function() {
         const totalAmount = parseFloat(calculateTotalAmount());
         if (addedMoney >= totalAmount) {
-            alert('Your order has been confirmed!');
-            cart = [];
-            localStorage.setItem('cart', JSON.stringify(cart));
-            renderCart();
-            renderCategoriesAndItems(); // Update product list to reflect changes
-            closeCheckoutModal();
-            updateProductStock();
+            try {
+                // Send cart items to server to update stock
+                const response = await fetch('/update-stock', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ items: cart })
+                });
+    
+                if (!response.ok) {
+                    throw new Error('Failed to update stock');
+                }
+    
+                alert('Your order has been confirmed!');
+                cart = [];
+                localStorage.setItem('cart', JSON.stringify(cart));
+                renderCart();
+                renderCategoriesAndItems(); // Update product list to reflect changes
+                closeCheckoutModal();
+                updateProductStock();
+            } catch (error) {
+                console.error('Error confirming checkout:', error);
+                alert('Error confirming checkout. Please try again.');
+            }
         } else {
             alert('Please add enough money to your account before proceeding.');
         }
