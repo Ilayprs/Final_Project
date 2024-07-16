@@ -1,10 +1,24 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', async function() {
     const id = localStorage.getItem('id');
     const userName = localStorage.getItem('userName');
 
     document.getElementById('userName').innerText = 'Name: ' + userName;
     document.getElementById('userId').innerText = 'ID: ' + id;
     document.getElementById('userType').innerText = 'Type: customer';
+
+    // Fetch customer credit
+    try {
+        const response = await fetch(`http://localhost:3000/customer/${id}/credit`);
+        const data = await response.json();
+        if (response.ok) {
+            localStorage.setItem('credit', data.credit);
+            document.getElementById('credit').innerText = 'Credit: $' + data.credit.toFixed(2);
+        } else {
+            console.error('Error fetching credit:', data.message);
+        }
+    } catch (error) {
+        console.error('Error fetching credit:', error);
+    }
 
     // Sample products data
     const products = [
@@ -153,19 +167,85 @@ document.addEventListener('DOMContentLoaded', function() {
         checkoutModal.style.display = 'none';
     }
 
-    // Function to add money to the addedMoney variable
-    window.addMoney = function() {
-        const addMoneyInput = document.getElementById('addMoney');
+    window.addMoney = async function() {
+        const addMoneyInput = document.getElementById('addMoneyInput');
         const amount = parseFloat(addMoneyInput.value);
+        const userId = localStorage.getItem('id');
         if (!isNaN(amount) && amount > 0) {
-            addedMoney += amount;
-            alert(`Added $${amount.toFixed(2)} to your account.`);
-            addMoneyInput.value = ''; // Clear input field
+            try {
+                const response = await fetch('http://localhost:3000/addMoney', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ userId: userId, amount: amount })
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    addedMoney = amount;
+                    const updatedCredit = data.credit; // Get updated credit value
+                    localStorage.setItem('credit', updatedCredit); // Save updated credit to localStorage
+                    document.getElementById('credit').innerText = 'Credit: $' + updatedCredit.toFixed(2); // Update displayed credit
+                    addMoneyInput.value = '';
+                    alert('Money added successfully.');
+                } 
+                else {
+                    console.error('Error adding money:', data.message);
+                }
+            } catch (error) {
+                console.error('Error adding money:', error);
+            }
         } else {
-            alert('Please enter a valid amount to add.');
+            alert('Please enter a valid amount.');
         }
     }
+    
 
+    // Function to handle checkout process
+    window.checkout = async function() {
+        const totalAmount = calculateTotalAmount();
+        const userId = localStorage.getItem('id');
+        const userName = localStorage.getItem('userName');
+        const totalAmountElement = document.getElementById('totalAmount');
+        totalAmountElement.textContent = `$${totalAmount}`;
+    
+        const checkoutModal = document.getElementById('checkoutModal');
+        checkoutModal.style.display = 'block';
+    
+        try {
+            const response = await fetch('http://localhost:3000/checkout', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ userId: userId, userName: userName, items: cart, totalAmount: parseFloat(totalAmount) })
+            });
+    
+            if (response.ok) {
+                cart = [];
+                localStorage.removeItem('cart'); // Clear cart from localStorage
+                updateProductStock(); // Update product stock
+                renderProducts(); // Re-render products to reflect stock changes
+                renderCart(); // Re-render cart to show it is empty
+    
+                const customer = await response.json(); // Assuming server responds with updated customer data
+                if (customer && customer.credit !== undefined) {
+                    localStorage.setItem('credit', customer.credit);
+                    document.getElementById('credit').innerText = 'Credit: $' + customer.credit.toFixed(2);
+                }
+    
+                alert('Order placed successfully.');
+                closeCheckoutModal(); // Close checkout modal after successful checkout
+            } else {
+                const errorData = await response.json();
+                alert('Checkout failed: ' + errorData.message);
+            }
+        } 
+        catch (error) {
+            console.error('Error during checkout:', error);
+            alert('Error during checkout.');
+        }
+    }
     // Function to confirm checkout
     window.confirmCheckout = function() {
         // Check if there is enough money added for the purchase
@@ -185,10 +265,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Event listener for the Proceed to Checkout button
-    const checkoutBtn = document.getElementById('checkoutBtn');
-    checkoutBtn.addEventListener('click', function() {
-        openCheckoutModal();
-    });
-
+    // Event listener for checkout button click
+    const checkoutButton = document.querySelector('.checkout-btn');
+    checkoutButton.addEventListener('click', checkout);
 });
