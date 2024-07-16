@@ -40,8 +40,9 @@ async function createCategory() {
             }
 
             // If successful, fetch categories again to update the dropdown and add new category to the page
+             
             const newCategory = { name: newCategoryName };
-            const newCategory = await response.json();
+            newCategory = await response.json();
 
             // Add new category to the page
             addCategoryToPage(newCategory);
