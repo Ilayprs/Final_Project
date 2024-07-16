@@ -22,7 +22,7 @@
             </svg>
         </div>
     </header>
-
+    <div>
     <section id="home">
         <h2>Welcome</h2>
         <p>Welcome to the Kitchen Stuff Online Store. Explore our range of products and add them to your shopping cart.</p>
@@ -45,7 +45,7 @@
             <button onclick="editProfile()">Edit Profile</button>
         </div>
     </section>
-    
+    </div>
     <footer>
         <p>&copy; 2024 Kitchen Stuff Online Store</p>
     </footer>
@@ -58,7 +58,7 @@
             <div class="cart-list">
                 <!-- Shopping cart items will be displayed here -->
             </div>
-            <button onclick="openCheckoutModal()">Proceed to Checkout</button>
+            <button id="checkoutBtn">Proceed to Checkout</button>
         </div>
     </div>
 
@@ -69,9 +69,9 @@
             <h2>Checkout</h2>
             <p>Total Amount: <span id="totalAmount">$0.00</span></p>
             <p>Add money to your account:</p>
-            <input type="number" id="addMoneyInput" placeholder="Enter amount">
+            <input type="number" id="addMoney" placeholder="Enter amount">
             <button onclick="addMoney()">Add Money</button>
-            <button onclick="confirmCheckout">Confirm Checkout</button>
+            <button onclick="confirmCheckout()">Confirm Checkout</button>
             <button onclick="closeCheckoutModal()">Cancel</button>
         </div>
     </div>
