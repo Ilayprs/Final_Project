@@ -3,12 +3,13 @@ const path = require('path');
 const mongoose = require('mongoose');
 const app = express();
 const PORT = 3000;
-let orderCounter = 1;
+
 // Middleware to serve static files
 app.use(express.static(path.join(__dirname, 'HomePage')));
 app.use(express.static(path.join(__dirname, 'store')));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+
 // Connect to MongoDB
 mongoose.connect('mongodb+srv://ilaypreiss10:WO9uG6pLo8I1PIo5@project.zpnipmo.mongodb.net/', {
     useNewUrlParser: true,
@@ -19,6 +20,7 @@ db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 db.once('open', function() {
     console.log('Connected to MongoDB');
 });
+
 // Define Mongoose schemas and models
 const customerSchema = new mongoose.Schema({
     id: { type: Number, unique: true },
@@ -28,6 +30,7 @@ const customerSchema = new mongoose.Schema({
     credit: { type: Number, default: 0 },
 });
 const Customer = mongoose.model('Customer', customerSchema);
+
 const managerSchema = new mongoose.Schema({
     id: { type: Number, unique: true },
     username: String,
@@ -35,14 +38,20 @@ const managerSchema = new mongoose.Schema({
     city: String,
 });
 const Manager = mongoose.model('Manager', managerSchema);
+
 const itemSchema = new mongoose.Schema({
-    name: String,
-    price: Number,
-    category: String,
-    stock: { type: Number, default: 0, min: 0 },
+    name: { type: String, required: true },
+    price: { type: Number, required: true },
+    category: { type: String, required: true },
+    stock: { type: Number, required: true },
+    companyName: { type: String },
+    rgb: { type: Boolean },
+    wireless: { type: Boolean }
 });
-itemSchema.index({ name: 1, category: 1 }, { unique: true });
+
 const Item = mongoose.model('Item', itemSchema);
+module.exports = Item;
+itemSchema.index({ name: 1, category: 1 }, { unique: true });
 
 const orderSchema = new mongoose.Schema({
     orderId: { type: Number, unique: true },
@@ -58,11 +67,11 @@ const orderSchema = new mongoose.Schema({
 });
 const Order = mongoose.model('Order', orderSchema);
 
-
 const categorySchema = new mongoose.Schema({
     name: { type: String, unique: true, required: true },
 });
 const Category = mongoose.model('Category', categorySchema);
+
 // Route to create a new category
 app.post('/categories', async (req, res) => {
     const { categoryName } = req.body;
@@ -75,6 +84,7 @@ app.post('/categories', async (req, res) => {
         res.status(500).send('Error creating category');
     }
 });
+
 // Route to fetch all categories
 app.get('/categories', async (req, res) => {
     try {
@@ -85,6 +95,7 @@ app.get('/categories', async (req, res) => {
         res.status(500).send('Error fetching categories');
     }
 });
+
 // Route to fetch items by category
 app.get('/items', async (req, res) => {
     const categoryName = req.query.category;
@@ -96,11 +107,22 @@ app.get('/items', async (req, res) => {
         res.status(500).send('Error fetching items');
     }
 });
+
+// Route to create a new product
+// Route to create a new product
 // Route to create a new product
 app.post('/products', async (req, res) => {
-    const { name, price, category, stock } = req.body;
+    const { name, price, category, stock, company, rgb, wireless } = req.body;
     try {
-        const product = new Item({ name, price, category, stock });
+        const product = new Item({
+            name,
+            price,
+            category,
+            stock,
+            companyName: company,
+            rgb,
+            wireless
+        });
         await product.save();
         res.status(201).json(product);
     } catch (error) {
@@ -108,6 +130,9 @@ app.post('/products', async (req, res) => {
         res.status(500).send('Error creating product');
     }
 });
+
+
+
 // Route to delete a product
 app.delete('/products/:name', async (req, res) => {
     const { name } = req.params;
@@ -148,12 +173,14 @@ async function sendCustomer(id, username, password, city) {
     await newCustomer.save();
     return newCustomer;
 }
+
 // Function to create a new Manager
 async function sendManager(id, username, password, city) {
     const newManager = new Manager({ id, username, password, city });
     await newManager.save();
     return newManager;
 }
+
 // Function to find a Manager by ID
 async function findManagerById(managerId) {
     try {
@@ -164,6 +191,7 @@ async function findManagerById(managerId) {
         throw err;
     }
 }
+
 // Function to find a Customer by ID
 async function findCustomerById(customerId) {
     try {
@@ -174,26 +202,32 @@ async function findCustomerById(customerId) {
         throw err;
     }
 }
+
 // Route to serve the Sign In page
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'HomePage', 'Sign_In.html'));
 });
+
 // Route to serve the Sign Up page
 app.get('/signup', (req, res) => {
     res.sendFile(path.join(__dirname, 'HomePage', 'Sign_Up.html'));
 });
+
 // Route to serve the Log In page
 app.get('/login', (req, res) => {
     res.sendFile(path.join(__dirname, 'HomePage', 'Log_In.html'));
 });
+
 // Route to serve the Customer Store page
 app.get('/Cus_Store.html', (req, res) => {
     res.sendFile(path.join(__dirname, 'store', 'Cus_Store.html'));
 });
+
 // Route to serve the Manager Store page
 app.get('/Man_Store.html', (req, res) => {
     res.sendFile(path.join(__dirname, 'store', 'Man_Store.html'));
 });
+
 // Route to handle login form submission
 app.post('/send2', async (req, res) => {
     const { id, selection } = req.body;
@@ -247,6 +281,7 @@ app.post('/send2', async (req, res) => {
         `);
     }
 });
+
 // Route to handle sign up form submission
 app.post('/send', async (req, res) => {
     const { id, username, password, selection, city } = req.body;
@@ -269,107 +304,6 @@ app.post('/send', async (req, res) => {
     }
 });
 
-app.get('/items/:id', async (req, res) => {
-    const { id } = req.params;
-    try {
-        const item = await Item.findById(id);
-        if (item) {
-            res.json(item);
-        } else {
-            res.status(404).send('Item not found');
-        }
-    } catch (error) {
-        console.error('Error fetching item:', error);
-        res.status(500).send('Error fetching item');
-    }
-});
-
-app.post('/update-stock', async (req, res) => {
-    const { items } = req.body;
-
-    try {
-        for (const item of items) {
-            const { _id, quantity } = item;
-            await Item.findByIdAndUpdate(_id, {
-                $inc: { stock: -quantity }
-            });
-        }
-        res.sendStatus(200); // OK
-    } catch (error) {
-        console.error('Error updating stock:', error);
-        res.status(500).send('Error updating stock');
-    }
-});
-
-app.post('/update-credit', async (req, res) => {
-    const { customerId, amount } = req.body;
-
-    try {
-        await Customer.findOneAndUpdate(
-            { id: customerId },
-            { $inc: { credit: amount } }
-        );
-        res.sendStatus(200); // OK
-    } catch (error) {
-        console.error('Error updating credit:', error);
-        res.status(500).send('Error updating credit');
-    }
-});
-app.get('/customer/:id', async (req, res) => {
-    const { id } = req.params;
-    try {
-        const customer = await Customer.findOne({ id: parseInt(id) });
-        if (customer) {
-            res.json({ credit: customer.credit });
-        } else {
-            res.status(404).send('Customer not found');
-        }
-    } catch (error) {
-        console.error('Error fetching customer:', error);
-        res.status(500).send('Error fetching customer');
-    }
-});
-
-
-// Route to create a new order
-app.post('/orders', async (req, res) => {
-    const { customerId, totalPrice, numItems, items } = req.body;
-
-    // Validate items
-    for (const item of items) {
-        if (!item.name || !item.category) {
-            return res.status(400).send('Each item must have a valid name and category');
-        }
-    }
-
-    try {
-        // Find the highest existing orderId
-        const lastOrder = await Order.findOne().sort({ orderId: -1 }).exec();
-        let nextOrderId = 1; // Default starting orderId if no orders exist
-        if (lastOrder && lastOrder.orderId) {
-            nextOrderId = lastOrder.orderId + 1;
-        }
-
-        // Create the new order with the next orderId
-        const newOrder = new Order({
-            orderId: nextOrderId,
-            customerId,
-            totalPrice,
-            numItems,
-            items
-        });
-
-        await newOrder.save();
-        res.status(201).json(newOrder);
-    } catch (error) {
-        console.error('Error creating order:', error);
-        res.status(500).send('Error creating order');
-    }
-});
-
-
-
-// Start the server
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 });
