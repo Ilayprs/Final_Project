@@ -49,6 +49,19 @@ const orderSchema = new mongoose.Schema({
     numItems: Number,
     items: [itemSchema],
 });
+// Define a pre-save middleware to auto-increment orderId
+orderSchema.pre('save', async function(next) {
+    try {
+        if (!this.orderId) {
+            // Find the highest existing orderId and increment by 1
+            const highestOrder = await Order.findOne({}, {}, { sort: { 'orderId': -1 } });
+            this.orderId = highestOrder ? highestOrder.orderId + 1 : 1;
+        }
+        next();
+    } catch (error) {
+        next(error);
+    }
+});
 const Order = mongoose.model('Order', orderSchema);
 const categorySchema = new mongoose.Schema({
     name: { type: String, unique: true, required: true },
