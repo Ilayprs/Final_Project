@@ -22,64 +22,67 @@
             </svg>
         </div>
     </header>
-
-    <section id="home">
-        <h2>Welcome</h2>
-        <p>Welcome to the Kitchen Stuff Online Store. Explore our range of products and add them to your shopping cart.</p>
-    </section>
     
-    <section id="products">
-        <h2>Products</h2>
-        <div class="category-list">
-            <!-- Categories will be dynamically populated here -->
-        </div>
-        <div class="product-list">
-            <!-- Products will be dynamically populated here -->
-        </div>
-    </section>
-    
-    <section id="profile">
-        <h2>Profile</h2>
-        <div class="profile-info">
-            <p id="userName"></p>
-            <p id="userId"></p>
-            <p id="userType"></p>
-            <p>Company: Kitchen Supplies Inc.</p>
-            <button onclick="editProfile()">Edit Profile</button>
-        </div>
-    </section>
-    
-    <footer>
-        <p>&copy; 2024 Kitchen Stuff Online Store</p>
-    </footer>
-
-    <!-- Modal for Shopping Cart -->
-    <div id="cartModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeCartModal()">&times;</span>
-            <h2>Shopping Cart</h2>
-            <div class="cart-list">
-                <!-- Shopping cart items will be displayed here -->
+    <div class="background">
+        <section id="home">
+            <h2>Welcome</h2>
+            <p>Welcome to the Kitchen Stuff Online Store. Explore our range of products and add them to your shopping cart.</p>
+        </section>
+        
+        <section id="products">
+            <h2>Products</h2>
+            <div class="category-list">
+                <!-- Categories will be dynamically populated here -->
             </div>
-            <button id="checkoutBtn" onclick="openCheckoutModal()">Proceed to Checkout</button>
-        </div>
-    </div>
+            <div class="product-list">
+                <!-- Products will be dynamically populated here -->
+            </div>
+        </section>
+        
+        <section id="profile">
+            <h2>Profile</h2>
+            <div class="profile-info">
+                <p id="userName"></p>
+                <p id="userId"></p>
+                <p id="userType"></p>
+                <p>Company: Kitchen Supplies Inc.</p>
+                <button onclick="editProfile()">Edit Profile</button>
+            </div>
+        </section>
+        
+        <footer>
+            <p>&copy; 2024 Kitchen Stuff Online Store</p>
+        </footer>
 
-    <!-- Modal for Checkout Confirmation -->
-    <div id="checkoutModal" class="modal" style="display: none;">
-        <div class="modal-content">
-            <span class="close" onclick="closeCheckoutModal()">&times;</span>
-            <h2>Checkout</h2>
-            <p>Total Amount: <span id="totalAmount">$0.00</span></p>
-            <p>Are you sure you want to proceed with the purchase?</p>
-            <button onclick="confirmCheckout()">Confirm Checkout</button>
-            <p>Add money to your account:</p>
-            <input type="number" id="addMoney" placeholder="Enter amount">
-            <button onclick="addMoney()">Add Money</button>
-            <button onclick="closeCheckoutModal()">Cancel</button>
+        <!-- Modal for Shopping Cart -->
+        <div id="cartModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeCartModal()">&times;</span>
+                <h2>Shopping Cart</h2>
+                <div class="cart-list">
+                    <!-- Shopping cart items will be displayed here -->
+                </div>
+                <button id="checkoutBtn" onclick="openCheckoutModal()">Proceed to Checkout</button>
+            </div>
         </div>
-    </div>
 
+        <!-- Modal for Checkout Confirmation -->
+        <div id="checkoutModal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <span class="close" onclick="closeCheckoutModal()">&times;</span>
+                <h2>Checkout</h2>
+                <p>Total Amount: <span id="totalAmount">$0.00</span></p>
+                <p>Are you sure you want to proceed with the purchase?</p>
+                <button onclick="confirmCheckout()">Confirm Checkout</button>
+                <p>Add money to your account:</p>
+                <input type="number" id="addMoney" placeholder="Enter amount">
+                <button onclick="addMoney()">Add Money</button>
+                <button onclick="closeCheckoutModal()">Cancel</button>
+            </div>
+        </div>
+    
+    
     <script src="Cus_store.js"></script>
+</div>
 </body>
 </html>
