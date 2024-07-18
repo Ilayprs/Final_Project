@@ -112,6 +112,7 @@ document.addEventListener('DOMContentLoaded', function() {
     async function initialize() {
         await fetchProducts();
         await fetchCustomerCredit();
+        document.getElementById('custCredit').innerText = 'Credits: ' + customerCredit;
         await renderCategoriesAndItems();
         updateProductStock();
     }
@@ -276,6 +277,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     closeCheckoutModal();
                     closeCartModal();
                     renderCategoriesAndItems();
+                    window.location.reload();
                 } else {
                     console.error('Error updating stock:', response.statusText);
                 }
