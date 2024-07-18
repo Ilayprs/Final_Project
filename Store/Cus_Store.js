@@ -50,14 +50,14 @@ document.addEventListener('DOMContentLoaded', function() {
         const categories = await fetchCategories();
         const categoryList = document.querySelector('.category-list');
         categoryList.innerHTML = '';
-
+    
         for (const category of categories) {
             const items = await fetchItemsByCategory(category.name);
-
+    
             const categoryElement = document.createElement('div');
             categoryElement.className = 'category';
             categoryElement.innerHTML = `<h2>${category.name}</h2><div class="product-list"></div>`;
-
+    
             const productList = categoryElement.querySelector('.product-list');
             items.forEach(item => {
                 const itemElement = document.createElement('div');
@@ -65,14 +65,18 @@ document.addEventListener('DOMContentLoaded', function() {
                 itemElement.innerHTML = `
                     <h4>${item.name}</h4>
                     <p>Price: $${item.price.toFixed(2)}</p>
+                    <p>Company: ${item.companyName}</p>
+                    <p>RGB: ${item.rgb ? 'Yes' : 'No'}</p>
+                    <p>Wireless: ${item.wireless ? 'Yes' : 'No'}</p>
                     <button onclick="addToCart('${item._id}')">Add to Cart</button>
                 `;
                 productList.appendChild(itemElement);
             });
-
+    
             categoryList.appendChild(categoryElement);
         }
     }
+    
 
     function updateProductStock() {
         cart.forEach(cartItem => {
