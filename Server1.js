@@ -152,18 +152,24 @@ app.delete('/products/:name', async (req, res) => {
 // Route to update a product
 app.put('/products/:id', async (req, res) => {
     const { id } = req.params;
-    const { stock, price } = req.body;
+    const { stock, price, rgb, wireless } = req.body;
 
     try {
-        const updatedProduct = await Item.findByIdAndUpdate(id, { stock, price }, { new: true });
-        if (updatedProduct) {
-            res.json(updatedProduct);
-        } else {
-            res.status(404).send('Product not found');
+        const updatedProduct = await Item.findByIdAndUpdate(id, {
+            stock,
+            price,
+            rgb,       // Ensure rgb is updated in MongoDB
+            wireless,  // Ensure wireless is updated in MongoDB
+        }, { new: true });
+
+        if (!updatedProduct) {
+            return res.status(404).json({ error: 'Product not found' });
         }
+
+        res.json(updatedProduct);
     } catch (error) {
         console.error('Error updating product:', error);
-        res.status(500).send('Error updating product');
+        res.status(500).json({ error: 'Internal server error' });
     }
 });
 
