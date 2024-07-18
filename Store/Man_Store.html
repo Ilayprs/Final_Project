@@ -53,25 +53,33 @@
         <p>&copy; 2024 Kitchen Stuff Supplier Portal</p>
     </footer>
     <!-- Modal for adding new product -->
-    <div id="addProductModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal()">&times;</span>
-            <h2>Add New Product</h2>
-            <form id="addProductForm">
-                <label for="productName">Product Name:</label><br>
-                <input type="text" id="productName" name="productName"><br>
-                <label for="productStock">Stock:</label><br>
-                <input type="number" id="productStock" name="productStock"><br>
-                <label for="productPrice">Price:</label><br>
-                <input type="text" id="productPrice" name="productPrice"><br><br>
-                <label for="existingCategory">Choose Category:</label><br>
-                <select id="existingCategory" name="existingCategory">
-                    <!-- Categories will be populated dynamically -->
-                </select><br><br>
-                <input type="button" value="Add Product" onclick="addProductToCategory()">
-            </form>
-        </div>
+    <!-- Modal for adding new product -->
+<div id="addProductModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <h2>Add New Product</h2>
+        <form id="addProductForm">
+            <label for="productName">Product Name:</label><br>
+            <input type="text" id="productName" name="productName"><br>
+            <label for="productStock">Stock:</label><br>
+            <input type="number" id="productStock" name="productStock"><br>
+            <label for="productPrice">Price:</label><br>
+            <input type="text" id="productPrice" name="productPrice"><br><br>
+            <label for="companyName">Company Name:</label><br>
+            <input type="text" id="companyName" name="companyName"><br><br>
+            <label for="hasRGB">Has RGB:</label><br>
+            <input type="checkbox" id="hasRGB" name="hasRGB"><br><br>
+            <label for="isWireless">Is Wireless:</label><br>
+            <input type="checkbox" id="isWireless" name="isWireless"><br><br>
+            <label for="existingCategory">Choose Category:</label><br>
+            <select id="existingCategory" name="existingCategory">
+                <!-- Categories will be populated dynamically -->
+            </select><br><br>
+            <input type="button" value="Add Product" onclick="addProductToCategory()">
+        </form>
     </div>
+</div>
+
     <!-- Modal for new category -->
     <div id="newCategoryModal" class="modal">
         <div class="modal-content">
