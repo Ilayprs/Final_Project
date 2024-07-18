@@ -111,6 +111,7 @@ document.addEventListener('DOMContentLoaded', function() {
     async function initialize() {
         await fetchProducts();
         await fetchCustomerCredit();
+        document.getElementById('custCredit').innerText = "Credits: " + customerCredit;
         await renderCategoriesAndItems();
         updateProductStock();
     }
