@@ -38,7 +38,7 @@ const itemSchema = new mongoose.Schema({
     name: String,
     price: Number,
     category: String,
-    stock: { type: Number, default: 0 },
+    stock: { type: Number, default: 0, min: 0 },
 });
 itemSchema.index({ name: 1, category: 1 }, { unique: true });
 const Item = mongoose.model('Item', itemSchema);
