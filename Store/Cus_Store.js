@@ -275,17 +275,19 @@ document.addEventListener('DOMContentLoaded', function() {
         const totalAmount = parseFloat(calculateTotalAmount());
         if (customerCredit >= totalAmount) {
             try {
-                const response = await fetch('/update-stock', {
+                // Update stock for items
+                const responseStock = await fetch('/update-stock', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({ items: cart })
                 });
-                if (!response.ok) {
+                if (!responseStock.ok) {
                     throw new Error('Error updating stock');
                 }
     
+                // Update customer credit
                 await fetch('/update-credit', {
                     method: 'POST',
                     headers: {
@@ -294,38 +296,33 @@ document.addEventListener('DOMContentLoaded', function() {
                     body: JSON.stringify({ customerId: id, amount: -totalAmount })
                 });
     
-                // Create the order
+                // Create order object and save to database
                 const orderData = {
                     customerId: id,
                     totalPrice: totalAmount,
                     numItems: cart.length,
-                    items: cart.map(item => ({
-                        _id: item._id,
-                        name: item.name,
-                        price: item.price,
-                        quantity: item.quantity
-                    }))
+                    items: cart
                 };
-    
-                const orderResponse = await fetch('/orders', {
+                const responseOrder = await fetch('/orders', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify(orderData)
                 });
-    
-                if (orderResponse.ok) {
-                    alert('Checkout successful.');
-                    cart = [];
-                    localStorage.setItem('cart', JSON.stringify(cart));
-                    closeCheckoutModal();
-                    closeCartModal();
-                    renderCategoriesAndItems();
-                    window.location.reload();
-                } else {
+                if (!responseOrder.ok) {
                     throw new Error('Error creating order');
                 }
+    
+                // Clear cart and update UI
+                customerCredit -= totalAmount;
+                cart = [];
+                localStorage.setItem('cart', JSON.stringify(cart));
+                closeCheckoutModal();
+                closeCartModal();
+                renderCategoriesAndItems();
+                alert('Checkout successful.');
+                window.location.reload(); // Reload the page or redirect as needed
             } catch (error) {
                 console.error('Error during checkout:', error);
                 alert('Error during checkout. Please try again.');
@@ -334,5 +331,8 @@ document.addEventListener('DOMContentLoaded', function() {
             alert('Insufficient credit. Please add more money.');
         }
     }
+    
+    
+    
     
 });
