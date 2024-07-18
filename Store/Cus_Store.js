@@ -133,34 +133,50 @@ document.addEventListener('DOMContentLoaded', function() {
     function renderCart() {
         const cartList = document.querySelector('.cart-list');
         cartList.innerHTML = '';
+    
         cart.forEach(item => {
             const cartItemElement = document.createElement('div');
             cartItemElement.innerHTML = `
                 <h3>${item.name}</h3>
                 <p>Quantity: 
                     <button onclick="decrementCartItem('${item._id}')">-</button>
-                    ${item.quantity}
-                    <button onclick="incrementCartItem('${item._id}')">+</button>
+                    <span>${item.quantity}</span>
+                    <button class="increment-btn" onclick="incrementCartItem('${item._id}')">+</button>
                 </p>
                 <p>Price: $${(item.price * item.quantity).toFixed(2)}</p>
                 <button onclick="removeFromCart('${item._id}')">Remove</button>
             `;
             cartList.appendChild(cartItemElement);
+    
+            // Disable increment button if stock is 0
+            const incrementButton = cartItemElement.querySelector('.increment-btn');
+            incrementButton.disabled = item.stock === 0;
         });
     }
+    
+    
+    
+    
+    
 
     window.incrementCartItem = async function(productId) {
         try {
             const response = await fetch(`/items/${productId}`);
             const product = await response.json();
-            if (product && product.stock > 0) {
+    
+            if (!product) {
+                throw new Error('Product not found');
+            }
+    
+            if (product.stock > 0) {
                 const cartItem = cart.find(item => item._id === productId);
+    
                 if (cartItem) {
                     cartItem.quantity += 1;
                     product.stock -= 1;
                     localStorage.setItem('cart', JSON.stringify(cart));
-                    renderCart();
-                    renderCategoriesAndItems();
+                    renderCart(); // Update cart UI
+                    renderCategoriesAndItems(); // Refresh categories/items UI if needed
                 } else {
                     alert(`${product.name} is not found in the cart.`);
                 }
@@ -169,8 +185,12 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         } catch (error) {
             console.error('Error incrementing cart item:', error);
+            alert('Error incrementing cart item. Please try again.');
         }
     }
+    
+    
+    
 
     window.decrementCartItem = function(productId) {
         const cartItem = cart.find(item => item._id === productId);
@@ -262,15 +282,40 @@ document.addEventListener('DOMContentLoaded', function() {
                     },
                     body: JSON.stringify({ items: cart })
                 });
-                if (response.ok) {
-                    customerCredit -= totalAmount;
-                    await fetch('/update-credit', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({ customerId: id, amount: -totalAmount })
-                    });
+                if (!response.ok) {
+                    throw new Error('Error updating stock');
+                }
+    
+                await fetch('/update-credit', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ customerId: id, amount: -totalAmount })
+                });
+    
+                // Create the order
+                const orderData = {
+                    customerId: id,
+                    totalPrice: totalAmount,
+                    numItems: cart.length,
+                    items: cart.map(item => ({
+                        _id: item._id,
+                        name: item.name,
+                        price: item.price,
+                        quantity: item.quantity
+                    }))
+                };
+    
+                const orderResponse = await fetch('/orders', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(orderData)
+                });
+    
+                if (orderResponse.ok) {
                     alert('Checkout successful.');
                     cart = [];
                     localStorage.setItem('cart', JSON.stringify(cart));
@@ -279,13 +324,15 @@ document.addEventListener('DOMContentLoaded', function() {
                     renderCategoriesAndItems();
                     window.location.reload();
                 } else {
-                    console.error('Error updating stock:', response.statusText);
+                    throw new Error('Error creating order');
                 }
             } catch (error) {
                 console.error('Error during checkout:', error);
+                alert('Error during checkout. Please try again.');
             }
         } else {
             alert('Insufficient credit. Please add more money.');
         }
     }
+    
 });
