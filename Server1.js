@@ -3,6 +3,7 @@ const path = require('path');
 const mongoose = require('mongoose');
 const app = express();
 const PORT = 3000;
+let orderCounter = 1;
 // Middleware to serve static files
 app.use(express.static(path.join(__dirname, 'HomePage')));
 app.use(express.static(path.join(__dirname, 'store')));
@@ -42,27 +43,22 @@ const itemSchema = new mongoose.Schema({
 });
 itemSchema.index({ name: 1, category: 1 }, { unique: true });
 const Item = mongoose.model('Item', itemSchema);
+
 const orderSchema = new mongoose.Schema({
     orderId: { type: Number, unique: true },
     customerId: Number,
     totalPrice: Number,
     numItems: Number,
-    items: [itemSchema],
-});
-// Define a pre-save middleware to auto-increment orderId
-orderSchema.pre('save', async function(next) {
-    try {
-        if (!this.orderId) {
-            // Find the highest existing orderId and increment by 1
-            const highestOrder = await Order.findOne({}, {}, { sort: { 'orderId': -1 } });
-            this.orderId = highestOrder ? highestOrder.orderId + 1 : 1;
-        }
-        next();
-    } catch (error) {
-        next(error);
-    }
+    items: [{
+        name: String,
+        price: Number,
+        category: String,
+        quantity: Number
+    }]
 });
 const Order = mongoose.model('Order', orderSchema);
+
+
 const categorySchema = new mongoose.Schema({
     name: { type: String, unique: true, required: true },
 });
@@ -334,16 +330,35 @@ app.get('/customer/:id', async (req, res) => {
     }
 });
 
+
 // Route to create a new order
 app.post('/orders', async (req, res) => {
     const { customerId, totalPrice, numItems, items } = req.body;
+
+    // Validate items
+    for (const item of items) {
+        if (!item.name || !item.category) {
+            return res.status(400).send('Each item must have a valid name and category');
+        }
+    }
+
     try {
+        // Find the highest existing orderId
+        const lastOrder = await Order.findOne().sort({ orderId: -1 }).exec();
+        let nextOrderId = 1; // Default starting orderId if no orders exist
+        if (lastOrder && lastOrder.orderId) {
+            nextOrderId = lastOrder.orderId + 1;
+        }
+
+        // Create the new order with the next orderId
         const newOrder = new Order({
+            orderId: nextOrderId,
             customerId,
             totalPrice,
             numItems,
             items
         });
+
         await newOrder.save();
         res.status(201).json(newOrder);
     } catch (error) {
@@ -351,6 +366,8 @@ app.post('/orders', async (req, res) => {
         res.status(500).send('Error creating order');
     }
 });
+
+
 
 // Start the server
 app.listen(PORT, () => {
