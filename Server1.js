@@ -306,6 +306,20 @@ app.post('/update-credit', async (req, res) => {
         res.status(500).send('Error updating credit');
     }
 });
+app.get('/customer/:id', async (req, res) => {
+    const { id } = req.params;
+    try {
+        const customer = await Customer.findOne({ id: parseInt(id) });
+        if (customer) {
+            res.json({ credit: customer.credit });
+        } else {
+            res.status(404).send('Customer not found');
+        }
+    } catch (error) {
+        console.error('Error fetching customer:', error);
+        res.status(500).send('Error fetching customer');
+    }
+});
 // Start the server
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
