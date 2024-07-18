@@ -260,6 +260,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     customerCredit += amount;
                     alert('Money added successfully.');
                     addMoneyInput.value = '';
+                    window.location.reload();
                 } else {
                     console.error('Error adding money:', response.statusText);
                 }
@@ -284,17 +285,20 @@ document.addEventListener('DOMContentLoaded', function() {
                     body: JSON.stringify({ items: cart })
                 });
                 if (!responseStock.ok) {
-                    throw new Error('Error updating stock');
+                    throw new Error('Failed to update stock');
                 }
     
                 // Update customer credit
-                await fetch('/update-credit', {
+                const responseCredit = await fetch('/update-credit', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({ customerId: id, amount: -totalAmount })
                 });
+                if (!responseCredit.ok) {
+                    throw new Error('Failed to update customer credit');
+                }
     
                 // Create order object and save to database
                 const orderData = {
@@ -303,6 +307,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     numItems: cart.length,
                     items: cart
                 };
+    
                 const responseOrder = await fetch('/orders', {
                     method: 'POST',
                     headers: {
@@ -311,7 +316,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     body: JSON.stringify(orderData)
                 });
                 if (!responseOrder.ok) {
-                    throw new Error('Error creating order');
+                    throw new Error('Failed to create order');
                 }
     
                 // Clear cart and update UI
@@ -331,7 +336,6 @@ document.addEventListener('DOMContentLoaded', function() {
             alert('Insufficient credit. Please add more money.');
         }
     }
-    
     
     
     
