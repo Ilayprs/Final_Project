@@ -180,23 +180,28 @@
             }
         }
 
-        // Dummy function for editing a product (replace with actual functionality)
-        function editProduct(productId, currentStock, currentPrice) {
+        // Function to edit a product
+        function editProduct(productId, currentStock, currentPrice, hasRGB, isWireless) {
             // Populate the modal fields with current values
             document.getElementById('editProductId').value = productId;
             document.getElementById('editProductStock').value = currentStock;
             document.getElementById('editProductPrice').value = currentPrice;
-
+            document.getElementById('editHasRGB').checked = hasRGB;
+            document.getElementById('editIsWireless').checked = isWireless;
+        
             // Open the edit product modal
             openModal('editProductModal');
         }
+
 
         // Function to update a product
         async function updateProduct() {
             const productId = document.getElementById('editProductId').value;
             const updatedStock = document.getElementById('editProductStock').value;
             const updatedPrice = document.getElementById('editProductPrice').value;
-
+            const updatedHasRGB = document.getElementById('editHasRGB').checked;
+            const updatedIsWireless = document.getElementById('editIsWireless').checked;
+        
             try {
                 const response = await fetch(`/products/${productId}`, {
                     method: 'PUT',
@@ -206,21 +211,24 @@
                     body: JSON.stringify({
                         stock: updatedStock,
                         price: updatedPrice,
+                        rgb: updatedHasRGB,
+                        wireless: updatedIsWireless,
                     }),
                 });
-
+        
                 if (!response.ok) {
                     throw new Error('Failed to update product');
                 }
-
+        
                 const updatedProduct = await response.json();
-
+        
                 // Update the product details on the page
                 updateProductOnPage(updatedProduct);
-
+        
                 // Close the modal
                 closeModal();
-
+                window.location.reload();
+        
             } catch (error) {
                 console.error('Error updating product:', error);
                 // Handle error updating product
@@ -271,7 +279,7 @@
             if (categoryDiv) {
                 var productListDiv = categoryDiv.querySelector(".product-list");
                 productListDiv.innerHTML = ''; // Clear existing items
-
+        
                 items.forEach(item => {
                     var newProductDiv = document.createElement("div");
                     newProductDiv.id = `product-${item._id}`;
@@ -280,6 +288,9 @@
                         <h3>${item.name}</h3>
                         <p class="product-stock">Stock: ${item.stock}</p>
                         <p class="product-price">Price: $${item.price}</p>
+                        <p class="product-company">Company: ${item.companyName || 'N/A'}</p> <!-- Default 'N/A' if companyName is undefined -->
+                        <p class="product-rgb">Has RGB: ${item.rgb ? 'Yes' : 'No'}</p>
+                        <p class="product-wireless">Is Wireless: ${item.wireless ? 'Yes' : 'No'}</p>
                         <button onclick="editProduct('${item._id}', '${item.stock}', '${item.price}')">Edit</button>
                         <button onclick="deleteProduct('${item.name}', this)">Delete</button>
                     `;
@@ -289,6 +300,7 @@
                 console.error('Selected category not found:', categoryName);
             }
         }
+        
 
         // Call fetchCategories() when the page loads to populate categories
         window.onload = fetchCategories();
