@@ -320,6 +320,25 @@ app.get('/customer/:id', async (req, res) => {
         res.status(500).send('Error fetching customer');
     }
 });
+
+// Route to create a new order
+app.post('/orders', async (req, res) => {
+    const { customerId, totalPrice, numItems, items } = req.body;
+    try {
+        const newOrder = new Order({
+            customerId,
+            totalPrice,
+            numItems,
+            items
+        });
+        await newOrder.save();
+        res.status(201).json(newOrder);
+    } catch (error) {
+        console.error('Error creating order:', error);
+        res.status(500).send('Error creating order');
+    }
+});
+
 // Start the server
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
