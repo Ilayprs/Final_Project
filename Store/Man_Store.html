@@ -94,18 +94,23 @@
     </div>
 
     <!-- Modal for editing product -->
-    <div id="editProductModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal()">&times;</span>
-            <h2>Edit Product</h2>
-            <label for="editProductStock">Stock:</label>
-            <input type="text" id="editProductStock" name="editProductStock" value="">
-            <label for="editProductPrice">Price:</label>
-            <input type="text" id="editProductPrice" name="editProductPrice" value="">
-            <input type="hidden" id="editProductId" name="editProductId" value="">
-            <button onclick="updateProduct()">Update Product</button>
-        </div>
+<div id="editProductModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <h2>Edit Product</h2>
+        <label for="editProductStock">Stock:</label>
+        <input type="text" id="editProductStock" name="editProductStock" value="">
+        <label for="editProductPrice">Price:</label>
+        <input type="text" id="editProductPrice" name="editProductPrice" value="">
+        <input type="hidden" id="editProductId" name="editProductId" value="">
+        <label for="editHasRGB">Has RGB:</label>
+        <input type="checkbox" id="editHasRGB" name="editHasRGB">
+        <label for="editIsWireless">Is Wireless:</label>
+        <input type="checkbox" id="editIsWireless" name="editIsWireless">
+        <button onclick="updateProduct()">Update Product</button>
     </div>
+</div>
+
 
 
     <script src="Man_Store.js"></script>
