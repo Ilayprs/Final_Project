@@ -6,50 +6,77 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('userType').innerText = 'Type: customer';
 
     let cart = JSON.parse(localStorage.getItem('cart')) || [];
-    let addedMoney = 0; // Variable to store the added money amount
+    let products = [];
+    let customerCredit = 0;
 
     async function fetchCategories() {
         const response = await fetch('/categories');
-        const categories = await response.json();
-        return categories;
+        if (response.ok) {
+            return await response.json();
+        } else {
+            console.error('Error fetching categories:', response.statusText);
+        }
     }
 
     async function fetchItemsByCategory(categoryName) {
         const response = await fetch(`/items?category=${encodeURIComponent(categoryName)}`);
-        const items = await response.json();
-        return items;
+        if (response.ok) {
+            return await response.json();
+        } else {
+            console.error('Error fetching items:', response.statusText);
+        }
+    }
+
+    async function fetchProducts() {
+        const response = await fetch('/items');
+        if (response.ok) {
+            products = await response.json();
+        } else {
+            console.error('Error fetching products:', response.statusText);
+        }
+    }
+
+    async function fetchCustomerCredit() {
+        const response = await fetch(`/customer/${id}`);
+        if (response.ok) {
+            const customer = await response.json();
+            customerCredit = customer.credit;
+        } else {
+            console.error('Error fetching customer credit:', response.statusText);
+        }
     }
 
     async function renderCategoriesAndItems() {
         const categories = await fetchCategories();
-        const productList = document.querySelector('.product-list');
-        productList.innerHTML = '';
+        const categoryList = document.querySelector('.category-list');
+        categoryList.innerHTML = '';
 
         for (const category of categories) {
-            const categoryElement = document.createElement('div');
-            categoryElement.className = 'category';
-            categoryElement.innerHTML = `<h3>${category.name}</h3>`;
-
             const items = await fetchItemsByCategory(category.name);
 
+            const categoryElement = document.createElement('div');
+            categoryElement.className = 'category';
+            categoryElement.innerHTML = `<h2>${category.name}</h2><div class="product-list"></div>`;
+
+            const productList = categoryElement.querySelector('.product-list');
             items.forEach(item => {
                 const itemElement = document.createElement('div');
                 itemElement.className = 'product';
                 itemElement.innerHTML = `
                     <h4>${item.name}</h4>
                     <p>Price: $${item.price.toFixed(2)}</p>
-                    <button onclick="addToCart('${item._id}')">Add to Shopping Cart</button>
+                    <button onclick="addToCart('${item._id}')">Add to Cart</button>
                 `;
-                categoryElement.appendChild(itemElement);
+                productList.appendChild(itemElement);
             });
 
-            productList.appendChild(categoryElement);
+            categoryList.appendChild(categoryElement);
         }
     }
 
     function updateProductStock() {
         cart.forEach(cartItem => {
-            const product = products.find(p => p.id === cartItem.id);
+            const product = products.find(p => p._id === cartItem._id);
             if (product) {
                 product.stock -= cartItem.quantity;
             }
@@ -57,14 +84,12 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     window.addToCart = async function(productId) {
-        console.log('Adding product to cart:', productId); // Debug log
         try {
             const response = await fetch(`/items/${productId}`);
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
             const product = await response.json();
-            console.log('Fetched product:', product); // Debug log
             if (product && product.stock > 0) {
                 const cartItem = cart.find(item => item._id === productId);
                 if (cartItem) {
@@ -72,10 +97,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 } else {
                     cart.push({ ...product, quantity: 1 });
                 }
-                product.stock -= 1; // Decrease the stock
-                localStorage.setItem('cart', JSON.stringify(cart)); // Save cart to localStorage
-                alert(`${product.name} has been added to your shopping cart.`);
-                renderCategoriesAndItems(); // Re-render products to update stock display
+                localStorage.setItem('cart', JSON.stringify(cart));
+                alert(`${product.name} has been added to your cart.`);
+                renderCategoriesAndItems();
             } else {
                 alert(`${product.name} is out of stock.`);
             }
@@ -83,10 +107,15 @@ document.addEventListener('DOMContentLoaded', function() {
             console.error('Error adding to cart:', error);
         }
     }
-    
 
-    renderCategoriesAndItems();
-    updateProductStock();
+    async function initialize() {
+        await fetchProducts();
+        await fetchCustomerCredit();
+        await renderCategoriesAndItems();
+        updateProductStock();
+    }
+
+    initialize();
 
     window.openCartModal = function() {
         const cartModal = document.getElementById('cartModal');
@@ -112,6 +141,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     <button onclick="incrementCartItem('${item._id}')">+</button>
                 </p>
                 <p>Price: $${(item.price * item.quantity).toFixed(2)}</p>
+                <button onclick="removeFromCart('${item._id}')">Remove</button>
             `;
             cartList.appendChild(cartItemElement);
         });
@@ -128,7 +158,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     product.stock -= 1;
                     localStorage.setItem('cart', JSON.stringify(cart));
                     renderCart();
-                    renderCategoriesAndItems(); // Update product list to reflect stock changes
+                    renderCategoriesAndItems();
                 } else {
                     alert(`${product.name} is not found in the cart.`);
                 }
@@ -153,8 +183,19 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             localStorage.setItem('cart', JSON.stringify(cart));
             renderCart();
-            renderCategoriesAndItems(); // Update product list to reflect stock changes
+            renderCategoriesAndItems();
         }
+    }
+
+    window.removeFromCart = function(productId) {
+        const product = products.find(p => p._id === productId);
+        if (product) {
+            product.stock += cart.find(item => item._id === productId).quantity;
+        }
+        cart = cart.filter(item => item._id !== productId);
+        localStorage.setItem('cart', JSON.stringify(cart));
+        renderCart();
+        renderCategoriesAndItems();
     }
 
     function calculateTotalAmount() {
@@ -186,39 +227,32 @@ document.addEventListener('DOMContentLoaded', function() {
         const amount = parseFloat(addMoneyInput.value);
         if (!isNaN(amount) && amount > 0) {
             try {
-                // Get customer ID from localStorage
-                const customerId = localStorage.getItem('id');
-    
-                // Send request to update credit on server
                 const response = await fetch('/update-credit', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ customerId, amount })
+                    body: JSON.stringify({ customerId: id, amount })
                 });
-    
-                if (!response.ok) {
-                    throw new Error('Failed to update credit');
+                if (response.ok) {
+                    customerCredit += amount;
+                    alert('Money added successfully.');
+                    addMoneyInput.value = '';
+                } else {
+                    console.error('Error adding money:', response.statusText);
                 }
-    
-                addedMoney += amount;
-                alert(`Added $${amount.toFixed(2)} to your account.`);
-                addMoneyInput.value = ''; // Clear input field
             } catch (error) {
                 console.error('Error adding money:', error);
-                alert('Error adding money. Please try again.');
             }
         } else {
-            alert('Please enter a valid amount to add.');
+            alert('Please enter a valid amount.');
         }
     }
 
     window.confirmCheckout = async function() {
         const totalAmount = parseFloat(calculateTotalAmount());
-        if (addedMoney >= totalAmount) {
+        if (customerCredit >= totalAmount) {
             try {
-                // Send cart items to server to update stock
                 const response = await fetch('/update-stock', {
                     method: 'POST',
                     headers: {
@@ -226,29 +260,29 @@ document.addEventListener('DOMContentLoaded', function() {
                     },
                     body: JSON.stringify({ items: cart })
                 });
-    
-                if (!response.ok) {
-                    throw new Error('Failed to update stock');
+                if (response.ok) {
+                    customerCredit -= totalAmount;
+                    await fetch('/update-credit', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ customerId: id, amount: -totalAmount })
+                    });
+                    alert('Checkout successful.');
+                    cart = [];
+                    localStorage.setItem('cart', JSON.stringify(cart));
+                    closeCheckoutModal();
+                    closeCartModal();
+                    renderCategoriesAndItems();
+                } else {
+                    console.error('Error updating stock:', response.statusText);
                 }
-    
-                alert('Your order has been confirmed!');
-                cart = [];
-                localStorage.setItem('cart', JSON.stringify(cart));
-                renderCart();
-                renderCategoriesAndItems(); // Update product list to reflect changes
-                closeCheckoutModal();
-                updateProductStock();
             } catch (error) {
-                console.error('Error confirming checkout:', error);
-                alert('Error confirming checkout. Please try again.');
+                console.error('Error during checkout:', error);
             }
         } else {
-            alert('Please add enough money to your account before proceeding.');
+            alert('Insufficient credit. Please add more money.');
         }
     }
-
-    const checkoutBtn = document.getElementById('checkoutBtn');
-    checkoutBtn.addEventListener('click', function() {
-        openCheckoutModal();
-    });
 });
