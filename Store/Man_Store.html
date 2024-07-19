@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kitchen Stuff Supplier Portal</title>
+    <title>Gaming Supplier Portal</title>
     <link rel="stylesheet" href="Man_Store.css">
 </head>
 <body>
     <header>
-        <h1>Kitchen Stuff Supplier Portal</h1>
+        <h1>Gaming Supplier Portal</h1>
         <nav>
             <ul>
                 <li><a href="#dashboard">Dashboard</a></li>
@@ -26,15 +26,17 @@
     
     <section id="inventory">
         <h2>Inventory</h2>
-        <button onclick="openModal('addProductModal')">Add New Product</button>
-        <button type="button" onclick="openModal('newCategoryModal')">Create New Category</button>
-        <!-- Empty categories to be populated dynamically -->
+        <button class="button" onclick="openModal('addProductModal')">Add New Product</button>
+        <button class="button" type="button" onclick="openModal('newCategoryModal')">Create New Category</button>
+        <div id="inventoryList" class="product-list">
+            <!-- Products will be populated dynamically -->
+        </div>
     </section>
     
     <section id="orders">
         <h2>Orders</h2>
         <div class="order-list">
-            <!-- Orders here -->
+            <!-- Orders will be populated dynamically -->
         </div>
     </section>
     
@@ -44,41 +46,48 @@
             <p id="userName"></p>
             <p id="userId"></p>
             <p id="userType"></p>
-            <p>Company: Kitchen Supplies Inc.</p>
+            <p>Company: Gaming Supplies Inc.</p>
             <button onclick="editProfile()">Edit Profile</button>
+
         </div>
     </section>
     
     <footer>
-        <p>&copy; 2024 Kitchen Stuff Supplier Portal</p>
-    </footer>
-    <!-- Modal for adding new product -->
-    <!-- Modal for adding new product -->
-<div id="addProductModal" class="modal">
-    <div class="modal-content">
-        <span class="close" onclick="closeModal()">&times;</span>
-        <h2>Add New Product</h2>
-        <form id="addProductForm">
-            <label for="productName">Product Name:</label><br>
-            <input type="text" id="productName" name="productName"><br>
-            <label for="productStock">Stock:</label><br>
-            <input type="number" id="productStock" name="productStock"><br>
-            <label for="productPrice">Price:</label><br>
-            <input type="text" id="productPrice" name="productPrice"><br><br>
-            <label for="companyName">Company Name:</label><br>
-            <input type="text" id="companyName" name="companyName"><br><br>
-            <label for="hasRGB">Has RGB:</label><br>
-            <input type="checkbox" id="hasRGB" name="hasRGB"><br><br>
-            <label for="isWireless">Is Wireless:</label><br>
-            <input type="checkbox" id="isWireless" name="isWireless"><br><br>
-            <label for="existingCategory">Choose Category:</label><br>
-            <select id="existingCategory" name="existingCategory">
+        <div class="footer-container">
+            <div class="categories">
+                <h3>Categories</h3>
                 <!-- Categories will be populated dynamically -->
-            </select><br><br>
-            <input type="button" value="Add Product" onclick="addProductToCategory()">
-        </form>
+                <section id="categories"></section>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- Modal for adding new product -->
+    <div id="addProductModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2>Add New Product</h2>
+            <form id="addProductForm">
+                <label for="productName">Product Name:</label><br>
+                <input type="text" id="productName" name="productName"><br>
+                <label for="productStock">Stock:</label><br>
+                <input type="number" id="productStock" name="productStock"><br>
+                <label for="productPrice">Price:</label><br>
+                <input type="text" id="productPrice" name="productPrice"><br><br>
+                <label for="companyName">Company Name:</label><br>
+                <input type="text" id="companyName" name="companyName"><br><br>
+                <label for="hasRGB">Has RGB:</label><br>
+                <input type="checkbox" id="hasRGB" name="hasRGB"><br><br>
+                <label for="isWireless">Is Wireless:</label><br>
+                <input type="checkbox" id="isWireless" name="isWireless"><br><br>
+                <label for="existingCategory">Choose Category:</label><br>
+                <select id="existingCategory" name="existingCategory">
+                    <!-- Categories will be populated dynamically -->
+                </select><br><br>
+                <input class="button" type="button" value="Add Product" onclick="addProductToCategory()">
+            </form>
+        </div>
     </div>
-</div>
 
     <!-- Modal for new category -->
     <div id="newCategoryModal" class="modal">
@@ -88,28 +97,46 @@
             <form id="newCategoryForm">
                 <label for="newCategoryName">Category Name:</label><br>
                 <input type="text" id="newCategoryName" name="newCategoryName"><br><br>
-                <input type="button" value="Create Category" onclick="createCategory()">
+                <input class="button" type="button" value="Create Category" onclick="createCategory()">
             </form>
         </div>
     </div>
 
     <!-- Modal for editing product -->
-<div id="editProductModal" class="modal">
+    <div id="editProductModal" class="modal">
     <div class="modal-content">
         <span class="close" onclick="closeModal()">&times;</span>
         <h2>Edit Product</h2>
+        <input type="hidden" id="editProductId">
+        <label for="editProductName">Product Name:</label>
+        <input type="text" id="editProductName">
         <label for="editProductStock">Stock:</label>
-        <input type="text" id="editProductStock" name="editProductStock" value="">
+        <input type="number" id="editProductStock">
         <label for="editProductPrice">Price:</label>
-        <input type="text" id="editProductPrice" name="editProductPrice" value="">
-        <input type="hidden" id="editProductId" name="editProductId" value="">
-        <label for="editHasRGB">Has RGB:</label>
-        <input type="checkbox" id="editHasRGB" name="editHasRGB">
-        <label for="editIsWireless">Is Wireless:</label>
-        <input type="checkbox" id="editIsWireless" name="editIsWireless">
-        <button onclick="updateProduct()">Update Product</button>
+        <input type="number" step="0.01" id="editProductPrice">
+        <label for="editCompanyName">Company Name:</label>
+        <input type="text" id="editCompanyName">
+        <label for="editHasRGB">RGB:</label>
+        <input type="checkbox" id="editHasRGB">
+        <label for="editIsWireless">Wireless:</label>
+        <input type="checkbox" id="editIsWireless">
+        <button id="updateProductButton" onclick="updateProduct()">Update Product</button>
     </div>
-</div>
+    </div>
+
+    <div id="editProfileModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2>Edit Profile</h2>
+            <form id="editProfileForm">
+                <label for="editProfileName">Name:</label>
+                <input type="text" id="editProfileName" name="name">
+                <label for="editProfileEmail">Email:</label>
+                <input type="email" id="editProfileEmail" name="email">
+                <button type="button" onclick="updateProfile()">Update Profile</button>
+            </form>
+        </div>
+    </div>
 
 
 
