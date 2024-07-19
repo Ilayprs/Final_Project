@@ -310,6 +310,112 @@ app.post('/send', async (req, res) => {
     }
 });
 
+
+
+
+
+
+app.get('/items/:id', async (req, res) => {
+    const { id } = req.params;
+    try {
+        const item = await Item.findById(id);
+        if (item) {
+            res.json(item);
+        } else {
+            res.status(404).send('Item not found');
+        }
+    } catch (error) {
+        console.error('Error fetching item:', error);
+        res.status(500).send('Error fetching item');
+    }
+});
+
+app.post('/update-stock', async (req, res) => {
+    const { items } = req.body;
+
+    try {
+        for (const item of items) {
+            const { _id, quantity } = item;
+            await Item.findByIdAndUpdate(_id, {
+                $inc: { stock: -quantity }
+            });
+        }
+        res.sendStatus(200); // OK
+    } catch (error) {
+        console.error('Error updating stock:', error);
+        res.status(500).send('Error updating stock');
+    }
+});
+
+app.post('/update-credit', async (req, res) => {
+    const { customerId, amount } = req.body;
+
+    try {
+        await Customer.findOneAndUpdate(
+            { id: customerId },
+            { $inc: { credit: amount } }
+        );
+        res.sendStatus(200); // OK
+    } catch (error) {
+        console.error('Error updating credit:', error);
+        res.status(500).send('Error updating credit');
+    }
+});
+app.get('/customer/:id', async (req, res) => {
+    const { id } = req.params;
+    try {
+        const customer = await Customer.findOne({ id: parseInt(id) });
+        if (customer) {
+            res.json({ credit: customer.credit });
+        } else {
+            res.status(404).send('Customer not found');
+        }
+    } catch (error) {
+        console.error('Error fetching customer:', error);
+        res.status(500).send('Error fetching customer');
+    }
+});
+
+
+// Route to create a new order
+app.post('/orders', async (req, res) => {
+    const { customerId, totalPrice, numItems, items } = req.body;
+
+    // Validate items
+    for (const item of items) {
+        if (!item.name || !item.category) {
+            return res.status(400).send('Each item must have a valid name and category');
+        }
+    }
+
+    try {
+        // Find the highest existing orderId
+        const lastOrder = await Order.findOne().sort({ orderId: -1 }).exec();
+        let nextOrderId = 1; // Default starting orderId if no orders exist
+        if (lastOrder && lastOrder.orderId) {
+            nextOrderId = lastOrder.orderId + 1;
+        }
+
+        // Create the new order with the next orderId
+        const newOrder = new Order({
+            orderId: nextOrderId,
+            customerId,
+            totalPrice,
+            numItems,
+            items
+        });
+
+        await newOrder.save();
+        res.status(201).json(newOrder);
+    } catch (error) {
+        console.error('Error creating order:', error);
+        res.status(500).send('Error creating order');
+    }
+});
+
+
+
+
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 });
