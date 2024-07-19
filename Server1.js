@@ -98,9 +98,8 @@ app.get('/categories', async (req, res) => {
 
 // Route to fetch items by category
 app.get('/items', async (req, res) => {
-    const categoryName = req.query.category;
     try {
-        const items = await Item.find({ category: categoryName });
+        const items = await Item.find();
         res.json(items);
     } catch (error) {
         console.error('Error fetching items:', error);
