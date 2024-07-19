@@ -1,207 +1,241 @@
-// Fetch user details from localStorage
-        const id = localStorage.getItem('id');
-        const userName = localStorage.getItem('userName');
-        document.getElementById('userName').innerText = 'Name: ' + userName;
-        document.getElementById('userId').innerText = 'ID: ' + id;
-        document.getElementById('userType').innerText = 'Type: manager';
+document.addEventListener('DOMContentLoaded', () => {
+    // JavaScript to handle footer visibility on scroll
+    let lastScrollTop = 0;
+    const footer = document.querySelector('footer');
 
-        // Function to open a specific modal
-        function openModal(modalId) {
-            closeModal(); // Close any open modal first
-            document.getElementById(modalId).style.display = "block";
+    window.addEventListener('scroll', function() {
+        let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        if (scrollTop > lastScrollTop) {
+            // Scrolling down
+            footer.classList.remove('show');
+            footer.classList.add('hide');
+        } else {
+            // Scrolling up
+            footer.classList.remove('hide');
+            footer.classList.add('show');
         }
+        lastScrollTop = scrollTop <= 0 ? 0 : scrollTop; // For Mobile or negative scrolling
+    });
 
-        // Function to close all modals
-        function closeModal() {
-            document.getElementById("addProductModal").style.display = "none";
-            // Add other modal close logic as needed
-            document.getElementById("newCategoryModal").style.display = "none";
-            document.getElementById("editProductModal").style.display = "none";
+    // Fetch user details from localStorage
+    const id = localStorage.getItem('id');
+    const userName = localStorage.getItem('userName');
+    document.getElementById('userName').innerText = 'Name: ' + userName;
+    document.getElementById('userId').innerText = 'ID: ' + id;
+    document.getElementById('userType').innerText = 'Type: manager';
 
-            // Reset inner form fields if applicable (adjust IDs as per your modal structure)
-            document.getElementById("editProductStock").value = '';
-            document.getElementById("editProductPrice").value = '';
+    // Function to open a specific modal
+    window.openModal = function(modalId) {
+        closeModal(); // Close any open modal first
+        document.getElementById(modalId).style.display = "block";
+    }
+
+    // Function to close all modals
+    window.closeModal = function() {
+        document.getElementById("addProductModal").style.display = "none";
+        document.getElementById("newCategoryModal").style.display = "none";
+        document.getElementById("editProductModal").style.display = "none";
+    }
+
+    // Fetch and populate categories
+    async function loadCategories() {
+        try {
+            const response = await fetch('/categories');
+            if (!response.ok) {
+                throw new Error('Failed to fetch categories');
+            }
+            const categories = await response.json();
+            const categoriesDiv = document.getElementById("categories");
+            const select = document.getElementById("existingCategory");
+
+            categories.forEach(category => {
+                // Add category to the dropdown
+                const option = document.createElement("option");
+                option.text = category.name;
+                option.value = category.name;
+                select.add(option);
+
+                // Add category to the categories section
+                const categoryDiv = document.createElement("div");
+                categoryDiv.className = "category";
+                categoryDiv.innerHTML = `
+                    <h3 class="category-title">${category.name}</h3>
+                    <div class="product-list" id="${category.name.replace(/\s+/g, '')}"></div>
+                `;
+                categoriesDiv.appendChild(categoryDiv);
+
+                // Load products for this category
+                loadProductsForCategory(category.name);
+            });
+        } catch (error) {
+            console.error('Error loading categories:', error);
         }
+    }
 
-        async function createCategory() {
-            var newCategoryName = document.getElementById("newCategoryName").value.trim(); // Trim whitespace
-            if (newCategoryName) {
-                try {
-                    const response = await fetch('/categories', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({ categoryName: newCategoryName }),
-                    });
-                    if (!response.ok) {
-                        throw new Error('Failed to create category');
-                    }
+    // Fetch and populate products for a category
+    async function loadProductsForCategory(categoryName) {
+        try {
+            const response = await fetch(`/products?category=${encodeURIComponent(categoryName)}`);
+            if (!response.ok) {
+                throw new Error('Failed to fetch products');
+            }
+            const products = await response.json();
+            const productList = document.getElementById(categoryName.replace(/\s+/g, ''));
 
-                    // If successful, fetch categories again to update the dropdown and add new category to the page
-                    const newCategory = await response.json();
+            products.forEach(product => {
+                const productDiv = document.createElement("div");
+                productDiv.className = "product";
+                productDiv.innerHTML = `
+                    <h3>${product.name}</h3>
+                    <p>Stock: ${product.stock}</p>
+                    <p>Price: $${product.price}</p>
+                    <p>Company: ${product.companyName}</p>
+                    <p>RGB: ${product.hasRGB ? 'Yes' : 'No'}</p>
+                    <p>Wireless: ${product.isWireless ? 'Yes' : 'No'}</p>
+                    <button class="button" onclick="editProduct('${product._id}', '${product.name}', ${product.stock}, ${product.price}, '${product.companyName}', ${product.hasRGB}, ${product.isWireless})">Edit</button>
+                `;
+                productList.appendChild(productDiv);
+            });
+        } catch (error) {
+            console.error('Error loading products:', error);
+        }
+    }
 
-                    // Add new category to the page
-                    addCategoryToPage(newCategory);
+    // Fetch and populate products for the inventory section
+    async function loadInventory() {
+        try {
+            const response = await fetch('/items');
+            if (!response.ok) {
+                throw new Error('Failed to fetch products');
+            }
+            const products = await response.json();
+            const inventoryList = document.getElementById("inventoryList");
 
-                    // Close the modal
-                    closeModal();
-                } catch (error) {
-                    console.error('Error creating category:', error);
-                    // Handle error creating category (e.g., display an error message)
+            // Clear existing products
+            inventoryList.innerHTML = '';
+
+            products.forEach(product => {
+                const productDiv = document.createElement("div");
+                productDiv.className = "product";
+                productDiv.innerHTML = `
+                    <h3>${product.name}</h3>
+                    <p>Stock: ${product.stock}</p>
+                    <p>Price: $${product.price}</p>
+                    <p>Company: ${product.companyName}</p>
+                    <p>RGB: ${product.rgb ? 'Yes' : 'No'}</p>
+                    <p>Wireless: ${product.wireless ? 'Yes' : 'No'}</p>
+                    <button class="button" onclick="editProduct('${product._id}', '${product.name}', ${product.stock}, ${product.price}, '${product.companyName}', ${product.rgb}, ${product.wireless})">Edit</button>
+                `;
+                inventoryList.appendChild(productDiv);
+            });
+        } catch (error) {
+            console.error('Error loading inventory:', error);
+        }
+    }
+
+    loadCategories(); // Initial call to load categories and products
+    loadInventory(); // Initial call to load products in the inventory section
+
+    // Add a new product to a category
+    window.addProductToCategory = async function() {
+        const productName = document.getElementById("productName").value.trim();
+        const productStock = parseInt(document.getElementById("productStock").value.trim(), 10);
+        const productPrice = parseFloat(document.getElementById("productPrice").value.trim());
+        const companyName = document.getElementById("companyName").value.trim();
+        const hasRGB = document.getElementById("hasRGB").checked;
+        const isWireless = document.getElementById("isWireless").checked;
+        const category = document.getElementById("existingCategory").value;
+
+        if (productName && !isNaN(productStock) && !isNaN(productPrice) && category) {
+            try {
+                const response = await fetch('/products', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        name: productName,
+                        stock: productStock,
+                        price: productPrice,
+                        companyName: companyName,
+                        hasRGB: hasRGB,
+                        isWireless: isWireless,
+                        category: category,
+                    }),
+                });
+                if (!response.ok) {
+                    throw new Error('Failed to add product');
                 }
-            } else {
-                alert('Please fill out the category name.');
+
+                const newProduct = await response.json();
+
+                // Add new product to the UI
+                const productList = document.getElementById(category.replace(/\s+/g, ''));
+                const productDiv = document.createElement("div");
+                productDiv.className = "product";
+                productDiv.innerHTML = `
+                    <h3>${newProduct.name}</h3>
+                    <p>Stock: ${newProduct.stock}</p>
+                    <p>Price: $${newProduct.price}</p>
+                    <p>Company: ${newProduct.companyName}</p>
+                    <p>RGB: ${newProduct.hasRGB ? 'Yes' : 'No'}</p>
+                    <p>Wireless: ${newProduct.isWireless ? 'Yes' : 'No'}</p>
+                    <button class="button" onclick="editProduct('${newProduct._id}', '${newProduct.name}', ${newProduct.stock}, ${newProduct.price}, '${newProduct.companyName}', ${newProduct.hasRGB}, ${newProduct.isWireless})">Edit</button>
+                `;
+                productList.appendChild(productDiv);
+
+                // Add new product to the inventory section
+                const inventoryList = document.getElementById("inventoryList");
+                const inventoryProductDiv = document.createElement("div");
+                inventoryProductDiv.className = "product";
+                inventoryProductDiv.innerHTML = `
+                    <h3>${newProduct.name}</h3>
+                    <p>Stock: ${newProduct.stock}</p>
+                    <p>Price: $${newProduct.price}</p>
+                    <p>Company: ${newProduct.companyName}</p>
+                    <p>RGB: ${newProduct.hasRGB ? 'Yes' : 'No'}</p>
+                    <p>Wireless: ${newProduct.isWireless ? 'Yes' : 'No'}</p>
+                    <button class="button" onclick="editProduct('${newProduct._id}', '${newProduct.name}', ${newProduct.stock}, ${newProduct.price}, '${newProduct.companyName}', ${newProduct.hasRGB}, ${newProduct.isWireless})">Edit</button>
+                `;
+                inventoryList.appendChild(inventoryProductDiv);
+
+                // Close the modal and clear input fields
+                closeModal();
+                document.getElementById("productName").value = "";
+                document.getElementById("productStock").value = "";
+                document.getElementById("productPrice").value = "";
+                document.getElementById("companyName").value = "";
+                document.getElementById("hasRGB").checked = false;
+                document.getElementById("isWireless").checked = false;
+            } catch (error) {
+                console.error('Error adding product:', error);
             }
         }
+    }
 
-        // Function to dynamically add a new category to the page
-        function addCategoryToPage(category) {
-            var categoriesDiv = document.querySelector("section#inventory");
-            // Create the new category div
-            var newCategoryDiv = document.createElement("div");
-            newCategoryDiv.className = "category";
-            newCategoryDiv.innerHTML = `
-                <h3 class="category-title">${category.name}</h3>
-                <div class="product-list"></div>
-            `;
-            // Add the new category to the HTML structure
-            categoriesDiv.appendChild(newCategoryDiv);
-            // Add new category to the select dropdown
-            var select = document.getElementById("existingCategory");
-            var option = document.createElement("option");
-            option.text = category.name;
-            option.value = category.name;
-            select.add(option);
-            // Optionally, sort options alphabetically
-            sortSelectOptions(select);
-        }
+    // Edit an existing product
+    window.editProduct = function(productId, productName, productStock, productPrice, companyName, hasRGB, isWireless) {
+        openModal('editProductModal');
+        document.getElementById('editProductId').value = productId;
+        document.getElementById('editProductName').value = productName;
+        document.getElementById('editProductStock').value = productStock;
+        document.getElementById('editProductPrice').value = productPrice;
+        document.getElementById('editCompanyName').value = companyName;
+        document.getElementById('editHasRGB').checked = hasRGB;
+        document.getElementById('editIsWireless').checked = isWireless;
+    }
 
-        // Helper function to sort select options alphabetically
-        function sortSelectOptions(select) {
-            var options = select.options;
-            var sortedOptions = Array.from(options).sort((a, b) => a.text.localeCompare(b.text));
-            select.options.length = 0; // Clear existing options
-            sortedOptions.forEach(option => select.add(option));
-        }
+    // Update an existing product
+    window.updateProduct = async function() {
+        const productId = document.getElementById('editProductId').value;
+        const productName = document.getElementById('editProductName').value.trim();
+        const productStock = parseInt(document.getElementById('editProductStock').value.trim(), 10);
+        const productPrice = parseFloat(document.getElementById('editProductPrice').value.trim());
+        const companyName = document.getElementById('editCompanyName').value.trim();
+        const hasRGB = document.getElementById('editHasRGB').checked;
+        const isWireless = document.getElementById('editIsWireless').checked;
 
-        // Function to add a product to a category
-        async function addProductToCategory() {
-            var productName = document.getElementById("productName").value;
-            var productStock = document.getElementById("productStock").value;
-            var productPrice = document.getElementById("productPrice").value;
-            var companyName = document.getElementById("companyName").value.trim(); // Fetch and trim company name
-            var hasRGB = document.getElementById("hasRGB").checked;
-            var isWireless = document.getElementById("isWireless").checked;
-            var selectedCategory = document.getElementById("existingCategory").value;
-
-            if (productName && productStock && productPrice && selectedCategory && companyName) {
-                try {
-                    const response = await fetch('/products', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            name: productName,
-                            stock: parseInt(productStock),
-                            price: parseFloat(productPrice),
-                            company: companyName, // Ensure company name is sent in the request
-                            rgb: hasRGB,
-                            wireless: isWireless,
-                            category: selectedCategory
-                        }),
-                    });
-                    if (!response.ok) {
-                        throw new Error('Failed to create product');
-                    }
-                    const product = await response.json();
-
-                    // Find the category div
-                    var categoryDiv = Array.from(document.getElementsByClassName("category"))
-                        .find(div => div.querySelector("h3").innerText === selectedCategory);
-                    if (categoryDiv) {
-                        // Create the new product element
-                        var newProductDiv = document.createElement("div");
-                        newProductDiv.className = "product";
-                        newProductDiv.innerHTML = `
-                            <h3>${product.name}</h3>
-                            <p class="product-stock">Stock: ${product.stock}</p>
-                            <p class="product-price">Price: $${product.price}</p>
-                            <p>Company: ${product.companyName}</p> <!-- Display company name -->
-                            <p>Has RGB: ${product.rgb ? 'Yes' : 'No'}</p>
-                            <p>Is Wireless: ${product.wireless ? 'Yes' : 'No'}</p>
-                            <button onclick="editProduct('${product._id}', '${product.stock}', '${product.price}')">Edit</button>
-                            <button onclick="deleteProduct('${product.name}', this)">Delete</button>
-                        `;
-
-                        // Add the new product to the category
-                        categoryDiv.querySelector(".product-list").appendChild(newProductDiv);
-
-                        // Reset the add product form
-                        document.getElementById("productName").value = '';
-                        document.getElementById("productStock").value = '';
-                        document.getElementById("productPrice").value = '';
-                        document.getElementById("companyName").value = '';
-                        document.getElementById("hasRGB").checked = false;
-                        document.getElementById("isWireless").checked = false;
-
-                        // Close the modal
-                        closeModal();
-                    } else {
-                        console.error('Selected category not found:', selectedCategory);
-                    }
-                } catch (error) {
-                    console.error('Error creating product:', error);
-                    // Handle error creating product (e.g., display an error message)
-                }
-            } else {
-                alert('Please fill out all fields.');
-            }
-        }
-
-        // Function to delete a product
-        async function deleteProduct(productName, button) {
-            if (confirm(`Are you sure you want to delete the product: ${productName}?`)) {
-                try {
-                    const response = await fetch(`/products/${productName}`, {
-                        method: 'DELETE',
-                    });
-                    if (!response.ok) {
-                        throw new Error('Failed to delete product');
-                    }
-                    // Remove the product from the page
-                    const productDiv = button.parentElement;
-                    productDiv.remove();
-                } catch (error) {
-                    console.error('Error deleting product:', error);
-                    // Handle error deleting product (e.g., display an error message)
-                }
-            }
-        }
-
-        // Function to edit a product
-        function editProduct(productId, currentStock, currentPrice, hasRGB, isWireless) {
-            // Populate the modal fields with current values
-            document.getElementById('editProductId').value = productId;
-            document.getElementById('editProductStock').value = currentStock;
-            document.getElementById('editProductPrice').value = currentPrice;
-            document.getElementById('editHasRGB').checked = hasRGB;
-            document.getElementById('editIsWireless').checked = isWireless;
-        
-            // Open the edit product modal
-            openModal('editProductModal');
-        }
-
-
-        // Function to update a product
-        async function updateProduct() {
-            const productId = document.getElementById('editProductId').value;
-            const updatedStock = document.getElementById('editProductStock').value;
-            const updatedPrice = document.getElementById('editProductPrice').value;
-            const updatedHasRGB = document.getElementById('editHasRGB').checked;
-            const updatedIsWireless = document.getElementById('editIsWireless').checked;
-        
+        if (productId && productName && !isNaN(productStock) && !isNaN(productPrice)) {
             try {
                 const response = await fetch(`/products/${productId}`, {
                     method: 'PUT',
@@ -209,98 +243,138 @@
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                        stock: updatedStock,
-                        price: updatedPrice,
-                        rgb: updatedHasRGB,
-                        wireless: updatedIsWireless,
+                        name: productName,
+                        stock: productStock,
+                        price: productPrice,
+                        companyName: companyName,
+                        hasRGB: hasRGB,
+                        isWireless: isWireless,
                     }),
                 });
-        
                 if (!response.ok) {
                     throw new Error('Failed to update product');
                 }
-        
+
                 const updatedProduct = await response.json();
-        
-                // Update the product details on the page
-                updateProductOnPage(updatedProduct);
-        
+
+                // Update product in the UI
+                const inventoryList = document.getElementById("inventoryList");
+                const productDivs = inventoryList.getElementsByClassName("product");
+
+                for (let productDiv of productDivs) {
+                    if (productDiv.querySelector("button").getAttribute("onclick").includes(productId)) {
+                        productDiv.innerHTML = `
+                            <h3>${updatedProduct.name}</h3>
+                            <p>Stock: ${updatedProduct.stock}</p>
+                            <p>Price: $${updatedProduct.price}</p>
+                            <p>Company: ${updatedProduct.companyName}</p>
+                            <p>RGB: ${updatedProduct.hasRGB ? 'Yes' : 'No'}</p>
+                            <p>Wireless: ${updatedProduct.isWireless ? 'Yes' : 'No'}</p>
+                            <button class="button" onclick="editProduct('${updatedProduct._id}', '${updatedProduct.name}', ${updatedProduct.stock}, ${updatedProduct.price}, '${updatedProduct.companyName}', ${updatedProduct.hasRGB}, ${updatedProduct.isWireless})">Edit</button>
+                        `;
+                        break;
+                    }
+                }
+
                 // Close the modal
                 closeModal();
-                window.location.reload();
-        
             } catch (error) {
                 console.error('Error updating product:', error);
-                // Handle error updating product
             }
         }
+    }
 
-        // Function to update product details on the page after editing
-        function updateProductOnPage(product) {
-            const productDiv = document.getElementById(`product-${product._id}`);
-            if (productDiv) {
-                productDiv.querySelector('.product-stock').textContent = `Stock: ${product.stock}`;
-                productDiv.querySelector('.product-price').textContent = `Price: $${product.price}`;
-            } else {
-                console.error('Product element not found on the page:', product._id);
-            }
-        }
-
-        // Function to fetch categories and populate the dropdown and page on initial load
-        async function fetchCategories() {
+    // Add a new category
+    window.addCategory = async function() {
+        const categoryName = document.getElementById("newCategoryName").value.trim();
+        if (categoryName) {
             try {
-                const response = await fetch('/categories');
-                const categories = await response.json();
-                var select = document.getElementById("existingCategory");
-                categories.forEach(async (category) => {
-                    var option = document.createElement("option");
-                    option.text = category.name;
-                    option.value = category.name;
-                    select.add(option);
-                    // Add category to the page
-                    addCategoryToPage(category);
-                    // Fetch items for this category
-                    const responseItems = await fetch(`/items?category=${category.name}`);
-                    const items = await responseItems.json();
-                    // Display items for this category
-                    displayItems(category.name, items);
+                const response = await fetch('/categories', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ name: categoryName }),
                 });
-                sortSelectOptions(select);
+                if (!response.ok) {
+                    throw new Error('Failed to add category');
+                }
+
+                const newCategory = await response.json();
+
+                // Add new category to the dropdown
+                const select = document.getElementById("existingCategory");
+                const option = document.createElement("option");
+                option.text = newCategory.name;
+                option.value = newCategory.name;
+                select.add(option);
+
+                // Add new category to the categories section
+                const categoriesDiv = document.getElementById("categories");
+                const categoryDiv = document.createElement("div");
+                categoryDiv.className = "category";
+                categoryDiv.innerHTML = `
+                    <h3 class="category-title">${newCategory.name}</h3>
+                    <div class="product-list" id="${newCategory.name.replace(/\s+/g, '')}"></div>
+                `;
+                categoriesDiv.appendChild(categoryDiv);
+
+                // Close the modal
+                closeModal();
+                document.getElementById("newCategoryName").value = "";
             } catch (error) {
-                console.error('Error fetching categories and items:', error);
-                // Handle error fetching categories (e.g., display an error message)
+                console.error('Error adding category:', error);
             }
         }
+    }
 
-        // Function to display items under a category
-        function displayItems(categoryName, items) {
-            var categoryDiv = Array.from(document.getElementsByClassName("category"))
-                .find(div => div.querySelector("h3").innerText === categoryName);
-            if (categoryDiv) {
-                var productListDiv = categoryDiv.querySelector(".product-list");
-                productListDiv.innerHTML = ''; // Clear existing items
-        
-                items.forEach(item => {
-                    var newProductDiv = document.createElement("div");
-                    newProductDiv.id = `product-${item._id}`;
-                    newProductDiv.className = "product";
-                    newProductDiv.innerHTML = `
-                        <h3>${item.name}</h3>
-                        <p class="product-stock">Stock: ${item.stock}</p>
-                        <p class="product-price">Price: $${item.price}</p>
-                        <p class="product-company">Company: ${item.companyName || 'N/A'}</p> <!-- Default 'N/A' if companyName is undefined -->
-                        <p class="product-rgb">Has RGB: ${item.rgb ? 'Yes' : 'No'}</p>
-                        <p class="product-wireless">Is Wireless: ${item.wireless ? 'Yes' : 'No'}</p>
-                        <button onclick="editProduct('${item._id}', '${item.stock}', '${item.price}')">Edit</button>
-                        <button onclick="deleteProduct('${item.name}', this)">Delete</button>
-                    `;
-                    productListDiv.appendChild(newProductDiv);
-                });
-            } else {
-                console.error('Selected category not found:', categoryName);
+    // Function to open the Edit Profile modal and populate it with current user data
+window.editProfile = function(name, email) {
+    document.getElementById('editProfileName').value = name;
+    document.getElementById('editProfileEmail').value = email;
+    openModal('editProfileModal');
+}
+
+// Function to update the profile
+window.updateProfile = async function() {
+    const name = document.getElementById('editProfileName').value.trim();
+    const email = document.getElementById('editProfileEmail').value.trim();
+    const id = localStorage.getItem('id'); // Assuming the user's ID is stored in localStorage
+
+    if (name && email) {
+        try {
+            const response = await fetch(`/profile/${id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ name, email }),
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to update profile');
             }
-        }
-        
 
-        // Call fetchCategories() when the page loads to populate categories
-        window.onload = fetchCategories();
+            const updatedProfile = await response.json();
+
+            // Update the UI with the new profile data
+            document.getElementById('userName').innerText = 'Name: ' + updatedProfile.name;
+            document.getElementById('userEmail').innerText = 'Email: ' + updatedProfile.email;
+
+            closeModal(); // Close the modal after updating
+
+            // Optionally, update localStorage if you store user details there
+            localStorage.setItem('userName', updatedProfile.name);
+            localStorage.setItem('userEmail', updatedProfile.email);
+
+            alert('Profile updated successfully');
+        } catch (error) {
+            console.error('Error updating profile:', error);
+            alert('Failed to update profile');
+        }
+    } else {
+        alert('Please fill out all fields');
+    }
+}
+
+});
