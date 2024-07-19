@@ -2,13 +2,13 @@ body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 0;
     padding: 0;
-    background: linear-gradient(to right, #e6e9f0, #eef1f5);
+    background: linear-gradient(to right, #f0f2f5, #c9d6ff);
     color: #333;
     overflow-x: hidden;
 }
 
 header {
-    background: linear-gradient(to right, #ff512f, #dd2476);
+    background: linear-gradient(to right, #ff416c, #ff4b2b);
     color: white;
     padding: 1.5em 0;
     text-align: center;
@@ -16,13 +16,16 @@ header {
     position: sticky;
     top: 0;
     z-index: 1000;
+    
 }
 
 header h1 {
     margin: 0;
     font-size: 3em;
     letter-spacing: 2px;
+    
 }
+
 
 header nav ul {
     list-style-type: none;
@@ -31,6 +34,7 @@ header nav ul {
     display: flex;
     justify-content: center;
     gap: 2em;
+    
 }
 
 header nav ul li {
@@ -71,6 +75,7 @@ section {
     max-width: 1200px;
     margin: 0 auto;
     animation: fadeIn 1s ease-in-out;
+    
 }
 
 @keyframes fadeIn {
@@ -80,9 +85,9 @@ section {
 
 section h2 {
     margin-bottom: 1em;
-    color: #dd2476;
+    color: #ff4b2b;
     font-size: 2.5em;
-    border-left: 5px solid #dd2476;
+    border-left: 5px solid #ff4b2b;
     padding-left: 0.75em;
     animation: slideInLeft 1s ease-in-out;
 }
@@ -114,155 +119,118 @@ section h2 {
     position: absolute;
     top: 0;
     left: 0;
-    width: 100%;
     height: 100%;
-    background: rgba(255, 255, 255, 0.7);
-    z-index: 1;
-    transition: opacity 0.3s ease;
-    opacity: 0;
-}
-
-.product:hover::before, .order:hover::before {
-    opacity: 1;
+    width: 5px;
+    background-color: #ff4b2b;
+    transform: scaleY(0);
+    transition: transform 0.3s ease;
 }
 
 .product:hover, .order:hover {
     transform: translateY(-5px);
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+}
+
+.product:hover::before, .order:hover::before {
+    transform: scaleY(1);
 }
 
 .product h3, .order h3 {
-    margin: 0 0 0.5em;
-    color: #ff512f;
-    position: relative;
-    z-index: 2;
+    margin-top: 0;
+    font-size: 1.8em;
+    color: #333;
 }
 
 .product p, .order p {
     margin: 0.5em 0;
-    position: relative;
-    z-index: 2;
-}
-
-button {
-    background-color: #dd2476;
-    color: white;
-    border: none;
-    padding: 0.75em 1.5em;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.3s ease;
-    position: relative;
-    z-index: 2;
-}
-
-button:hover {
-    background-color: #ff512f;
-    transform: scale(1.05);
-}
-
-#addProductBtn {
-    margin-top: 2em;
-    padding: 1em 2em;
-    background: linear-gradient(to right, #ff512f, #dd2476);
-    border: none;
-    color: white;
-    font-size: 1.2em;
-}
-
-form {
-    display: flex;
-    flex-direction: column;
-    gap: 1em;
-    max-width: 500px;
-    margin: 0 auto;
-    padding: 2em;
-    background-color: #FFFFFF;
-    border: 1px solid #ddd;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
-}
-
-form label {
-    font-weight: bold;
-    color: #dd2476;
-}
-
-form input, form textarea {
-    padding: 0.75em;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    width: 100%;
-    transition: border-color 0.3s ease;
-}
-
-form input:focus, form textarea:focus {
-    border-color: #dd2476;
-}
-
-form button {
-    align-self: center;
-    padding: 0.75em 2em;
-    background-color: #dd2476;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.3s ease;
-}
-
-form button:hover {
-    background-color: #ff512f;
-    transform: scale(1.05);
+    color: #666;
 }
 
 footer {
-    background-color: #dd2476;
+    background: #ff416c;
     color: white;
-    text-align: center;
-    padding: 1em;
     position: fixed;
-    width: 100%;
-    bottom: 0;
-    box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.1);
+    right: 0;
+    top: 0;
+    height: 100%;
+    width: 250px;
+    padding: 2em 1em;
+    box-shadow: -5px 0 10px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
 }
 
-/* Additional CSS styling if needed */
-.product, .order {
-    margin-bottom: 10px; /* Add margin between items */
+footer h3 {
+    margin-top: 0;
+    font-size: 1.5em;
+    border-bottom: 2px solid #FFEB3B;
+    padding-bottom: 0.5em;
 }
 
-.category-title {
-    font-size: 1.8em;
-    color: #333;
-    padding: 10px;
-    border-left: 5px solid #ff512f;
-    margin-top: 10px;
-    margin-bottom: 10px;
+footer ul {
+    list-style: none;
+    padding: 0;
 }
 
-/* Modal styles */
+footer ul li {
+    margin: 1em 0;
+}
+
+footer ul li a {
+    color: white;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+footer ul li a:hover {
+    color: #FFEB3B;
+}
+
+.button {
+    background: linear-gradient(to right, #ff416c, #ff4b2b);
+    color: white;
+    padding: 0.75em 1.5em;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+    font-size: 1em;
+    font-weight: bold;
+}
+
+.button:hover {
+    background: linear-gradient(to right, #ff4b2b, #ff416c);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
 .modal {
-    display: none; 
-    position: fixed; 
-    z-index: 1001; 
+    display: none;
+    position: fixed;
+    z-index: 1001;
     left: 0;
     top: 0;
-    width: 100%; 
-    height: 100%; 
-    overflow: auto; 
-    background-color: rgba(0,0,0,0.5); 
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
     padding-top: 60px;
+    animation: fadeIn 0.5s ease;
 }
 
 .modal-content {
-    background-color: #fefefe;
-    margin: 5% auto; 
+    background-color: #fff;
+    margin: 5% auto;
     padding: 20px;
     border: 1px solid #888;
     width: 80%;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    max-width: 500px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    animation: slideIn 0.5s ease;
+}
+
+@keyframes slideIn {
+    from { transform: translateY(-100%); }
+    to { transform: translateY(0); }
 }
 
 .close {
@@ -277,4 +245,14 @@ footer {
     color: black;
     text-decoration: none;
     cursor: pointer;
+}
+/* moving footer can cancel*/
+footer {
+    transition: transform 0.3s ease;
+}
+footer.hide {
+    transform: translateY(100%);
+}
+footer.show {
+    transform: translateY(0);
 }
