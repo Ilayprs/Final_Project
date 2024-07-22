@@ -109,13 +109,26 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    window.openPersonalArea = function() {
-        const personalAreaModal = document.getElementById('personalAreaModal');
-        document.getElementById('personalUserName').innerText = 'Name: ' + localStorage.getItem('userName');
-        document.getElementById('personalUserId').innerText = 'ID: ' + localStorage.getItem('id');
-        document.getElementById('personalUserType').innerText = 'Type: customer';
-        personalAreaModal.style.display = 'block';
+    window.openPersonalArea = async function() {
+        try {
+            const response = await fetch(`/customer/${id}`);
+            if (response.ok) {
+                const customer = await response.json();
+                document.getElementById('personalUserName').innerText = 'Name: ' + customer.username;
+                document.getElementById('personalUserId').innerText = 'ID: ' + customer.id;
+                document.getElementById('personalUserType').innerText = 'Type: customer';
+                //document.getElementById('personalUserCity').innerText = 'City: ' + customer.city; // Assuming you have this field
+    
+                const personalAreaModal = document.getElementById('personalAreaModal');
+                personalAreaModal.style.display = 'block';
+            } else {
+                console.error('Error fetching customer data:', response.statusText);
+            }
+        } catch (error) {
+            console.error('Error fetching customer data:', error);
+        }
     }
+    
     
     window.closePersonalArea = function() {
         const personalAreaModal = document.getElementById('personalAreaModal');
@@ -350,10 +363,22 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    window.editProfile = function() {
+    window.editProfile = async function() {
         const editProfileModal = document.getElementById('editProfileModal');
+        const response = await fetch(`/customer/${id}`);
+        
+        if (response.ok) {
+            const customer = await response.json();
+            document.getElementById('newUsername').value = customer.username || '';
+            document.getElementById('newPassword').value = ''; // Clear password field
+            document.getElementById('newCity').value = customer.city || '';
+        } else {
+            console.error('Error fetching customer data:', response.statusText);
+        }
+    
         editProfileModal.style.display = 'block';
     }
+    
     
     window.closeEditProfileModal = function() {
         const editProfileModal = document.getElementById('editProfileModal');
@@ -384,9 +409,13 @@ document.addEventListener('DOMContentLoaded', function() {
             if (response.ok) {
                 alert('Profile updated successfully.');
                 // Update UI with new values if needed
-                document.getElementById('userName').innerText = 'Name: ' + newUsername;
-                closeEditProfileModal();
-                window.location.reload();
+                document.getElementById('personalUserName').innerText = 'Name: ' + newUsername;
+                document.getElementById('personalUserId').innerText = 'ID: ' + id;
+                document.getElementById('personalUserType').innerText = 'Type: customer';
+                document.getElementById('personalUserCity').innerText = 'City: ' + newCity; // Assuming you have this field
+    
+                closeEditProfileModal(); // Close the edit profile modal
+                window.location.reload(); // Refresh the page or update the profile data as needed
             } else {
                 console.error('Error updating profile:', response.statusText);
             }
@@ -394,6 +423,9 @@ document.addEventListener('DOMContentLoaded', function() {
             console.error('Error updating profile:', error);
         }
     });
+    
+    
+    
     
     
 });
