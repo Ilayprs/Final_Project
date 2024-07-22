@@ -111,14 +111,41 @@ document.addEventListener('DOMContentLoaded', function() {
 
     window.openPersonalArea = async function() {
         try {
+            // Fetch customer profile
             const response = await fetch(`/customer/${id}`);
             if (response.ok) {
                 const customer = await response.json();
                 document.getElementById('personalUserName').innerText = 'Name: ' + customer.username;
                 document.getElementById('personalUserId').innerText = 'ID: ' + customer.id;
                 document.getElementById('personalUserType').innerText = 'Type: customer';
-                //document.getElementById('personalUserCity').innerText = 'City: ' + customer.city; // Assuming you have this field
     
+                // Fetch customer orders
+                const ordersResponse = await fetch(`/orders?customerId=${id}`);
+                if (ordersResponse.ok) {
+                    const orders = await ordersResponse.json();
+                    const ordersList = document.getElementById('customerOrdersList');
+                    ordersList.innerHTML = '';
+
+                    let count = 1;
+                    
+                    orders.forEach(order => {
+                        const orderElement = document.createElement('div');
+                        orderElement.className = 'order';
+                        orderElement.innerHTML = `
+                            <h3>Order ${count}: </h3>
+                            <p>Total Price: $${order.totalPrice.toFixed(2)}</p>
+                            <p>Number of Items: ${order.numItems}</p>
+                            <ul>
+                                ${order.items.map(item => `<li>${item.name}: ${item.quantity} x $${item.price.toFixed(2)}</li>`).join('')}
+                            </ul>
+                        `;
+                        ++count;
+                        ordersList.appendChild(orderElement);
+                    });
+                } else {
+                    console.error('Error fetching orders:', ordersResponse.statusText);
+                }
+                
                 const personalAreaModal = document.getElementById('personalAreaModal');
                 personalAreaModal.style.display = 'block';
             } else {
@@ -128,6 +155,8 @@ document.addEventListener('DOMContentLoaded', function() {
             console.error('Error fetching customer data:', error);
         }
     }
+    
+    
     
     
     window.closePersonalArea = function() {
