@@ -1,9 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
     const id = localStorage.getItem('id');
-    const userName = localStorage.getItem('userName');
-    document.getElementById('userName').innerText = 'Name: ' + userName;
-    document.getElementById('userId').innerText = 'ID: ' + id;
-    document.getElementById('userType').innerText = 'Type: customer';
 
     let cart = JSON.parse(localStorage.getItem('cart')) || [];
     let products = [];
@@ -354,6 +350,50 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
+    window.editProfile = function() {
+        const editProfileModal = document.getElementById('editProfileModal');
+        editProfileModal.style.display = 'block';
+    }
+    
+    window.closeEditProfileModal = function() {
+        const editProfileModal = document.getElementById('editProfileModal');
+        editProfileModal.style.display = 'none';
+    }
+    
+    document.getElementById('editProfileForm').addEventListener('submit', async function(event) {
+        event.preventDefault(); // Prevent form from submitting the default way
+    
+        const newUsername = document.getElementById('newUsername').value;
+        const newPassword = document.getElementById('newPassword').value;
+        const newCity = document.getElementById('newCity').value;
+    
+        try {
+            const response = await fetch('/update-profile', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    id: id,
+                    username: newUsername,
+                    password: newPassword,
+                    city: newCity
+                })
+            });
+    
+            if (response.ok) {
+                alert('Profile updated successfully.');
+                // Update UI with new values if needed
+                document.getElementById('userName').innerText = 'Name: ' + newUsername;
+                closeEditProfileModal();
+                window.location.reload();
+            } else {
+                console.error('Error updating profile:', response.statusText);
+            }
+        } catch (error) {
+            console.error('Error updating profile:', error);
+        }
+    });
     
     
 });
