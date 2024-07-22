@@ -393,8 +393,8 @@ async function fetchCustomerDetails() {
         data.orders.forEach(order => {
             const orderItem = document.createElement('li');
             orderItem.innerHTML = `
-                <button onclick="toggleOrderDetails(${order.orderId})">order id: ${order.orderId}</button>
-                <div id="orderDetails_${order.orderId}" style="display: none;"></div>
+                <button onclick="toggleOrderDetails(${order.orderId})" class="orderss">order ${order.orderId}</button>
+                <div id="orderDetails_${order.orderId}" style="display: none;" class="details_orders"></div>
             `;
             ordersList.appendChild(orderItem);
         });
