@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let cart = JSON.parse(localStorage.getItem('cart')) || [];
     let products = [];
     let customerCredit = 0;
+    let companies = [];
 
     async function fetchCategories() {
         const response = await fetch('/categories');
@@ -49,7 +50,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
         for (const category of categories) {
             const items = await fetchItemsByCategory(category.name);
-    
+
             const categoryElement = document.createElement('div');
             categoryElement.className = 'category';
             categoryElement.innerHTML = `<h2>${category.name}</h2><div class="product-list"></div>`;
@@ -67,10 +68,28 @@ document.addEventListener('DOMContentLoaded', function() {
                     <button onclick="addToCart('${item._id}')">Add to Cart</button>
                 `;
                 productList.appendChild(itemElement);
+                if (!companies.includes(item.companyName)) {
+                    companies.push(item.companyName);
+                }
             });
     
             categoryList.appendChild(categoryElement);
+
         }
+
+        populateCompanySelect();
+    }
+
+    function populateCompanySelect() {
+        const companySelect = document.getElementById('filterCompany');
+        companySelect.innerHTML = '';
+
+        companies.forEach(company => {
+            const option = document.createElement('option');
+            option.value = company;
+            option.textContent = company;
+            companySelect.appendChild(option);
+        });
     }
     
 
