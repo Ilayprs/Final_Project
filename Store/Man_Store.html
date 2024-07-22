@@ -23,6 +23,13 @@
                 <li><a href="#profile">Profile</a></li>
             </ul>
         </nav>
+        <div class="icons-container">
+        <div class="icon personal-icon" onclick="openPersonalArea()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-person" viewBox="0 0 16 16">
+                <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM8 9a6 6 0 0 0-6 6v1a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-1a6 6 0 0 0-6-6z"/>
+            </svg>
+        </div>
+    </div>
     </header>
     
     <section id="dashboard">
@@ -111,6 +118,39 @@
         <label for="editIsWireless">Is Wireless:</label>
         <input type="checkbox" id="editIsWireless" name="editIsWireless" required>
         <button onclick="updateProduct()">Update Product</button>
+    </div>
+</div>
+<div id="personalAreaModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closePersonalArea()">&times;</span>
+        <h2>Personal Area</h2>
+        
+        <!-- Manager Info Section -->
+        <div class="manager-info">
+            <h3>Manager Information</h3>
+            <p id="managerId"></p>
+            <p id="managerName"></p>
+            <p id="managerCity"></p>
+        </div>
+
+        <!-- Customer Info Section -->
+        <div class="profile-info" style="display: inline-block;">
+            <label for="customerSelect">Select Customer:</label>
+            <select id="customerSelect" onchange="fetchCustomerDetails()">
+                <!-- Options will be populated dynamically -->
+            </select>
+            <h3>Customer information</h3>
+            <p id="customerId"></p>
+            <p id="customerName"></p>
+            <p id="customerCity"></p>
+            <p id="customerCredit"></p>
+            <h3>Orders:</h3>
+            <ul id="customerOrders">
+                <!-- Orders will be populated dynamically -->
+            </ul>
+        </div>
+
+        <button onclick="editProfile()">Edit Profile</button>
     </div>
 </div>
 
