@@ -1,24 +1,40 @@
-/*hii*/
+/* General styles */
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(to right, #f0f2f5, #c9d6ff);
+    color: #333;
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
-    margin: 0;
-    background: linear-gradient(to right, #6a11cb, #2575fc);
 }
+
 .container {
     text-align: center;
     background: white;
     padding: 50px;
-    border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
 }
+
+.container:hover {
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+    transform: translateY(-5px);
+}
+
 h1 {
     margin-bottom: 20px;
-    color: #333;
+    color: #ff4b2b;
+    font-size: 2.5em;
+    font-weight: bold;
+    letter-spacing: 1px;
+    animation: fadeIn 1s ease-in-out;
 }
+
+/* Button styles */
 .button {
     display: inline-block;
     margin: 10px;
@@ -26,12 +42,16 @@ h1 {
     font-size: 16px;
     font-weight: bold;
     color: white;
-    background-color: #6a11cb;
+    background: linear-gradient(to right, #ff416c, #ff4b2b);
     border: none;
-    border-radius: 5px;
+    border-radius: 8px;
     cursor: pointer;
-    transition: background-color 0.3s;
+    transition: background 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
+
 .button:hover {
-    background-color: #2575fc;
+    background: linear-gradient(to right, #ff4b2b, #ff416c);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
 }
