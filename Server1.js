@@ -471,7 +471,24 @@ app.post('/orders', async (req, res) => {
 });
 
 
+app.get('/orders', async (req, res) => {
+    try {
+        const customerId = req.query.customerId;
 
+        if (!customerId) {
+            return res.status(400).json({ error: 'Customer ID is required' });
+        }
+
+        // Find orders by customer ID
+        const orders = await Order.find({ customerId });
+
+        // Return the orders as JSON
+        res.json(orders);
+    } catch (error) {
+        console.error('Error fetching orders:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
 
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
