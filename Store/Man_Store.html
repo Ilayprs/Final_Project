@@ -5,6 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gaming Stuff Supplier Portal</title>
     <link rel="stylesheet" href="Man_Store.css">
+    <style>
+        .section-offset {
+            padding-top: 100px; /* Adjust this value to match the height of the fixed header */
+            margin-top: -100px; /* Adjust this value to match the height of the fixed header */
+        }
+    </style>
 </head>
 <body>
     <header>
@@ -94,16 +100,16 @@
         <span class="close" onclick="closeModal()">&times;</span>
         <h2>Edit Product</h2>
         <label for="editProductName">Name:</label>
-        <input type="text" id="editProductName" name="editProductName" value="">
+        <input type="text" id="editProductName" name="editProductName" value="" required>
         <label for="editProductStock">Stock:</label>
-        <input type="text" id="editProductStock" name="editProductStock" value="">
+        <input type="text" id="editProductStock" name="editProductStock" value="" required>
         <label for="editProductPrice">Price:</label>
-        <input type="text" id="editProductPrice" name="editProductPrice" value="">
-        <input type="hidden" id="editProductId" name="editProductId" value="">
+        <input type="text" id="editProductPrice" name="editProductPrice" value="" required>
+        <input type="hidden" id="editProductId" name="editProductId" value="" required>
         <label for="editHasRGB">Has RGB:</label>
-        <input type="checkbox" id="editHasRGB" name="editHasRGB">
+        <input type="checkbox" id="editHasRGB" name="editHasRGB" required>
         <label for="editIsWireless">Is Wireless:</label>
-        <input type="checkbox" id="editIsWireless" name="editIsWireless">
+        <input type="checkbox" id="editIsWireless" name="editIsWireless" required>
         <button onclick="updateProduct()">Update Product</button>
     </div>
 </div>
