@@ -308,6 +308,110 @@ function displayItems(categoryName, items) {
     }
 }
 
+// Function to open the personal area modal and populate customer IDs
+// Function to open the personal area modal and populate manager and customer data
+async function openPersonalArea() {
+    document.getElementById('personalAreaModal').style.display = 'block';
+    await fetchManagerDetails();
+    await fetchCustomerIds(); // Assuming you have a function to populate customer IDs
+}
+
+async function fetchCustomerIds() {
+    try {
+        const response = await fetch('/customer-ids');
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        const customers = await response.json();
+        const customerSelect = document.getElementById('customerSelect');
+        
+        // Clear previous options
+        customerSelect.innerHTML = '';
+
+        // Populate select options with customer IDs
+        customers.forEach(customer => {
+            const option = document.createElement('option');
+            option.value = customer.id;
+            option.textContent = customer.id;
+            customerSelect.appendChild(option);
+        });
+    } catch (error) {
+        console.error('Error fetching customer IDs:', error);
+    }
+}
+
+// Function to fetch and display manager details
+async function fetchManagerDetails() {
+    const managerId = localStorage.getItem('id'); // Assuming manager ID is stored in localStorage
+
+    if (!managerId) return;
+
+    try {
+        const response = await fetch(`/manager-details/${managerId}`);
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+
+        const data = await response.json();
+
+        // Display manager details
+        document.getElementById('managerId').textContent = `ID: ${data.id}`;
+        document.getElementById('managerName').textContent = `Name: ${data.username}`;
+        document.getElementById('managerCity').textContent = `City: ${data.city}`;
+    } catch (error) {
+        console.error('Error fetching manager details:', error);
+    }
+}
+
+// Function to fetch and display customer details
+// Function to fetch and display customer details
+async function fetchCustomerDetails() {
+    const customerId = document.getElementById('customerSelect').value;
+
+    if (!customerId) return;
+
+    try {
+        const response = await fetch(`/customer-details/${customerId}`);
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+
+        const data = await response.json();
+
+        // Display customer details
+        document.getElementById('customerId').textContent = `ID: ${data.id}`;
+        document.getElementById('customerName').textContent = `Name: ${data.username}`;
+        document.getElementById('customerCity').textContent = `City: ${data.city}`;
+        document.getElementById('customerCredit').textContent = `Credit: $${data.credit}`;
+
+        // Display customer orders
+        const ordersList = document.getElementById('customerOrders');
+        ordersList.innerHTML = ''; // Clear previous orders
+
+        data.orders.forEach(order => {
+            const orderItem = document.createElement('li');
+            orderItem.innerHTML = `
+                <strong>Order ID:</strong> ${order.orderId} <br>
+                <strong>Total Price:</strong> $${order.totalPrice} <br>
+                <strong>Items:</strong>
+                <ul>
+                    ${order.items.map(item => `
+                        <li>${item.name}: ${item.quantity} x $${item.price}</li>
+                    `).join('')}
+                </ul>
+            `;
+            ordersList.appendChild(orderItem);
+        });
+    } catch (error) {
+        console.error('Error fetching customer details:', error);
+    }
+}
+
+
+// Function to close the personal area modal
+function closePersonalArea() {
+    document.getElementById('personalAreaModal').style.display = 'none';
+}
 
 // Call fetchCategories() when the page loads to populate categories
 window.onload = fetchCategories;
