@@ -50,6 +50,13 @@ header nav ul li a:hover {
     color: #FFEB3B;
 }
 
+/* Remove dots from the list */
+ul.no-bullets {
+    list-style-type: none; /* Remove default bullets */
+    padding-left: 0; /* Remove default left padding */
+    margin: 0; /* Remove default margin */
+}
+
 
 .icons-container {
     position: absolute;
