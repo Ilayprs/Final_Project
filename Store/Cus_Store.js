@@ -113,6 +113,19 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    window.openPersonalArea = function() {
+        const personalAreaModal = document.getElementById('personalAreaModal');
+        document.getElementById('personalUserName').innerText = 'Name: ' + localStorage.getItem('userName');
+        document.getElementById('personalUserId').innerText = 'ID: ' + localStorage.getItem('id');
+        document.getElementById('personalUserType').innerText = 'Type: customer';
+        personalAreaModal.style.display = 'block';
+    }
+    
+    window.closePersonalArea = function() {
+        const personalAreaModal = document.getElementById('personalAreaModal');
+        personalAreaModal.style.display = 'none';
+    }
+
     async function initialize() {
         await fetchProducts();
         await fetchCustomerCredit();
