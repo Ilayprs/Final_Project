@@ -86,6 +86,20 @@ app.get('/categories', async (req, res) => {
     }
 });
 // Route to fetch items by category
+
+// Route to fetch all customer IDs
+app.get('/customer-ids', async (req, res) => {
+    try {
+        const customers = await Customer.find({}, { id: 1, _id: 0 }); // Fetch only the 'id' field
+        res.json(customers);
+    } catch (error) {
+        console.error('Error fetching customer IDs:', error);
+        res.status(500).send('Error fetching customer IDs');
+    }
+});
+
+
+
 app.get('/items', async (req, res) => {
     const categoryName = req.query.category;
     try {
@@ -347,7 +361,59 @@ app.get('/customer/:id', async (req, res) => {
     }
 });
 
+// Route to fetch customer details by ID
+// Route to fetch customer details including orders
+app.get('/customer-details/:id', async (req, res) => {
+    const { id } = req.params;
+    try {
+        const customer = await Customer.findOne({ id: parseInt(id) }).lean();
+        if (!customer) {
+            return res.status(404).send('Customer not found');
+        }
 
+        // Fetch orders for the customer
+        const orders = await Order.find({ customerId: customer.id }).lean();
+
+        // Send customer and orders data
+        res.json({ ...customer, orders });
+    } catch (error) {
+        console.error('Error fetching customer details:', error);
+        res.status(500).send('Error fetching customer details');
+    }
+});
+
+
+// Route to fetch manager details by ID
+app.get('/manager-details/:id', async (req, res) => {
+    const { id } = req.params;
+    try {
+        const manager = await Manager.findOne({ id: parseInt(id) });
+
+        if (!manager) {
+            return res.status(404).send('Manager not found');
+        }
+
+        // Send manager details
+        res.json(manager);
+    } catch (error) {
+        console.error('Error fetching manager details:', error);
+        res.status(500).send('Error fetching manager details');
+    }
+});
+
+app.post('/update-profile', async (req, res) => {
+    const { id, username, password, city } = req.body;
+
+    try {
+        await Customer.findOneAndUpdate(
+            { id: id },
+            { username, password, city }
+        );
+        res.sendStatus(200); // OK
+    } catch (error) {
+        console.error('Error updating profile:', error);
+    }
+});
 // Route to create a new order
 app.post('/orders', async (req, res) => {
     const { customerId, totalPrice, numItems, items } = req.body;
