@@ -365,6 +365,8 @@ async function fetchManagerDetails() {
 
 // Function to fetch and display customer details
 // Function to fetch and display customer details
+// Function to fetch and display customer details
+// Function to fetch and display customer details
 async function fetchCustomerDetails() {
     const customerId = document.getElementById('customerSelect').value;
 
@@ -391,7 +393,32 @@ async function fetchCustomerDetails() {
         data.orders.forEach(order => {
             const orderItem = document.createElement('li');
             orderItem.innerHTML = `
-                <strong>Order ID:</strong> ${order.orderId} <br>
+                <button onclick="toggleOrderDetails(${order.orderId})">order id: ${order.orderId}</button>
+                <div id="orderDetails_${order.orderId}" style="display: none;"></div>
+            `;
+            ordersList.appendChild(orderItem);
+        });
+
+    } catch (error) {
+        console.error('Error fetching customer details:', error);
+    }
+}
+
+// Function to toggle visibility of order details
+async function toggleOrderDetails(orderId) {
+    const detailsContainer = document.getElementById(`orderDetails_${orderId}`);
+    
+    if (detailsContainer.style.display === 'none') {
+        try {
+            const response = await fetch(`/orders/${orderId}`);
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+
+            const order = await response.json();
+
+            // Display order details
+            detailsContainer.innerHTML = `
                 <strong>Total Price:</strong> $${order.totalPrice} <br>
                 <strong>Items:</strong>
                 <ul>
@@ -400,12 +427,19 @@ async function fetchCustomerDetails() {
                     `).join('')}
                 </ul>
             `;
-            ordersList.appendChild(orderItem);
-        });
-    } catch (error) {
-        console.error('Error fetching customer details:', error);
+
+            detailsContainer.style.display = 'block';
+
+        } catch (error) {
+            console.error('Error fetching order details:', error);
+        }
+    } else {
+        // Hide the details if already shown
+        detailsContainer.style.display = 'none';
     }
 }
+
+
 
 
 // Function to close the personal area modal
