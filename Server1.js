@@ -351,7 +351,10 @@ app.get('/customer/:id', async (req, res) => {
     try {
         const customer = await Customer.findOne({ id: parseInt(id) });
         if (customer) {
-            res.json({ credit: customer.credit });
+            res.json({ credit: customer.credit,
+                username: customer.username,
+                id: customer.id
+             });
         } else {
             res.status(404).send('Customer not found');
         }
@@ -400,6 +403,22 @@ app.get('/manager-details/:id', async (req, res) => {
         res.status(500).send('Error fetching manager details');
     }
 });
+
+// Route to fetch order details
+app.get('/orders/:id', async (req, res) => {
+    const { id } = req.params;
+    try {
+        const order = await Order.findOne({ orderId: parseInt(id) }).lean();
+        if (!order) {
+            return res.status(404).send('Order not found');
+        }
+        res.json(order);
+    } catch (error) {
+        console.error('Error fetching order details:', error);
+        res.status(500).send('Error fetching order details');
+    }
+});
+
 
 app.post('/update-profile', async (req, res) => {
     const { id, username, password, city } = req.body;
