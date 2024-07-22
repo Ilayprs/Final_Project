@@ -1,35 +1,40 @@
 /* General styles */
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(to right, #f0f2f5, #c9d6ff);
+    color: #333;
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
-    margin: 0;
-    background: linear-gradient(to right, #6a11cb, #2575fc);
 }
 
 .container {
     text-align: center;
     background: white;
     padding: 50px;
-    border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.container:hover {
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+    transform: translateY(-5px);
 }
 
 h1 {
     margin-bottom: 20px;
-    color: #333;
+    color: #ff4b2b;
+    font-size: 2.5em;
+    font-weight: bold;
+    letter-spacing: 1px;
+    animation: fadeIn 1s ease-in-out;
 }
-.bottom-left-button {
-    padding: 10px 20px; /* Padding inside the button */
-    font-size: 16px; /* Font size of the button text */
-    background-color: #4CAF50; /* Background color of the button */
-    color: white; /* Text color of the button */
-    border: none; /* No border */
-    cursor: pointer; /* Cursor style */
-    border-radius: 5px; /* Rounded corners for the button */
-}
+
+/* Button styles */
 .button {
     display: inline-block;
     margin: 10px;
@@ -37,51 +42,83 @@ h1 {
     font-size: 16px;
     font-weight: bold;
     color: white;
-    background-color: #6a11cb;
+    background: linear-gradient(to right, #ff416c, #ff4b2b);
     border: none;
-    border-radius: 5px;
+    border-radius: 8px;
     cursor: pointer;
-    transition: background-color 0.3s;
+    transition: background 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .button:hover {
-    background-color: #2575fc;
+    background: linear-gradient(to right, #ff4b2b, #ff416c);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
 }
 
-.bottom-left {
-    position: fixed; /* Fixed position to stay at the bottom of the viewport */
-    left: 20px; /* Adjust this value to control the horizontal position */
-    bottom: 20px; /* Adjust this value to control the vertical position */
-    
+/* Bottom-left button styles */
+.bottom-left-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #ff416c;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 8px;
+    position: fixed;
+    left: 20px;
+    bottom: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.bottom-left-button:hover {
+    background-color: #ff4b2b;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
 }
 
 /* Input and select styles */
 input, select {
     width: 100%;
-    padding: 10px;
+    padding: 12px;
     margin: 10px 0;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
     box-sizing: border-box;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 input:focus, select:focus {
-    border-color: #6a11cb;
+    border-color: #ff416c;
     outline: none;
+    box-shadow: 0 0 5px rgba(255, 65, 108, 0.5);
 }
 
-/* Additional styles */
+/* Form styles */
 form {
     max-width: 400px;
     margin: auto;
 }
 
 form input[type="submit"] {
-    background-color: #6a11cb;
+    background: linear-gradient(to right, #ff416c, #ff4b2b);
     color: white;
     cursor: pointer;
+    border-radius: 8px;
+    padding: 12px;
+    border: none;
+    transition: background 0.3s ease, transform 0.2s ease;
 }
 
 form input[type="submit"]:hover {
-    background-color: #2575fc;
+    background: linear-gradient(to right, #ff4b2b, #ff416c);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* Keyframes for animations */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
