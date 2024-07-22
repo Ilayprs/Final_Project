@@ -456,6 +456,139 @@ document.addEventListener('DOMContentLoaded', function() {
     
     
     
-    
+    async function fetchItemProperties() {
+        // Simulating fetching item properties; replace with your actual API call
+        return [
+            { name: 'Color', type: 'select', options: ['Red', 'Blue', 'Green'] },
+            { name: 'Size', type: 'select', options: ['Small', 'Medium', 'Large'] },
+            { name: 'Brand', type: 'select', options: ['Brand A', 'Brand B', 'Brand C'] },
+            { name: 'RGB', type: 'checkbox' },
+            { name: 'Wireless', type: 'checkbox' }
+        ];
+    }
+
+    async function renderFilters() {
+        const properties = await fetchItemProperties();
+        const filtersForm = document.getElementById('filtersForm');
+        filtersForm.innerHTML = '';
+
+        properties.forEach(property => {
+            const container = document.createElement('div');
+            container.className = 'filter-container';
+
+            if (property.type === 'select') {
+                const select = document.createElement('select');
+                select.id = property.name;
+                select.name = property.name;
+
+                property.options.forEach(option => {
+                    const optionElement = document.createElement('option');
+                    optionElement.value = option;
+                    optionElement.textContent = option;
+                    select.appendChild(optionElement);
+                });
+
+                container.appendChild(document.createTextNode(property.name + ': '));
+                container.appendChild(select);
+
+            } else if (property.type === 'checkbox') {
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.id = property.name;
+                checkbox.name = property.name;
+
+                container.appendChild(checkbox);
+                container.appendChild(document.createTextNode(' ' + property.name));
+            }
+
+            filtersForm.appendChild(container);
+        });
+    }
+
+    window.applyFilters = function() {
+        const filters = {};
+        document.querySelectorAll('#filtersForm select, #filtersForm input[type="checkbox"]').forEach(element => {
+            filters[element.name] = element.type === 'checkbox' ? element.checked : element.value;
+        });
+
+        // Use the filters to fetch and render filtered items
+        fetchAndRenderFilteredItems(filters);
+    }
+
+    async function fetchAndRenderFilteredItems(filters) {
+        // Implement filtering logic based on selected filters
+        // This is an example; you will need to adjust it to match your API and filtering logic
+        try {
+            const response = await fetch('/items', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(filters)
+            });
+            if (response.ok) {
+                const items = await response.json();
+                renderProducts(items);
+            } else {
+                console.error('Error fetching filtered items:', response.statusText);
+            }
+        } catch (error) {
+            console.error('Error fetching filtered items:', error);
+        }
+    }
+
+    function renderProducts(products) {
+        const productList = document.querySelector('.product-list');
+        productList.innerHTML = '';
+
+        products.forEach(item => {
+            const itemElement = document.createElement('div');
+            itemElement.className = 'product';
+            itemElement.innerHTML = `
+                <h4>${item.name}</h4>
+                <p>Price: $${item.price.toFixed(2)}</p>
+                <p>Company: ${item.companyName}</p>
+                <p>RGB: ${item.rgb ? 'Yes' : 'No'}</p>
+                <p>Wireless: ${item.wireless ? 'Yes' : 'No'}</p>
+                <button onclick="addToCart('${item._id}')">Add to Cart</button>
+            `;
+            productList.appendChild(itemElement);
+        });
+    }
+
+    async function populateCategorySelect() {
+        const categories = await fetchCategories();
+        const categorySelect = document.getElementById('categorySelect');
+        categorySelect.innerHTML = '<option value="">Select a category</option>';
+        
+        categories.forEach(category => {
+            const option = document.createElement('option');
+            option.value = category.name;
+            option.textContent = category.name;
+            categorySelect.appendChild(option);
+        });
+    }
+
+    function applyFilters() {
+        const company = document.getElementById('companyInput').value;
+        const minPrice = parseFloat(document.getElementById('minPrice').value) || 0;
+        const maxPrice = parseFloat(document.getElementById('maxPrice').value) || Infinity;
+        const category = document.getElementById('categorySelect').value;
+        const rgb = document.getElementById('rgbCheckbox').checked;
+        const wireless = document.getElementById('wirelessCheckbox').checked;
+
+        // Logic to filter products based on the provided criteria
+        filterProducts(company, minPrice, maxPrice, category, rgb, wireless);
+    }
+
+    function filterProducts(company, minPrice, maxPrice, category, rgb, wireless) {
+        // Implement your filtering logic here
+        console.log('Filtering products with:', { company, minPrice, maxPrice, category, rgb, wireless });
+        // For example, you could make a fetch request to get the filtered products
+    }
+
+    populateCategorySelect();
+    // Initialize filters on page load
+    renderFilters();
     
 });
