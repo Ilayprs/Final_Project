@@ -353,7 +353,8 @@ app.get('/customer/:id', async (req, res) => {
         if (customer) {
             res.json({ credit: customer.credit,
                 username: customer.username,
-                id: customer.id
+                id: customer.id,
+                city: customer.city
              });
         } else {
             res.status(404).send('Customer not found');
