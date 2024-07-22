@@ -50,6 +50,29 @@ header nav ul li a:hover {
     color: #FFEB3B;
 }
 
+
+.icons-container {
+    position: absolute;
+    top: 1em;
+    right: 1em;
+    display: flex;
+    gap: 1em;
+}
+
+.icons-container .icon {
+    width: 2.5em;
+    height: 2.5em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.icons-container .icon svg {
+    width: 100%;
+    height: auto;
+}
+
 header nav ul li a::after {
     content: '';
     display: block;
