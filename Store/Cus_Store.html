@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kitchen Stuff Online Store</title>
+    <title>Gaming Stuff Online Store</title>
     <link rel="stylesheet" href="Cus_Store.css">
 </head>
 <body>
     <header>
-        <h1>Kitchen Stuff Online Store</h1>
+        <h1>Gaming Stuff Online Store</h1>
         <nav>
             <ul>
                 <li><a href="#home">Home</a></li>
@@ -21,12 +21,18 @@
                 <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5M3.102 4l1.313 7h8.17l1.313-7zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4m7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4m-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2m7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2"/>
             </svg>
         </div>
+        <div class="personal-icon cart-icon" style="margin-right: 30px;" onclick="openPersonalArea()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-person" viewBox="0 0 16 16">
+                <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM8 9a6 6 0 0 0-6 6v1a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-1a6 6 0 0 0-6-6z"/>
+            </svg>
+        </div>
     </header>
+    
     
     <div class="background">
         <section id="home">
             <h2>Welcome</h2>
-            <p>Welcome to the Kitchen Stuff Online Store. Explore our range of products and add them to your shopping cart.</p>
+            <p>Welcome to the Gaming Stuff Online Store. Explore our range of products and add them to your shopping cart.</p>
             <p id = 'custCredit'></p>
         </section>
         
@@ -46,13 +52,13 @@
                 <p id="userName"></p>
                 <p id="userId"></p>
                 <p id="userType"></p>
-                <p>Company: Kitchen Supplies Inc.</p>
+                <p>Company: Gaming Supplies Inc.</p>
                 <button onclick="editProfile()">Edit Profile</button>
             </div>
         </section>
         
         <footer>
-            <p>&copy; 2024 Kitchen Stuff Online Store</p>
+            <p>&copy; 2024 Gaming Stuff Online Store</p>
         </footer>
 
         <!-- Modal for Shopping Cart -->
@@ -81,6 +87,21 @@
                 <button onclick="closeCheckoutModal()">Cancel</button>
             </div>
         </div>
+
+        <div id="personalAreaModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closePersonalArea()">&times;</span>
+                <h2>Personal Area</h2>
+                <div class="profile-info">
+                    <p id="personalUserName"></p>
+                    <p id="personalUserId"></p>
+                    <p id="personalUserType"></p>
+                    <p>Company: Gaming Supplies Inc.</p>
+                    <button onclick="editProfile()">Edit Profile</button>
+                </div>
+            </div>
+        </div>
+
     
     
     <script src="Cus_store.js"></script>
