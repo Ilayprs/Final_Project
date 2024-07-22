@@ -416,7 +416,8 @@ document.addEventListener('DOMContentLoaded', function() {
     
     document.getElementById('editProfileForm').addEventListener('submit', async function(event) {
         event.preventDefault(); // Prevent form from submitting the default way
-    
+        window.location.reload();
+
         const newUsername = document.getElementById('newUsername').value;
         const newPassword = document.getElementById('newPassword').value;
         const newCity = document.getElementById('newCity').value;
