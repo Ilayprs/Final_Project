@@ -178,6 +178,19 @@ function editProduct(productId, currentStock, currentPrice, hasRGB, isWireless) 
     // Open the edit product modal
     openModal('editProductModal');
 }
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function(e) {
+        e.preventDefault();
+
+        const targetId = this.getAttribute('href').substring(1);
+        const targetElement = document.getElementById(targetId);
+
+        window.scrollTo({
+            top: targetElement.offsetTop - 100, // Adjust this value to match the height of the fixed header
+            behavior: 'smooth'
+        });
+    });
+});
 
 
 // Function to update a product
