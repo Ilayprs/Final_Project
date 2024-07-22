@@ -13,7 +13,6 @@
             <ul>
                 <li><a href="#home">Home</a></li>
                 <li><a href="#products">Products</a></li>
-                <li><a href="#profile">Profile</a></li>
             </ul>
         </nav>
         <div class="icons-container">
@@ -48,17 +47,7 @@
                 <!-- Products will be dynamically populated here -->
             </div>
         </section>
-        
-        <section id="profile">
-            <h2>Profile</h2>
-            <div class="profile-info">
-                <p id="userName"></p>
-                <p id="userId"></p>
-                <p id="userType"></p>
-                <p>Company: Gaming Supplies Inc.</p>
-                <button onclick="editProfile()">Edit Profile</button>
-            </div>
-        </section>
+    
 
         <!-- Modal for Shopping Cart -->
         <div id="cartModal" class="modal">
@@ -101,7 +90,26 @@
             </div>
         </div>
 
-    
+    <!-- Modal for Editing Profile -->
+<div id="editProfileModal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <span class="close" onclick="closeEditProfileModal()">&times;</span>
+        <h2>Edit Profile</h2>
+        <form id="editProfileForm">
+            <label for="newUsername">New Username:</label>
+            <input type="text" id="newUsername" name="newUsername" required>
+            
+            <label for="newPassword">New Password:</label>
+            <input type="password" id="newPassword" name="newPassword" required>
+            
+            <label for="newCity">New City:</label>
+            <input type="text" id="newCity" name="newCity" required>
+            
+            <button type="submit">Save Changes</button>
+        </form>
+    </div>
+</div>
+
     
     <script src="Cus_store.js"></script>
 </div>
