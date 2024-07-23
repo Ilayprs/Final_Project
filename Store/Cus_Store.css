@@ -320,3 +320,98 @@ footer ul li a:hover {
         gap: 1em;
     }
 }
+/* Filter Section */
+.filters {
+    background: #f9f9f9; /* Light background for filters section */
+    padding: 1em; /* Reduced padding */
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin: 0 auto; /* Centering the filter section */
+    width: 80%; /* Adjust width to make it smaller */
+    max-width: 600px; /* Set a maximum width */
+}
+
+/* Heading style */
+.filters h2 {
+    margin-bottom: 0.5em; /* Reduced margin */
+    color: #ff4b2b; /* Matching the header color */
+    font-size: 1.5em; /* Smaller font size */
+}
+
+/* Filter Group */
+.filter-group {
+    margin-bottom: 0.5em; /* Reduced margin */
+}
+
+.filter-group label {
+    display: block;
+    margin-bottom: 0.25em; /* Reduced margin */
+    color: #333;
+    font-weight: bold;
+    font-size: 0.9em; /* Smaller font size */
+}
+
+.filter-select {
+    width: 100%;
+    padding: 0.3em; /* Reduced padding */
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    font-size: 0.9em; /* Smaller font size */
+    box-sizing: border-box;
+}
+
+.filter-input {
+    width: calc(50% - 0.3em); /* Adjusted width */
+    padding: 0.3em; /* Reduced padding */
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    font-size: 0.9em; /* Smaller font size */
+    margin-right: 0.3em; /* Reduced margin */
+    box-sizing: border-box;
+}
+
+.filter-input:last-of-type {
+    margin-right: 0;
+}
+
+.filter-checkbox {
+    display: flex;
+    align-items: center;
+    font-size: 0.9em; /* Smaller font size */
+}
+
+.filter-checkbox input {
+    margin-right: 0.3em; /* Reduced margin */
+}
+
+.filter-button {
+    background: linear-gradient(to right, #ff416c, #ff4b2b); /* Matches top footer color */
+    color: white;
+    border: none;
+    border-radius: 4px; /* Reduced border radius */
+    padding: 0.3em 0.7em; /* Reduced padding */
+    font-size: 0.8em; /* Smaller font size */
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.3s ease;
+    text-align: center;
+    display: inline-block;
+}
+
+.filter-button:hover {
+    background: linear-gradient(to right, #ff4b2b, #ff416c); /* Inverted gradient on hover */
+    transform: scale(1.03); /* Slightly smaller scale */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* Reduced shadow */
+}
+
+.filter-button:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px #ffeb3b; /* Highlight focus state */
+}
+
+@media (max-width: 768px) {
+    .filter-input {
+        width: 100%; /* Full width on mobile */
+        margin-right: 0;
+    }
+}
