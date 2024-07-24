@@ -144,19 +144,21 @@ document.addEventListener('DOMContentLoaded', function() {
                     const orders = await ordersResponse.json();
                     const ordersList = document.getElementById('customerOrdersList');
                     ordersList.innerHTML = '';
-
+    
                     let count = 1;
                     
                     orders.forEach(order => {
                         const orderElement = document.createElement('div');
                         orderElement.className = 'order';
                         orderElement.innerHTML = `
-                            <h3>Order ${count}: </h3>
-                            <p>Total Price: $${order.totalPrice.toFixed(2)}</p>
-                            <p>Number of Items: ${order.numItems}</p>
-                            <ul>
-                                ${order.items.map(item => `<li>${item.name}: ${item.quantity} x $${item.price.toFixed(2)}</li>`).join('')}
-                            </ul>
+                            <button onclick="toggleOrderDetails(${count})">order (${count})</button>
+                            <div class="order-details" id="order-details-${count}" style="display: none;">
+                                <p>Total Price: $${order.totalPrice.toFixed(2)}</p>
+                                <p>Number of Items: ${order.numItems}</p>
+                                <ul>
+                                    ${order.items.map(item => `<li>${item.name}: ${item.quantity} x $${item.price.toFixed(2)}</li>`).join('')}
+                                </ul>
+                            </div>
                         `;
                         ++count;
                         ordersList.appendChild(orderElement);
@@ -174,6 +176,18 @@ document.addEventListener('DOMContentLoaded', function() {
             console.error('Error fetching customer data:', error);
         }
     }
+    
+    window.toggleOrderDetails = function(orderNumber) {
+        const orderDetailsElement = document.getElementById(`order-details-${orderNumber}`);
+        if (orderDetailsElement) {
+            if (orderDetailsElement.style.display === 'none') {
+                orderDetailsElement.style.display = 'block';
+            } else {
+                orderDetailsElement.style.display = 'none';
+            }
+        }
+    }
+    
     
     
     
