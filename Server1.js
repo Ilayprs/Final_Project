@@ -420,6 +420,20 @@ app.get('/orders/:id', async (req, res) => {
     }
 });
 
+app.post('/update-profile', async (req, res) => {
+    const { id, username, password, city } = req.body;
+
+    try {
+        await Manager.findOneAndUpdate(
+            { id: id },
+            { username, password, city }
+        );
+        res.sendStatus(200); // OK
+    } catch (error) {
+        console.error('Error updating profile:', error);
+    }
+});
+
 
 app.post('/update-profile', async (req, res) => {
     const { id, username, password, city } = req.body;
