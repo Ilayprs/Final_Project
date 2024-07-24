@@ -161,7 +161,25 @@
     </div>
 </div>
 
-
+    <!-- Modal for Editing Profile -->
+    <div id="editProfileModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close" onclick="closeEditProfileModal()">&times;</span>
+            <h2>Edit Profile</h2>
+            <form id="editProfileForm">
+                <label for="newUsername">New Username:</label>
+                <input type="text" id="newUsername" name="newUsername" required>
+                
+                <label for="newPassword">New Password:</label>
+                <input type="password" id="newPassword" name="newPassword" required>
+                
+                <label for="newCity">New City:</label>
+                <input type="text" id="newCity" name="newCity" required>
+                
+                <button type="submit">Save Changes</button>
+            </form>
+        </div>
+    </div>
 
     <script src="Man_Store.js"></script>
 </body>
