@@ -106,7 +106,7 @@
                 <div class="cart-list">
                     <!-- Shopping cart items will be displayed here -->
                 </div>
-                <button id="checkoutBtn" onclick="openCheckoutModal()">Proceed to Checkout</button>
+                <button id="checkoutBtn" onclick="openCheckoutModal()" class="proceed">Proceed to Checkout</button>
             </div>
         </div>
 
@@ -114,16 +114,18 @@
         <div id="checkoutModal" class="modal" style="display: none;">
             <div class="modal-content">
                 <span class="close" onclick="closeCheckoutModal()">&times;</span>
-                <h2>Checkout</h2>
-                <p>Total Amount: <span id="totalAmount">$0.00</span></p>
-                <p>Are you sure you want to proceed with the purchase?</p>
-                <button onclick="confirmCheckout()">Confirm Checkout</button>
-                <p>Add money to your account:</p>
-                <input type="number" id="addMoney" placeholder="Enter amount">
-                <button onclick="addMoney()">Add Money</button>
-                <button onclick="closeCheckoutModal()">Cancel</button>
+                <h2 class="modal-title">Checkout</h2>
+                <p class="modal-text">Total Amount: <span id="totalAmount">$0.00</span></p>
+                <p class="modal-text">Are you sure you want to proceed with the purchase?</p>
+                <button class="modal-btn confirm-btn" onclick="confirmCheckout()">Confirm Checkout</button>
+                <p class="modal-text">Add money to your account:</p>
+                <input type="number" id="addMoney" placeholder="Enter amount" class="modal-input">
+                <button class="modal-btn add-money-btn" onclick="addMoney()">Add Money</button>
+                <button class="modal-btn cancel-btn" onclick="closeCheckoutModal()">Cancel</button>
             </div>
         </div>
+
+
 
         <div id="personalAreaModal" class="modal">
             <div class="modal-content">
@@ -135,7 +137,7 @@
                     <p id="personalUserType"></p>
                     <p id = 'custCredit'></p>
                     <p>Company: Gaming Supplies Inc.</p>
-                    <button onclick="editProfile()">Edit Profile</button>
+                    <button onclick="editProfile()" class="buttonedit">Edit Profile</button>
                 </div>
                 <div id="customerOrders">
                     <h3>My Orders</h3>
@@ -163,7 +165,7 @@
             <label for="newCity">New City:</label>
             <input type="text" id="newCity" name="newCity" required>
             
-            <button type="submit">Save Changes</button>
+            <button type="submit" class="buttonedit" style="    background: linear-gradient(135deg, #159728, #7ede89); /* Gradient background */">Save Changes</button>
         </form>
     </div>
 </div>
