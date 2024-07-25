@@ -65,7 +65,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     <p>Company: ${item.companyName}</p>
                     <p>RGB: ${item.rgb ? 'Yes' : 'No'}</p>
                     <p>Wireless: ${item.wireless ? 'Yes' : 'No'}</p>
-                    <button onclick="addToCart('${item._id}')">Add to Cart</button>
+                    <button onclick="addToCart('${item._id}')" class="filter-button">Add to Cart</button>
                 `;
                 productList.appendChild(itemElement);
                 if (!companies.includes(item.companyName)) {
@@ -151,8 +151,8 @@ document.addEventListener('DOMContentLoaded', function() {
                         const orderElement = document.createElement('div');
                         orderElement.className = 'order';
                         orderElement.innerHTML = `
-                            <button onclick="toggleOrderDetails(${count})">order (${count})</button>
-                            <div class="order-details" id="order-details-${count}" style="display: none;">
+                            <button onclick="toggleOrderDetails(${count})" class="orderss">order ${count}</button>
+                            <div onclick="toggleOrderDetails(${count})" class="order-details" id="order-details-${count}" style="display: none;">
                                 <p>Total Price: $${order.totalPrice.toFixed(2)}</p>
                                 <p>Number of Items: ${order.numItems}</p>
                                 <ul>
@@ -225,15 +225,19 @@ document.addEventListener('DOMContentLoaded', function() {
         cart.forEach(item => {
             const cartItemElement = document.createElement('div');
             cartItemElement.innerHTML = `
-                <h3>${item.name}</h3>
-                <p>Quantity: 
-                    <button onclick="decrementCartItem('${item._id}')">-</button>
-                    <span>${item.quantity}</span>
-                    <button class="increment-btn" onclick="incrementCartItem('${item._id}')">+</button>
+            <div class="cart-item">
+                <h3 class="cart-item-name">${item.name}</h3>
+                <p class="cart-item-quantity">
+                    Quantity: 
+                    <button class="quantity-btn decrement-btn" onclick="decrementCartItem('${item._id}')">-</button>
+                    <span class="quantity-value">${item.quantity}</span>
+                    <button class="quantity-btn increment-btn" onclick="incrementCartItem('${item._id}')">+</button>
                 </p>
-                <p>Price: $${(item.price * item.quantity).toFixed(2)}</p>
-                <button onclick="removeFromCart('${item._id}')">Remove</button>
-            `;
+                <p class="cart-item-price">Price: $${(item.price * item.quantity).toFixed(2)}</p>
+                <button onclick="removeFromCart('${item._id}')" class="remove-btn">Remove</button>
+            </div>
+        `;
+
             cartList.appendChild(cartItemElement);
     
             // Disable increment button if stock is 0
