@@ -684,3 +684,73 @@ button:hover {
         padding: 15px;
     }
 }
+
+.section-offset {
+    padding-top: 100px; /* Adjust this value to match the height of the fixed header */
+    margin-top: -100px; /* Adjust this value to match the height of the fixed header */
+}
+
+/* Make the results section stand out with visual consistency */
+#sales-category {
+    padding: 20px;
+    background-color: #ffffff; /* White background for contrast */
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin: 20px;
+}
+.sales:active{
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3); /* Reduced shadow when pressed */
+    transform: translateY(0); /* Return to original position */
+}
+.sales-heading {
+    font-size: 24px;
+    color: #333;
+    text-align: center;
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+
+.category-card {
+    background-color: #f9f9f9; /* Slightly off-white background */
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    padding: 15px;
+    transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+.category-card:hover {
+    background-color: #f1f1f1;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+.category-card h4 {
+    margin-top: 0;
+    font-size: 18px;
+    color: #444;
+}
+
+.category-card p {
+    margin: 5px 0;
+    font-size: 16px;
+    color: #666;
+}
+
+.highlight {
+    font-weight: bold;
+    color: #e94e77; /* Highlight color */
+}
+
+.error-message {
+    color: #e94e77; /* Red color for errors */
+    text-align: center;
+    font-size: 18px;
+    margin-top: 20px;
+}
+
+#queryBtn:active{
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3); /* Reduced shadow when pressed */
+    transform: translateY(0); /* Return to original position */
+}
+
