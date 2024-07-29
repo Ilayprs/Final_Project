@@ -510,5 +510,24 @@ function closePersonalArea() {
     document.getElementById('personalAreaModal').style.display = 'none';
 }
 
+document.getElementById('queryBtn').addEventListener('click', async () => {
+    try {
+        const response = await fetch('/sales-by-category');
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        const data = await response.json();
+
+        // Display results
+        const resultsDiv = document.getElementById('resultsqr');
+        resultsDiv.innerHTML = '<h3>Sales by Category:</h3>' + data.map(category => `
+            <p>Category: ${category._id}, Total Sales: $${category.totalSales.toFixed(2)}, Total Items Sold: ${category.totalItemsSold}</p>
+        `).join('');
+    } catch (error) {
+        console.error('Error fetching sales data:', error);
+        document.getElementById('results').innerHTML = 'Error fetching sales data';
+    }
+});
+
 // Call fetchCategories() when the page loads to populate categories
 window.onload = fetchCategories;
