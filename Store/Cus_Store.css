@@ -794,3 +794,20 @@ margin-bottom: 20px;
         display: inline-block;
     }
 }
+
+/* Inline styles for canvas and video */
+.video-section {
+    position: relative;
+    width: 100%;
+    max-width: 800px; /* Adjust width as needed */
+    margin: 0 auto;
+}
+#videoCanvas {
+    display: block;
+    width: 100%;
+    height: auto;
+    background: black;
+}
+#videoElement {
+    display: none; /* Hide the video element */
+}
