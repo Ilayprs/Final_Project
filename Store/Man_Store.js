@@ -520,14 +520,20 @@ document.getElementById('queryBtn').addEventListener('click', async () => {
 
         // Display results
         const resultsDiv = document.getElementById('resultsqr');
-        resultsDiv.innerHTML = '<h3>Sales by Category:</h3>' + data.map(category => `
-            <p>Category: ${category._id}, Total Sales: $${category.totalSales.toFixed(2)}, Total Items Sold: ${category.totalItemsSold}</p>
+        resultsDiv.innerHTML = '<h3 class="results-heading">Sales by Category:</h3>' + data.map(category => `
+            <div class="category-card">
+                <h4>Category: ${category._id}</h4>
+                <p>Total Sales: <span class="highlight">$${category.totalSales.toFixed(2)}</span></p>
+                <p>Total Items Sold: <span class="highlight">${category.totalItemsSold}</span></p>
+            </div>
         `).join('');
     } catch (error) {
         console.error('Error fetching sales data:', error);
-        document.getElementById('results').innerHTML = 'Error fetching sales data';
+        document.getElementById('resultsqr').innerHTML = '<p class="error-message">Error fetching sales data</p>';
     }
 });
+
+
 
 // Call fetchCategories() when the page loads to populate categories
 window.onload = fetchCategories;
