@@ -38,7 +38,7 @@ const itemSchema = new mongoose.Schema({
     name: { type: String, required: true },
     price: { type: Number, required: true },
     category: { type: String, required: true },
-    stock: { type: Number, required: true },
+    stock: { type: Number, required: true, min: [0, 'Stock must be greater than or equal to 0']  },
     companyName: { type: String },
     rgb: { type: Boolean },
     wireless: { type: Boolean }
