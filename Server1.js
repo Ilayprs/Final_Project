@@ -504,6 +504,30 @@ app.get('/orders', async (req, res) => {
     }
 });
 
+
+
+// Route to get sales data by category
+app.get('/sales-by-category', async (req, res) => {
+    try {
+        const result = await Order.aggregate([
+            { $unwind: "$items" },
+            {
+                $group: {
+                    _id: "$items.category",
+                    totalSales: { $sum: { $multiply: ["$items.price", "$items.quantity"] } },
+                    totalItemsSold: { $sum: "$items.quantity" }
+                }
+            },
+            { $sort: { totalSales: -1 } }
+        ]).exec();
+
+        res.json(result);
+    } catch (err) {
+        console.error('Error running aggregation query:', err);
+        res.status(500).send('Error running aggregation query');
+    }
+});
+
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 });
