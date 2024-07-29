@@ -39,6 +39,7 @@ async function createCategory() {
             addCategoryToPage(newCategory);
             // Close the modal
             closeModal();
+            window.location.reload();
         } catch (error) {
             console.error('Error creating category:', error);
             // Handle error creating category (e.g., display an error message)
@@ -64,7 +65,7 @@ function addCategoryToPage(category) {
     var option = document.createElement("option");
     option.text = category.name;
     option.value = category.name;
-    select.add(option);
+    //select.add(option);
     // Optionally, sort options alphabetically
     sortSelectOptions(select);
 }
