@@ -515,7 +515,6 @@ document.addEventListener('DOMContentLoaded', function() {
         // Adjust the canvas size to match the iframe container
         canvas.width = iframeContainer.offsetWidth;
         canvas.height = iframeContainer.offsetHeight;
-    
-    
+
     
 });//521
