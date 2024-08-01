@@ -37,25 +37,23 @@
             <p>Welcome to the Gaming Stuff Online Store. Explore our range of products and add them to your shopping cart.</p>
         </section>
 
-<!-- Video Section -->
+<!-- Video Section 
 <div class="video-section">
     <canvas id="videoCanvas"></canvas>
     <div class="iframe-container">
-        <iframe width="378" height="672" src="https://www.youtube.com/embed/wnhvanMdx4s" title="Mouse Montage (my new main)" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+        <iframe width="378" height="672" src="https://www.youtube.com/embed/b-GYW-gHb7g" title="Mouse Montage (my new main)" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
     </div>
 </div>
-
+-->
 
 <!-- Filters Section -->
 <div class="filters">
     <h2>Filter Products</h2>
 <!-- Filter Form -->
-<form id="filterForm">
-    <!-- Filter by Company -->
-    <div class="filter-group">
-        <label for="filterCompany">Company:</label>
-        <select id="filterCompany" class="filter-select"></select>
-    </div>
+<div class="filter-group">
+    <label for="filterCompany">Company:</label>
+    <div id="filterCompanyContainer"></div>
+</div>
 
     <!-- Filter by Price -->
     <div class="filter-group">
@@ -67,10 +65,8 @@
 
     <!-- Filter by Category -->
     <div class="filter-group">
-        <label for="categorySelect">Category:</label>
-        <select id="categorySelect" name="category" class="filter-select">
-            <!-- Categories will be dynamically populated here -->
-        </select>
+    <label>Category:</label>
+    <div id="filterCategoryContainer"></div>
     </div>
 
     <!-- Filter by RGB -->
@@ -90,6 +86,7 @@
     </div>
 
     <button type="button" class="filter-button" onclick="applyFilters()">Apply Filters</button>
+    <button type="button" class="filter-button" onclick="window.location.reload()">Reset Filters</button>
 </form>
 </div>
 
@@ -179,7 +176,12 @@
         </form>
     </div>
 </div>
-
+<h1>Popular Games from Twitch</h1>
+    <button class="toggle-button" onclick="toggleGameList()">Show Games</button>
+    <div id="game-list" class="game-list" style="display: none;">
+        <!-- Games will be displayed here -->
+    </div>
+    <div id="error-message" class="error"></div>
     
     <script src="Cus_store.js"></script>
     <script>
@@ -201,71 +203,206 @@
         }
 
         // Populate filter options dynamically
-        function populateFilters() {
-            const companySelect = document.getElementById('filterCompany');
-            const categorySelect = document.getElementById('categorySelect');
+// Populate company checkboxes dynamically
+// Populate category checkboxes dynamically
+function populateFilters() {
+    const companyContainer = document.getElementById('filterCompanyContainer');
+    const categoryContainer = document.getElementById('filterCategoryContainer');
 
-            // Extract unique values for company and category
-            const companies = [...new Set(items.map(item => item.companyName))];
-            const categories = [...new Set(items.map(item => item.category))];
+    // Extract unique values for company and category
+    const companies = [...new Set(items.map(item => item.companyName))];
+    const categories = [...new Set(items.map(item => item.category))];
 
-            // Populate company dropdown
-            companySelect.innerHTML = '<option value="">All</option>';
-            companies.forEach(company => {
-                companySelect.innerHTML += `<option value="${company}">${company}</option>`;
-            });
+    // Populate company checkboxes
+    companyContainer.innerHTML = '';
+    companies.forEach(company => {
+        companyContainer.innerHTML += `
+            <label>
+                <input type="checkbox" class="company-checkbox" value="${company}">
+                ${company}
+            </label>
+        `;
+    });
 
-            // Populate category dropdown
-            categorySelect.innerHTML = '<option value="">All</option>';
-            categories.forEach(category => {
-                categorySelect.innerHTML += `<option value="${category}">${category}</option>`;
-            });
-        }
+    // Populate category checkboxes
+    categoryContainer.innerHTML = '';
+    categories.forEach(category => {
+        categoryContainer.innerHTML += `
+            <label>
+                <input type="checkbox" class="category-checkbox" value="${category}">
+                ${category}
+            </label>
+        `;
+    });
+}
+
+
 
         // Apply filters and display results
-        async function applyFilters() {
-            const category = document.getElementById('categorySelect').value.trim().toLowerCase();
-            const companyName = document.getElementById('filterCompany').value.trim().toLowerCase();
-            const minPrice = parseFloat(document.getElementById('minPrice').value) || 0;
-            const maxPrice = parseFloat(document.getElementById('maxPrice').value) || 10000;
-            const rgb = document.getElementById('rgbCheckbox').checked;
-            const wireless = document.getElementById('wirelessCheckbox').checked;
+// Apply filters and display results
+// Apply filters and display results
+async function applyFilters() {
+    const minPrice = parseFloat(document.getElementById('minPrice').value) || 0;
+    const maxPrice = parseFloat(document.getElementById('maxPrice').value) || 10000;
+    const rgb = document.getElementById('rgbCheckbox').checked;
+    const wireless = document.getElementById('wirelessCheckbox').checked;
 
-            try {
-                const response = await fetch(`/api/items?minPrice=${minPrice}&maxPrice=${maxPrice}&category=${category}&company=${companyName}&rgb=${rgb}&wireless=${wireless}`);
-                if (response.ok) {
-                    items = await response.json();
-                    displayItems();
-                } else {
-                    console.error('Failed to fetch filtered items');
-                }
-            } catch (error) {
-                console.error('Error fetching filtered items:', error);
+    // Get selected companies
+    const selectedCompanies = Array.from(document.querySelectorAll('.company-checkbox:checked'))
+        .map(checkbox => checkbox.value.toLowerCase());
+
+    // Get selected categories
+    const selectedCategories = Array.from(document.querySelectorAll('.category-checkbox:checked'))
+        .map(checkbox => checkbox.value.toLowerCase());
+
+    try {
+        const response = await fetch(`/api/items?minPrice=${minPrice}&maxPrice=${maxPrice}&rgb=${rgb}&wireless=${wireless}`);
+        if (response.ok) {
+            let items = await response.json();
+            
+            // Filter items by selected companies
+            if (selectedCompanies.length > 0) {
+                items = items.filter(item => selectedCompanies.includes(item.companyName.toLowerCase()));
             }
+
+            // Filter items by selected categories
+            if (selectedCategories.length > 0) {
+                items = items.filter(item => selectedCategories.includes(item.category.toLowerCase()));
+            }
+
+            displayItems(items);
+        } else {
+            console.error('Failed to fetch filtered items');
+        }
+    } catch (error) {
+        console.error('Error fetching filtered items:', error);
+    }
+}
+
+// Display items in the products section
+function displayItems(items) {
+    const categoryList = document.querySelector('.category-list');
+    categoryList.innerHTML = '';
+    const productsDiv = document.querySelector('.product-list');
+    productsDiv.innerHTML = ''; // Clear previous items
+
+    items.forEach(item => {
+        const itemDiv = document.createElement('div');
+        itemDiv.className = 'product';
+        itemDiv.innerHTML = `
+            <h3>${item.name}</h3>
+            <p>Price: $${item.price.toFixed(2)}</p>
+            <p>Category: ${item.category}</p>
+            <p>Company: ${item.companyName}</p>
+            <p>RGB: ${item.rgb ? 'Yes' : 'No'}</p>
+            <p>Wireless: ${item.wireless ? 'Yes' : 'No'}</p>
+            <button onclick="addToCart('${item._id}')" class="filter-button">Add to Cart</button>
+        `;
+        productsDiv.appendChild(itemDiv);
+    });
+}
+
+// Fetch items on page load
+fetchItems();
+
+let isGameListVisible = false;
+let gameDataCache = [];
+
+async function fetchGames() {
+    const clientId = 'dq1puf0pbndxn4qjpcux99ha73u34k';
+    const clientSecret = '8mqt0eyg2kgaiuxzqhkwudjmamssug';
+
+    try {
+        // Step 1: Get OAuth Token
+        const authResponse = await fetch('https://id.twitch.tv/oauth2/token', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: new URLSearchParams({
+                'client_id': clientId,
+                'client_secret': clientSecret,
+                'grant_type': 'client_credentials'
+            })
+        });
+
+        if (!authResponse.ok) {
+            throw new Error(`Authentication failed: ${authResponse.statusText}`);
         }
 
-        // Display items in the products section
-        function displayItems() {
-            const productsDiv = document.getElementById('products');
-            productsDiv.innerHTML = ''; // Clear previous items
+        const authData = await authResponse.json();
+        const accessToken = authData.access_token;
 
-            items.forEach(item => {
-                const itemDiv = document.createElement('div');
-                itemDiv.className = 'product-item';
-                itemDiv.innerHTML = `
-                    <h3>${item.name}</h3>
-                    <p>Price: $${item.price.toFixed(2)}</p>
-                    <p>Category: ${item.category}</p>
-                    <p>Company: ${item.companyName}</p>
-                    <p>RGB: ${item.rgb ? 'Yes' : 'No'}</p>
-                    <p>Wireless: ${item.wireless ? 'Yes' : 'No'}</p>
-                `;
-                productsDiv.appendChild(itemDiv);
-            });
+        // Step 2: Fetch Popular Games
+        const gameResponse = await fetch('https://api.twitch.tv/helix/games/top', {
+            headers: {
+                'Client-ID': clientId,
+                'Authorization': `Bearer ${accessToken}`
+            }
+        });
+
+        if (!gameResponse.ok) {
+            throw new Error(`Failed to fetch games data: ${gameResponse.statusText}`);
         }
 
-        // Fetch items on page load
-        fetchItems();
+        const gameData = await gameResponse.json();
+        gameDataCache = gameData.data; // Cache the game data
+        displayGames(gameDataCache);
+    } catch (error) {
+        console.error('Error:', error);
+        document.getElementById('error-message').innerText = `Error: ${error.message}`;
+    }
+}
+
+function displayGames(games) {
+    const list = document.getElementById('game-list');
+    list.innerHTML = '';
+
+    if (games.length === 0) {
+        list.innerHTML = 'No games found.';
+        return;
+    }
+
+    games.forEach(game => {
+        const gameItem = document.createElement('div');
+        gameItem.className = 'game-item';
+        gameItem.innerHTML = `
+            <img src="${game.box_art_url.replace('{width}', '200').replace('{height}', '300')}" alt="${game.name}">
+            <div>
+                <h3>${game.name}</h3>
+                <p>Viewers: ${game.viewers}</p>
+            </div>
+        `;
+        list.appendChild(gameItem);
+    });
+}
+
+function toggleGameList() {
+    const list = document.getElementById('game-list');
+    const button = document.querySelector('.toggle-button');
+    
+    if (isGameListVisible) {
+        list.style.display = 'none';
+        button.innerText = 'Show Games';
+    } else {
+        list.style.display = 'block';
+        button.innerText = 'Hide Games';
+    }
+
+    if (!gameDataCache.length) {
+        fetchGames();
+    } else {
+        displayGames(gameDataCache);
+    }
+
+    isGameListVisible = !isGameListVisible;
+}
+
+// Fetch games initially
+fetchGames();
+
+// Set up an interval to update every 10 minutes (600,000 milliseconds)
+setInterval(fetchGames, 600000);
     </script>
 </div>
 </body>
