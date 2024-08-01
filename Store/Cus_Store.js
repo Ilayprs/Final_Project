@@ -47,14 +47,14 @@ document.addEventListener('DOMContentLoaded', function() {
         const categories = await fetchCategories();
         const categoryList = document.querySelector('.category-list');
         categoryList.innerHTML = '';
-    
+
         for (const category of categories) {
             const items = await fetchItemsByCategory(category.name);
 
             const categoryElement = document.createElement('div');
             categoryElement.className = 'category';
             categoryElement.innerHTML = `<h2>${category.name}</h2><div class="product-list"></div>`;
-    
+
             const productList = categoryElement.querySelector('.product-list');
             items.forEach(item => {
                 const itemElement = document.createElement('div');
@@ -72,23 +72,59 @@ document.addEventListener('DOMContentLoaded', function() {
                     companies.push(item.companyName);
                 }
             });
-    
-            categoryList.appendChild(categoryElement);
 
+            categoryList.appendChild(categoryElement);
         }
 
         populateCompanySelect();
+        addCheckboxEventListeners();
     }
 
+
     function populateCompanySelect() {
-        const companySelect = document.getElementById('filterCompany');
-        companySelect.innerHTML = '';
+        const companyContainer = document.getElementById('filterCompanyContainer');
+        companyContainer.innerHTML = ''; // Clear previous content
 
         companies.forEach(company => {
-            const option = document.createElement('option');
-            option.value = company;
-            option.textContent = company;
-            companySelect.appendChild(option);
+            const checkboxLabel = document.createElement('label');
+            checkboxLabel.className = 'company-checkbox-label';
+            
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.value = company;
+            checkbox.className = 'company-checkbox';
+
+            checkboxLabel.appendChild(checkbox);
+            checkboxLabel.appendChild(document.createTextNode(company));
+            
+            companyContainer.appendChild(checkboxLabel);
+        });
+    }
+
+    function addCheckboxEventListeners() {
+        const checkboxes = document.querySelectorAll('.company-checkbox');
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', filterProductsByCompany);
+        });
+    }
+
+    function filterProductsByCompany() {
+        const selectedCompanies = Array.from(document.querySelectorAll('.company-checkbox:checked')).map(checkbox => checkbox.value);
+
+        products.forEach(product => {
+            if (selectedCompanies.length === 0 || selectedCompanies.includes(product.companyName)) {
+                const productElement = document.createElement('div');
+                productElement.className = 'product';
+                productElement.innerHTML = `
+                    <h4>${product.name}</h4>
+                    <p>Price: $${product.price.toFixed(2)}</p>
+                    <p>Company: ${product.companyName}</p>
+                    <p>RGB: ${product.rgb ? 'Yes' : 'No'}</p>
+                    <p>Wireless: ${product.wireless ? 'Yes' : 'No'}</p>
+                    <button onclick="addToCart('${product._id}')" class="filter-button">Add to Cart</button>
+                `;
+                categoryList.appendChild(productElement);
+            }
         });
     }
     
@@ -508,13 +544,13 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize filters on page load
     renderFilters();
     
-    
+    /*video section
         var canvas = document.getElementById('videoCanvas');
         var iframeContainer = document.querySelector('.iframe-container');
         
         // Adjust the canvas size to match the iframe container
         canvas.width = iframeContainer.offsetWidth;
         canvas.height = iframeContainer.offsetHeight;
-
+*/
     
-});//521
+});
