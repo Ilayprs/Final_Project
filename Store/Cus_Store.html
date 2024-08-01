@@ -308,9 +308,9 @@ function displayItems(items) {
 
 // Fetch items on page load
 fetchItems();
-
 let isGameListVisible = false;
 let gameDataCache = [];
+let viewerDataCache = {};
 
 async function fetchGames() {
     const clientId = 'dq1puf0pbndxn4qjpcux99ha73u34k';
@@ -351,11 +351,40 @@ async function fetchGames() {
 
         const gameData = await gameResponse.json();
         gameDataCache = gameData.data; // Cache the game data
-        displayGames(gameDataCache);
+        
+        // Fetch streams for each game to get viewer counts
+        await fetchViewerCounts(gameData.data, accessToken);
     } catch (error) {
         console.error('Error:', error);
         document.getElementById('error-message').innerText = `Error: ${error.message}`;
     }
+}
+
+async function fetchViewerCounts(games, accessToken) {
+    const clientId = 'dq1puf0pbndxn4qjpcux99ha73u34k';
+    
+    const gameIds = games.map(game => game.id);
+    const streamsResponse = await fetch('https://api.twitch.tv/helix/streams', {
+        headers: {
+            'Client-ID': clientId,
+            'Authorization': `Bearer ${accessToken}`
+        },
+        method: 'GET',
+        params: {
+            'game_id': gameIds.join('&game_id=')
+        }
+    });
+
+    if (!streamsResponse.ok) {
+        throw new Error(`Failed to fetch streams data: ${streamsResponse.statusText}`);
+    }
+
+    const streamsData = await streamsResponse.json();
+    streamsData.data.forEach(stream => {
+        viewerDataCache[stream.game_id] = stream.viewer_count;
+    });
+
+    displayGames(gameDataCache);
 }
 
 function displayGames(games) {
@@ -374,7 +403,7 @@ function displayGames(games) {
             <img src="${game.box_art_url.replace('{width}', '200').replace('{height}', '300')}" alt="${game.name}">
             <div>
                 <h3>${game.name}</h3>
-                <p>Viewers: ${game.viewers}</p>
+                <p>Viewers: ${viewerDataCache[game.id] || 'N/A'}</p>
             </div>
         `;
         list.appendChild(gameItem);
@@ -407,6 +436,7 @@ fetchGames();
 
 // Set up an interval to update every 10 minutes (600,000 milliseconds)
 setInterval(fetchGames, 600000);
+
     </script>
 </div>
 </body>
