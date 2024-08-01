@@ -528,6 +528,75 @@ app.get('/sales-by-category', async (req, res) => {
     }
 });
 
+// Route to filter items based on various criteria
+app.get('/filter-items', async (req, res) => {
+    try {
+        const {
+            companyName,
+            category,
+            rgb,
+            wireless,
+            minPrice,
+            maxPrice
+        } = req.query;
+
+        // Construct the filter query
+        const filterQuery = {};
+
+        if (companyName) {
+            filterQuery.companyName = companyName;
+        }
+
+        if (category) {
+            filterQuery.category = category;
+        }
+
+        if (rgb !== undefined) {
+            filterQuery.rgb = rgb === 'true'; // Convert to boolean
+        }
+
+        if (wireless !== undefined) {
+            filterQuery.wireless = wireless === 'true'; // Convert to boolean
+        }
+
+        if (minPrice) {
+            filterQuery.price = { ...filterQuery.price, $gte: parseFloat(minPrice) };
+        }
+
+        if (maxPrice) {
+            filterQuery.price = { ...filterQuery.price, $lte: parseFloat(maxPrice) };
+        }
+
+        // Fetch the filtered items
+        const items = await Item.find(filterQuery);
+
+        res.json(items);
+    } catch (error) {
+        console.error('Error fetching filtered items:', error);
+        res.status(500).send('Error fetching filtered items');
+    }
+});
+
+app.get('/api/items', async (req, res) => {
+    const { minPrice, maxPrice, category, company, rgb, wireless } = req.query;
+    const filter = {};
+
+    if (minPrice !== undefined) filter.price = { ...filter.price, $gte: parseFloat(minPrice) };
+    if (maxPrice !== undefined) filter.price = { ...filter.price, $lte: parseFloat(maxPrice) };
+    if (category) filter.category = category;
+    if (company) filter.companyName = company;
+    if (rgb !== undefined) filter.rgb = rgb === 'true';
+    if (wireless !== undefined) filter.wireless = wireless === 'true';
+
+    try {
+        const items = await Item.find(filter);
+        res.json(items);
+    } catch (error) {
+        console.error('Error fetching items:', error);
+        res.status(500).send('Error fetching items');
+    }
+});
+
 
 
 app.listen(PORT, () => {
