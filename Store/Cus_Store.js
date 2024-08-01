@@ -445,6 +445,16 @@ document.addEventListener('DOMContentLoaded', function() {
         const totalAmount = parseFloat(calculateTotalAmount());
         if (customerCredit >= totalAmount) {
             try {
+                // Check if stock is sufficient for each item in the cart
+                for (const cartItem of cart) {
+                    const response = await fetch(`/items/${cartItem._id}`);
+                    const product = await response.json();
+                    if (product.stock < cartItem.quantity) {
+                        alert(`The stock of ${product.name} is lower than the quantity in your cart.`);
+                        return; // Exit the function if stock is insufficient
+                    }
+                }
+    
                 // Update stock for items
                 const responseStock = await fetch('/update-stock', {
                     method: 'POST',
@@ -505,6 +515,7 @@ document.addEventListener('DOMContentLoaded', function() {
             alert('Insufficient credit. Please add more money.');
         }
     }
+    
     
     window.editProfile = async function() {
         const editProfileModal = document.getElementById('editProfileModal');
