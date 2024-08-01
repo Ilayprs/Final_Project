@@ -21,8 +21,7 @@
             <ul>
                 <li><a href="#dashboard">Dashboard</a></li>
                 <li><a href="#inventory">Inventory</a></li>
-                <li><a href="#orders">Orders</a></li>
-                <li><a href="#profile">Profile</a></li>
+        
             </ul>
         </nav>
         <div class="icons-container">
@@ -46,23 +45,7 @@
         <!-- Empty categories to be populated dynamically -->
     </section>
     
-    <section id="orders">
-        <h2>Orders</h2>
-        <div class="order-list">
-            <!-- Orders here -->
-        </div>
-    </section>
-    
-    <section id="profile">
-        <h2>Profile</h2>
-        <div class="profile-info">
-            <p id="userName"></p>
-            <p id="userId"></p>
-            <p id="userType"></p>
-            <p>Company: Gaming Supplies Inc.</p>
-            <button onclick="editProfile()">Edit Profile</button>
-        </div>
-    </section>
+   
     
     <!-- Modal for adding new product -->
 <div id="addProductModal" class="modal">
@@ -185,10 +168,10 @@
         </div>
     </div>
 
-    <p>Total price of the items that has been ordered for each category</p>
+    <h4 class = 'category-title'>Total price of the items that has been ordered for each category</h4>
     <div id="categorySalesGraph"></div>
 
-    <p>Quantity of that has been ordered for each category</p>
+    <h4 class = 'category-title'>Quantity of that has been ordered for each category</h4>
     <div id="categoryTotalGraph"></div>
 
     <script src="Man_Store.js"></script>
