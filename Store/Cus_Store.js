@@ -628,24 +628,14 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize filters on page load
     renderFilters();
     
-    window.onload = function() {
-        const video = document.getElementById('videoElement');
-        const canvas = document.getElementById('videoCanvas');
-        const context = canvas.getContext('2d');
-
-        video.addEventListener('play', function() {
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            function draw() {
-                if (!video.paused && !video.ended) {
-                    context.drawImage(video, 0, 0);
-                    requestAnimationFrame(draw);
-                }
-            }
-            draw();
-        });
-
-        video.play(); // Play video when page loads
-    };
+    
+        var canvas = document.getElementById('videoCanvas');
+        var iframeContainer = document.querySelector('.iframe-container');
+        
+        // Adjust the canvas size to match the iframe container
+        canvas.width = iframeContainer.offsetWidth;
+        canvas.height = iframeContainer.offsetHeight;
+    
+    
 
 });
