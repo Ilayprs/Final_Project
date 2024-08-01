@@ -375,30 +375,71 @@ document.addEventListener('DOMContentLoaded', function() {
     window.addMoney = async function() {
         const addMoneyInput = document.getElementById('addMoney');
         const amount = parseFloat(addMoneyInput.value);
-        if (!isNaN(amount) && amount > 0) {
-            try {
-                const response = await fetch('/update-credit', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ customerId: id, amount })
-                });
-                if (response.ok) {
-                    customerCredit += amount;
-                    alert('Money added successfully.');
-                    addMoneyInput.value = '';
-                    window.location.reload();
-                } else {
-                    console.error('Error adding money:', response.statusText);
-                }
-            } catch (error) {
-                console.error('Error adding money:', error);
-            }
-        } else {
+    
+        if (isNaN(amount) || amount <= 0) {
             alert('Please enter a valid amount.');
+            return;
+        }
+    
+        try {
+            const response = await fetch('/update-credit', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ customerId: id, amount })
+            });
+    
+            if (response.ok) {
+                customerCredit += amount;
+                alert('Money added successfully.');
+                addMoneyInput.value = '';
+                document.getElementById('custCredit').innerText = 'Credits: ' + customerCredit;
+            } else {
+                console.error('Error adding money:', response.statusText);
+                alert('Error adding money. Please try again.');
+            }
+        } catch (error) {
+            console.error('Error adding money:', error);
+            alert('Error adding money. Please try again.');
         }
     }
+
+
+    window.addMoneyTwo = async function() {
+        const addMoneyInput = document.getElementById('addMoneyTwo');
+        const amount = parseFloat(addMoneyInput.value);
+    
+        if (isNaN(amount) || amount <= 0) {
+            alert('Please enter a valid amount.');
+            return;
+        }
+    
+        try {
+            const response = await fetch('/update-credit', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ customerId: id, amount })
+            });
+    
+            if (response.ok) {
+                customerCredit += amount;
+                alert('Money added successfully.');
+                addMoneyInput.value = '';
+                document.getElementById('custCredit').innerText = 'Credits: ' + customerCredit;
+            } else {
+                console.error('Error adding money:', response.statusText);
+                alert('Error adding money. Please try again.');
+            }
+        } catch (error) {
+            console.error('Error adding money:', error);
+            alert('Error adding money. Please try again.');
+        }
+    }
+    
+    
 
     window.confirmCheckout = async function() {
         const totalAmount = parseFloat(calculateTotalAmount());
