@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gaming Stuff Supplier Portal</title>
@@ -19,8 +21,7 @@
             <ul>
                 <li><a href="#dashboard">Dashboard</a></li>
                 <li><a href="#inventory">Inventory</a></li>
-                <li><a href="#orders">Orders</a></li>
-                <li><a href="#profile">Profile</a></li>
+        
             </ul>
         </nav>
         <div class="icons-container">
@@ -44,23 +45,7 @@
         <!-- Empty categories to be populated dynamically -->
     </section>
     
-    <section id="orders">
-        <h2>Orders</h2>
-        <div class="order-list">
-            <!-- Orders here -->
-        </div>
-    </section>
-    
-    <section id="profile">
-        <h2>Profile</h2>
-        <div class="profile-info">
-            <p id="userName"></p>
-            <p id="userId"></p>
-            <p id="userType"></p>
-            <p>Company: Gaming Supplies Inc.</p>
-            <button onclick="editProfile()">Edit Profile</button>
-        </div>
-    </section>
+   
     
     <!-- Modal for adding new product -->
 <div id="addProductModal" class="modal">
@@ -182,6 +167,12 @@
             </form>
         </div>
     </div>
+
+    <h4 class = 'category-title'>Total price of the items that has been ordered for each category</h4>
+    <div id="categorySalesGraph"></div>
+
+    <h4 class = 'category-title'>Quantity of that has been ordered for each category</h4>
+    <div id="categoryTotalGraph"></div>
 
     <script src="Man_Store.js"></script>
 </body>

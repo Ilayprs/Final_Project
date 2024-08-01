@@ -1,9 +1,6 @@
 // Fetch user details from localStorage
 const id = localStorage.getItem('id');
 const userName = localStorage.getItem('userName');
-document.getElementById('userName').innerText = 'Name: ' + userName;
-document.getElementById('userId').innerText = 'ID: ' + id;
-document.getElementById('userType').innerText = 'Type: manager';
 // Function to open a specific modal
 function openModal(modalId) {
     closeModal(); // Close any open modal first
@@ -535,6 +532,138 @@ document.getElementById('queryBtn').addEventListener('click', async () => {
 });
 
 
+// Function to fetch sales data and render the graph
+async function renderSalesGraph() {
+    try {
+        const response = await fetch('/sales-by-category');
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        const data = await response.json();
 
-// Call fetchCategories() when the page loads to populate categories
-window.onload = fetchCategories;
+        // Prepare data for the graph
+        const graphData = data.map(category => ({
+            category: category._id,
+            totalSales: category.totalSales
+        }));
+
+        // Set up the dimensions and margins for the graph
+        const margin = { top: 20, right: 30, bottom: 40, left: 90 },
+            width = 800 - margin.left - margin.right,
+            height = 400 - margin.top - margin.bottom;
+
+        // Append the svg object to the div
+        const svg = d3.select("#categorySalesGraph")
+            .append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform", `translate(${margin.left},${margin.top})`);
+
+        // Add X axis
+        const x = d3.scaleLinear()
+            .domain([0, d3.max(graphData, d => d.totalSales)])
+            .range([0, width]);
+        svg.append("g")
+            .attr("transform", `translate(0,${height})`)
+            .call(d3.axisBottom(x).ticks(5))
+            .selectAll("text")
+            .attr("transform", "translate(-10,0)rotate(-45)")
+            .style("text-anchor", "end");
+
+        // Add Y axis
+        const y = d3.scaleBand()
+            .range([0, height])
+            .domain(graphData.map(d => d.category))
+            .padding(.1);
+        svg.append("g")
+            .call(d3.axisLeft(y));
+
+        // Bars
+        svg.selectAll("myRect")
+            .data(graphData)
+            .enter()
+            .append("rect")
+            .attr("x", x(0))
+            .attr("y", d => y(d.category))
+            .attr("width", d => x(d.totalSales))
+            .attr("height", y.bandwidth())
+            .attr("fill", "#69b3a2");
+
+    } catch (error) {
+        console.error('Error fetching sales data:', error);
+        document.getElementById('categorySalesGraph').innerHTML = '<p class="error-message">Error fetching sales data</p>';
+    }
+}
+
+
+// Function to fetch sales data and render the graph
+async function renderTotalGraph() {
+    try {
+        const response = await fetch('/sales-by-category');
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        const data = await response.json();
+
+        // Prepare data for the graph
+        const graphData = data.map(category => ({
+            category: category._id,
+            totalSales: category.totalItemsSold
+        }));
+
+        // Set up the dimensions and margins for the graph
+        const margin = { top: 20, right: 30, bottom: 40, left: 90 },
+            width = 800 - margin.left - margin.right,
+            height = 400 - margin.top - margin.bottom;
+
+        // Append the svg object to the div
+        const svg = d3.select("#categoryTotalGraph")
+            .append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform", `translate(${margin.left},${margin.top})`);
+
+        // Add X axis
+        const x = d3.scaleLinear()
+            .domain([0, d3.max(graphData, d => d.totalSales)])
+            .range([0, width]);
+        svg.append("g")
+            .attr("transform", `translate(0,${height})`)
+            .call(d3.axisBottom(x).ticks(5))
+            .selectAll("text")
+            .attr("transform", "translate(-10,0)rotate(-45)")
+            .style("text-anchor", "end");
+
+        // Add Y axis
+        const y = d3.scaleBand()
+            .range([0, height])
+            .domain(graphData.map(d => d.category))
+            .padding(.1);
+        svg.append("g")
+            .call(d3.axisLeft(y));
+
+        // Bars
+        svg.selectAll("myRect")
+            .data(graphData)
+            .enter()
+            .append("rect")
+            .attr("x", x(0))
+            .attr("y", d => y(d.category))
+            .attr("width", d => x(d.totalSales))
+            .attr("height", y.bandwidth())
+            .attr("fill", "#69b3a2");
+
+    } catch (error) {
+        console.error('Error fetching sales data:', error);
+        document.getElementById('categorySalesGraph').innerHTML = '<p class="error-message">Error fetching sales data</p>';
+    }
+}
+
+// Call renderItemsGraph on window load
+window.onload = () => {
+    fetchCategories();
+    renderSalesGraph(); 
+    renderTotalGraph();
+};
