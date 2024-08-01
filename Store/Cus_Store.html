@@ -138,22 +138,26 @@
             <div class="modal-content">
                 <span class="close" onclick="closePersonalArea()">&times;</span>
                 <h2>Personal Area</h2>
-                <div class="profile-info">
-                    <p id="personalUserName"></p>
-                    <p id="personalUserId"></p>
-                    <p id="personalUserType"></p>
-                    <p id = 'custCredit'></p>
-                    <p>Company: Gaming Supplies Inc.</p>
-                    <button onclick="editProfile()" class="buttonedit">Edit Profile</button>
-                </div>
-                <div id="customerOrders">
-                    <h3>My Orders</h3>
-                    <div id="customerOrdersList">
-                        <!-- Orders will be dynamically populated here -->
-                    </div>
+                <p id="personalUserName">Name: </p>
+                <p id="personalUserId">ID: </p>
+                <p id="personalUserType">Type: </p>
+                <p id="personalUserCity">City: </p>
+                <p id="custCredit">Credits: </p>
+        
+                <h3>Orders</h3>
+                <div id="customerOrdersList"></div>
+        
+                <!-- Add Money Section -->
+                <div id="addMoneySection">
+                    <h3 class="modal-text">Add money to your account:</h3>
+                <input type="number" id="addMoneyTwo" placeholder="Enter amount" class="modal-input">
+                <button class="modal-btn add-money-btn" onclick="addMoneyTwo()">Add Money</button>
                 </div>
             </div>
         </div>
+        
+        
+        
         
         
 
