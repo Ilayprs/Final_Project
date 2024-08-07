@@ -859,18 +859,22 @@ iframe {
     grid-template-columns: repeat(3, 1fr); /* 3 columns with equal width */
     gap: 20px; /* Space between items */
     padding: 20px;
+    align-items: center;
     justify-items: center; /* Center items horizontally within their grid cell */
 }
 
 /* Style for each game item */
 .game-item {
+    display: inline-block;
     background-color: #f9f9f9;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     padding: 10px;
     text-align: center;
     width: 100%; /* Ensure the item fills the grid cell */
-    max-width: 150px; /* Limit the width of each game item */
+    max-width: 200px; /* Limit the width of each game item */
+    margin-left:8%;
+    margin-top: 5%;
 }
 
 /* Style for game title */
